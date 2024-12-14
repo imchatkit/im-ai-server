@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.dromara</groupId>
-    <artifactId>ruoyi-cloud-plus</artifactId>
+    <artifactId>im-kit</artifactId>
     <version>${revision}</version>
 
     <name>RuoYi-Cloud-Plus</name>
     <url>https://gitee.com/dromara/RuoYi-Cloud-Plus</url>
-    <description>RuoYi-Cloud-Plus微服务系统</description>
+    <description>IM系统</description>
 
     <properties>
         <revision>2.2.2</revision>
@@ -375,9 +375,9 @@
     </dependencyManagement>
 
     <modules>
-        <module>ruoyi-auth</module>
-        <module>ruoyi-gateway</module>
-        <module>ruoyi-visual</module>
+<!--        <module>ruoyi-auth</module>-->
+<!--        <module>ruoyi-gateway</module>-->
+<!--        <module>ruoyi-visual</module>-->
         <module>ruoyi-modules</module>
         <module>ruoyi-api</module>
         <module>ruoyi-common</module>
