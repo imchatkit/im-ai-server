@@ -17,41 +17,6 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
--- ----------------------------
--- Table structure for im_api_key
--- ----------------------------
-DROP TABLE IF EXISTS `im_api_key`;
-CREATE TABLE `im_api_key`  (
-  `id` bigint NOT NULL COMMENT '密钥id',
-  `fk_tenant_id` bigint NOT NULL COMMENT '租户id',
-  `app_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '应用ID',
-  `app_secret` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '应用密钥',
-  `app_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '应用名称',
-  `ip_whitelist` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT 'IP白名单',
-  `api_limit_per_day` int NULL DEFAULT NULL COMMENT '每日API调用限制',
-  `api_status` tinyint NULL DEFAULT NULL,
-  `create_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
-  `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `app_id`(`app_id` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'API密钥表' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Table structure for im_billing_record
--- ----------------------------
-DROP TABLE IF EXISTS `im_billing_record`;
-CREATE TABLE `im_billing_record`  (
-  `id` bigint NOT NULL COMMENT '记录id',
-  `fk_tenant_id` bigint NOT NULL COMMENT '租户id',
-  `billing_type` tinyint NULL DEFAULT NULL COMMENT '计费类型：1消息数 2存储空间 3带宽',
-  `billing_amount` decimal(10, 2) NULL DEFAULT NULL COMMENT '计费金额',
-  `billing_cycle` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '计费周期',
-  `start_time` timestamp NULL DEFAULT NULL COMMENT '开始时间',
-  `end_time` timestamp NULL DEFAULT NULL COMMENT '结束时间',
-  `create_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_tenant_time`(`fk_tenant_id` ASC, `create_time` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '计费记录表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for im_callback_record
@@ -119,6 +84,7 @@ DROP TABLE IF EXISTS `im_conversation`;
 CREATE TABLE `im_conversation`  (
   `id` bigint NOT NULL COMMENT 'Room ID',
   `tenant_id` bigint NOT NULL COMMENT '租户ID',
+  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '头像',
   `conversation_type` tinyint NOT NULL COMMENT '会话类型: 1-单聊 2-群聊 3-系统通知 4-机器人',
   `create_time` timestamp NOT NULL COMMENT '创建时间',
   `update_time` timestamp NOT NULL COMMENT '更新时间',
@@ -294,7 +260,6 @@ CREATE TABLE `im_group`  (
   `id` bigint NOT NULL COMMENT '群组ID',
   `conversation_id` bigint NOT NULL COMMENT '关联的RoomID',
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '群名称',
-  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '群头像',
   `owner_id` bigint NOT NULL COMMENT '群主ID',
   `group_type` tinyint NOT NULL COMMENT '群类型: 1-普通群 2-部门群 3-企业群',
   `max_member_count` int NULL DEFAULT 500 COMMENT '最大成员数',
@@ -353,15 +318,26 @@ CREATE TABLE `im_group_member`  (
 -- Table structure for im_group_setting
 -- ----------------------------
 DROP TABLE IF EXISTS `im_group_setting`;
-CREATE TABLE `im_group_setting`  (
-  `group_id` bigint NOT NULL COMMENT '群组ID',
-  `mute_all` tinyint NULL DEFAULT 0 COMMENT '全员禁言: 0-否 1-是',
-  `allow_member_invite` tinyint NULL DEFAULT 1 COMMENT '允许成员邀请: 0-否 1-是',
-  `allow_member_modify` tinyint NULL DEFAULT 1 COMMENT '允许成员修改群信息: 0-否 1-是',
-  `show_member_list` tinyint NULL DEFAULT 1 COMMENT '显示成员列表: 0-否 1-是',
-  PRIMARY KEY (`group_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '群组设置表' ROW_FORMAT = DYNAMIC;
+CREATE TABLE `im_group_setting` (
+  `fk_group_id` bigint NOT NULL COMMENT '群组ID',
+  
+  -- 基本设置
+  `all_mute` tinyint(1) NOT NULL DEFAULT 0 COMMENT '全员禁言开关 0-关闭 1-开启',
+  `member_invite` tinyint(1) NOT NULL DEFAULT 1 COMMENT '成员邀请开关 0-关闭 1-开启',
+  `member_modify` tinyint(1) NOT NULL DEFAULT 1 COMMENT '成员修改群信息开关 0-关闭 1-开启', 
+  `member_visible` tinyint(1) NOT NULL DEFAULT 1 COMMENT '成员列表可见开关 0-关闭 1-开启',
+  
+  -- 功能限制
+  `forbid_add_friend` tinyint(1) NOT NULL DEFAULT 0 COMMENT '禁止群内加好友 0-关闭 1-开启',
+  `forbid_send_redpacket` tinyint(1) NOT NULL DEFAULT 0 COMMENT '禁止发红包 0-关闭 1-开启',
+  `forbid_send_image` tinyint(1) NOT NULL DEFAULT 0 COMMENT '禁止发图片 0-关闭 1-开启',
+  `forbid_send_link` tinyint(1) NOT NULL DEFAULT 0 COMMENT '禁止发链接 0-关闭 1-开启',
+  
+  -- 群状态
+  `group_disbanded` tinyint(1) NOT NULL DEFAULT 0 COMMENT '群组是否已解散 0-否 1-是',
 
+  PRIMARY KEY (`fk_group_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '群组设置表';
 -- ----------------------------
 -- Table structure for im_msg
 -- ----------------------------
@@ -498,50 +474,18 @@ CREATE TABLE `im_sync`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '多端同步表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for im_sys_conversation
--- ----------------------------
-DROP TABLE IF EXISTS `im_sys_conversation`;
-CREATE TABLE `im_sys_conversation`  (
-  `id` bigint NOT NULL COMMENT '房间id',
-  `fk_creator_user_id` bigint NOT NULL COMMENT '创建者id',
-  `fk_team_id` bigint NOT NULL COMMENT '所属团队id',
-  `create_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
-  `update_time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-  `member_count` int NULL DEFAULT NULL COMMENT '成员数',
-  `sys_conversation_type` int NULL DEFAULT NULL COMMENT '系统会话类型',
-  `conversation_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '会话名称',
-  `extras` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '可选	自定义属性，供开发者扩展使用。',
-  `all_muted` tinyint NOT NULL DEFAULT 0 COMMENT '全员禁言开关 0-未禁言 1-禁言',
-  `forbid_add_friend_flag` tinyint UNSIGNED NULL DEFAULT 0 COMMENT '是否禁止群里互加��友0否1是',
-  `forbid_send_red_packets_flag` tinyint UNSIGNED NULL DEFAULT 0 COMMENT '是否禁止发红包0否1是',
-  `forbid_send_pic_flag` tinyint UNSIGNED NULL DEFAULT 0 COMMENT '是否禁止发图片0否1是',
-  `forbid_send_link_flag` tinyint UNSIGNED NULL DEFAULT 0 COMMENT '是否禁止发链接0否1是',
-  `disband_flag` tinyint UNSIGNED NULL DEFAULT 0 COMMENT '是否已解散： 1-是 0-否',
-  `head_portrait` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '群头像',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '系统房间表' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
 -- Table structure for im_sys_conversation_init
 -- ----------------------------
 DROP TABLE IF EXISTS `im_sys_conversation_init`;
 CREATE TABLE `im_sys_conversation_init`  (
-  `id` bigint NOT NULL COMMENT '房间id',
-  `fk_creator_user_id` bigint NOT NULL COMMENT '创建者id',
+  `id` bigint NOT NULL COMMENT 'id',
   `fk_team_id` bigint NOT NULL COMMENT '所属团队id',
   `create_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
   `update_time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-  `member_count` int NULL DEFAULT NULL COMMENT '成员数',
   `conversation_type` int NOT NULL COMMENT '会话类型',
   `conversation_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '会话名称',
   `extras` json NULL COMMENT '可选	自定义属性，供开发者扩展使用。',
-  `all_muted` tinyint NOT NULL DEFAULT 0 COMMENT '全员禁言开关 0-未禁言 1-禁言',
-  `forbid_add_friend_flag` tinyint UNSIGNED NULL DEFAULT 0 COMMENT '是否禁止群里互加好友0否1是',
-  `forbid_send_red_packets_flag` tinyint UNSIGNED NULL DEFAULT 0 COMMENT '是否禁止发红包0否1是',
-  `forbid_send_pic_flag` tinyint UNSIGNED NULL DEFAULT 0 COMMENT '是否禁止发图片0否1是',
-  `forbid_send_link_flag` tinyint UNSIGNED NULL DEFAULT 0 COMMENT '是否禁止发链接0否1是',
-  `disband_flag` tinyint UNSIGNED NULL DEFAULT 0 COMMENT '是否已解散： 1-是 0-否',
-  `head_portrait` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '群头像',
+  `avatar` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '头像',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '系统房间初始化表' ROW_FORMAT = DYNAMIC;
 
@@ -634,7 +578,7 @@ CREATE TABLE `im_user`  (
   `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '邮箱号码',
   `password` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '密码',
   `sex` int NULL DEFAULT 3 COMMENT '性别 1-男 2-女 3-未知',
-  `head_portrait` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '头像',
+  `avatar` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '头像',
   `nickname` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '昵称',
   `create_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
   `last_offline_time` timestamp NULL DEFAULT NULL COMMENT '最后离线时间',
