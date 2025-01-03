@@ -4,13 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.dromara</groupId>
+    <groupId>com.feiyancloud</groupId>
     <artifactId>im-kit</artifactId>
     <version>${revision}</version>
 
-    <name>RuoYi-Cloud-Plus</name>
-    <url>https://gitee.com/dromara/RuoYi-Cloud-Plus</url>
-    <description>IM系统</description>
+    <name>im-kit</name>
+    <url>https://github.com/imchatkit/ImKit</url>
+    <description>IM即时通讯项目</description>
 
     <properties>
         <revision>2.2.2</revision>
@@ -114,7 +114,7 @@
 
             <!-- SpringCloud Alibaba 微服务 -->
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>com.feiyancloud</groupId>
                 <artifactId>ruoyi-common-alibaba-bom</artifactId>
                 <version>${revision}</version>
                 <type>pom</type>
@@ -148,7 +148,7 @@
 
             <!-- common 的依赖配置-->
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>com.feiyancloud</groupId>
                 <artifactId>ruoyi-common-bom</artifactId>
                 <version>${revision}</version>
                 <type>pom</type>
@@ -157,7 +157,7 @@
 
             <!-- api 的依赖配置-->
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>com.feiyancloud</groupId>
                 <artifactId>ruoyi-api-bom</artifactId>
                 <version>${revision}</version>
                 <type>pom</type>
@@ -375,13 +375,15 @@
     </dependencyManagement>
 
     <modules>
-<!--        <module>ruoyi-auth</module>-->
-<!--        <module>ruoyi-gateway</module>-->
-<!--        <module>ruoyi-visual</module>-->
+        <module>ruoyi-auth</module>
+        <module>ruoyi-gateway</module>
+        <module>ruoyi-visual</module>
         <module>ruoyi-modules</module>
         <module>ruoyi-api</module>
         <module>ruoyi-common</module>
         <module>ruoyi-example</module>
+        <module>im-ws-server</module>
+        <module>im-core</module>
     </modules>
     <packaging>pom</packaging>
 

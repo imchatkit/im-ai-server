@@ -2,7 +2,7 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>org.dromara</groupId>
+        <groupId>com.feiyancloud</groupId>
         <artifactId>im-kit</artifactId>
         <version>${revision}</version>
     </parent>
@@ -13,7 +13,7 @@
         <module>ruoyi-gen</module>
         <module>ruoyi-job</module>
         <module>ruoyi-resource</module>
-        <module>ruoyi-workflow</module>
+<!--        <module>ruoyi-workflow</module>-->
     </modules>
 
     <artifactId>ruoyi-modules</artifactId>
@@ -26,25 +26,25 @@
     <dependencies>
         <!-- 自定义负载均衡(多团队开发使用) -->
 <!--        <dependency>-->
-<!--            <groupId>org.dromara</groupId>-->
+<!--            <groupId>com.feiyancloud</groupId>-->
 <!--            <artifactId>ruoyi-common-loadbalancer</artifactId>-->
 <!--        </dependency>-->
 
         <!-- ELK 日志收集 -->
 <!--        <dependency>-->
-<!--            <groupId>org.dromara</groupId>-->
+<!--            <groupId>com.feiyancloud</groupId>-->
 <!--            <artifactId>ruoyi-common-logstash</artifactId>-->
 <!--        </dependency>-->
 
         <!-- skywalking 日志收集 -->
 <!--        <dependency>-->
-<!--            <groupId>org.dromara</groupId>-->
+<!--            <groupId>com.feiyancloud</groupId>-->
 <!--            <artifactId>ruoyi-common-skylog</artifactId>-->
 <!--        </dependency>-->
 
         <!-- prometheus 监控 -->
 <!--        <dependency>-->
-<!--            <groupId>org.dromara</groupId>-->
+<!--            <groupId>com.feiyancloud</groupId>-->
 <!--            <artifactId>ruoyi-common-prometheus</artifactId>-->
 <!--        </dependency>-->
 

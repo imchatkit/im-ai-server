@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.dromara</groupId>
+        <groupId>com.feiyancloud</groupId>
         <artifactId>ruoyi-visual</artifactId>
         <version>${revision}</version>
     </parent>
@@ -50,7 +50,7 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-nacos</artifactId>
         </dependency>
 

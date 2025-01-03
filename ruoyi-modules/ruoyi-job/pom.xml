@@ -3,7 +3,7 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>org.dromara</groupId>
+        <groupId>com.feiyancloud</groupId>
         <artifactId>ruoyi-modules</artifactId>
         <version>${revision}</version>
     </parent>
@@ -18,60 +18,60 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-nacos</artifactId>
         </dependency>
 
         <!-- RuoYi Common Log -->
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-log</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-dict</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-web</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-dubbo</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-mybatis</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-job</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-tenant</artifactId>
             <exclusions>
                 <exclusion>
-                    <groupId>org.dromara</groupId>
+                    <groupId>com.feiyancloud</groupId>
                     <artifactId>ruoyi-common-mybatis</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
 
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-security</artifactId>
         </dependency>
 
         <!-- RuoYi Api System -->
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-api-system</artifactId>
         </dependency>
 
