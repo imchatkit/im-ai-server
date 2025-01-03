@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>org.dromara</groupId>
+        <groupId>com.feiyancloud</groupId>
         <artifactId>ruoyi-modules</artifactId>
         <version>${revision}</version>
     </parent>
@@ -18,7 +18,7 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-nacos</artifactId>
         </dependency>
 
@@ -71,66 +71,66 @@
         </dependency>
 
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-websocket</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-mail</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-sms</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-mybatis</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-log</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-idempotent</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-excel</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-translation</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-tenant</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-dubbo</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-security</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-seata</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-api-workflow</artifactId>
         </dependency>
 
