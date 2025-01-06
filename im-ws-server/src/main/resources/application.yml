@@ -1,7 +1,9 @@
 # Tomcat
 server:
-  port: 9402
+  port: 9686
 
+netty:
+  port: 9688
 # Spring
 spring:
   application:
