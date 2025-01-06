@@ -376,7 +376,7 @@
 
     <modules>
 <!--        <module>ruoyi-auth</module>-->
-        <module>ruoyi-gateway</module>
+        <module>api-gateway</module>
 <!--        <module>ruoyi-visual</module>-->
 <!--        <module>ruoyi-modules</module>-->
 <!--        <module>ruoyi-api</module>-->
