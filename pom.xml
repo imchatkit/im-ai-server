@@ -375,15 +375,16 @@
     </dependencyManagement>
 
     <modules>
-        <module>ruoyi-auth</module>
+<!--        <module>ruoyi-auth</module>-->
         <module>ruoyi-gateway</module>
-        <module>ruoyi-visual</module>
-        <module>ruoyi-modules</module>
-        <module>ruoyi-api</module>
-        <module>ruoyi-common</module>
-        <module>ruoyi-example</module>
+<!--        <module>ruoyi-visual</module>-->
+<!--        <module>ruoyi-modules</module>-->
+<!--        <module>ruoyi-api</module>-->
+<!--        <module>ruoyi-common</module>-->
+<!--        <module>ruoyi-example</module>-->
         <module>im-ws-server</module>
         <module>im-core</module>
+        <module>framework</module>
     </modules>
     <packaging>pom</packaging>
 
