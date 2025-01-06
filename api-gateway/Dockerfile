@@ -3,23 +3,20 @@ FROM bellsoft/liberica-openjdk-debian:17.0.11-cds
 #FROM bellsoft/liberica-openjdk-debian:21.0.3-cds
 #FROM findepi/graalvm:java17-native
 
-
-
-RUN mkdir -p /ruoyi/resource/logs \
-    /ruoyi/resource/temp \
+RUN mkdir -p /ruoyi/gateway/logs  \
+    /ruoyi/gateway/temp  \
     /ruoyi/skywalking/agent
 
-WORKDIR /ruoyi/resource
+WORKDIR /ruoyi/gateway
 
-ENV SERVER_PORT=9204 LANG=C.UTF-8 LC_ALL=C.UTF-8 JAVA_OPTS=""
+ENV SERVER_PORT=8080 LANG=C.UTF-8 LC_ALL=C.UTF-8 JAVA_OPTS=""
 
 EXPOSE ${SERVER_PORT}
 
-ADD ./target/ruoyi-resource.jar ./app.jar
+ADD ./target/api-gateway.jar ./app.jar
 
 ENTRYPOINT java -Djava.security.egd=file:/dev/./urandom -Dserver.port=${SERVER_PORT} \
-           #-Dskywalking.agent.service_name=ruoyi-resource \
+           #-Dskywalking.agent.service_name=ruoyi-gateway \
            #-javaagent:/ruoyi/skywalking/agent/skywalking-agent.jar \
            -XX:+HeapDumpOnOutOfMemoryError -XX:+UseZGC ${JAVA_OPTS} \
            -jar app.jar
-

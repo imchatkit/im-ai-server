@@ -3,7 +3,7 @@ FROM bellsoft/liberica-openjdk-debian:17.0.11-cds
 #FROM bellsoft/liberica-openjdk-debian:21.0.3-cds
 #FROM findepi/graalvm:java17-native
 
-LABEL maintainer="Lion Li"
+
 
 RUN mkdir -p /ruoyi/system/logs \
     /ruoyi/system/temp \
