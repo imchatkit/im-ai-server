@@ -1,4 +1,4 @@
-package com.imai.ws.netty;
+package com.imai.ws.netty.run;
 
 import com.imai.ws.netty.codec.ProtobufMultiMessageCodec;
 import com.imai.ws.netty.handler.HttpHandler;

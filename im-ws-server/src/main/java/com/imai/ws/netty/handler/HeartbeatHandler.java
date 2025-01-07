@@ -1,6 +1,6 @@
 package com.imai.ws.netty.handler;
 
-import com.imai.ws.netty.ChannelUserHolder;
+import com.imai.ws.netty.user.ChannelUserHolder;
 import com.imai.ws.netty.config.ChannelAttributes;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;

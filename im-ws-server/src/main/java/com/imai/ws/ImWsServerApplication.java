@@ -7,12 +7,12 @@ import org.springframework.boot.context.metrics.buffering.BufferingApplicationSt
 /**
  * ws网关模块
  *
- * @author Lion Li
+ * @author wei
  */
 @SpringBootApplication
-public class ImServerApplication {
+public class ImWsServerApplication {
     public static void main(String[] args) {
-        SpringApplication application = new SpringApplication(ImServerApplication.class);
+        SpringApplication application = new SpringApplication(ImWsServerApplication.class);
         application.setApplicationStartup(new BufferingApplicationStartup(2048));
         application.run(args);
         System.out.println("(♥◠‿◠)ﾉﾞ  ImNettyServer启动成功   ლ(´ڡ`ლ)ﾞ  ");

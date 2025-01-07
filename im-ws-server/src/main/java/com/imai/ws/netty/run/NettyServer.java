@@ -1,4 +1,4 @@
-package com.imai.ws.netty;
+package com.imai.ws.netty.run;
 
 import com.imai.ws.netty.config.NettyConfig;
 import io.netty.bootstrap.ServerBootstrap;

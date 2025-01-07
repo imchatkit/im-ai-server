@@ -1,6 +1,5 @@
-package com.imai.ws.netty.msg;
+package com.imai.ws.netty.user;
 
-import com.imai.ws.netty.ChannelUserHolder;
 import com.imai.ws.netty.config.ChannelAttributes;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
