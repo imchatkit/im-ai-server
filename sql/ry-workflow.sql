@@ -1,3 +1,13 @@
+
+
+DROP DATABASE IF EXISTS `ry-workflow`;
+
+CREATE DATABASE  `ry-workflow` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+USE `ry-workflow`;
 -- 请假单信息
 create table test_leave
 (
