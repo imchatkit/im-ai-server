@@ -1,4 +1,4 @@
-package com.imai.ws.netty;
+package com.imai.ws.netty.run;
 
 import jakarta.annotation.Resource;
 import org.springframework.boot.ApplicationArguments;

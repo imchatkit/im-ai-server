@@ -1,7 +1,7 @@
 package com.imai.ws.netty.handler;
 
 
-import com.imai.ws.netty.ChannelUserHolder;
+import com.imai.ws.netty.user.ChannelUserHolder;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
@@ -13,11 +13,6 @@ import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-
-import java.time.Duration;
-
-import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Slf4j
 @Component

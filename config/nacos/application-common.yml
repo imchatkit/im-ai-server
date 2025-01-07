@@ -10,9 +10,9 @@ server:
     direct-buffers: true
     threads:
       # 设置IO线程数, 它主要执行非阻塞的任务,它们会负责多个连接, 默认设置每个CPU核心一个线程
-      io: 8
+      io: 4
       # 阻塞任务线程池, 当执行类似servlet请求阻塞操作, undertow会从这个线程池中取得线程,它的值设置取决于系统的负载
-      worker: 256
+      worker: 128
 
 dubbo:
   application:
@@ -35,7 +35,7 @@ dubbo:
     # 全局请求log
     request-log: true
     # info 基础信息 param 参数信息 full 全部
-    log-level: info
+    log-level: full
 
 spring:
   threads:
@@ -74,8 +74,8 @@ spring:
       discovery:
         metadata:
           # admin 监控账号密码
-          username: ruoyi
-          userpassword: 123456
+          username: imadmin
+          userpassword: a123456a
     # sentinel 配置
     sentinel:
       # sentinel 开关
@@ -102,10 +102,10 @@ spring:
   # redis通用配置 子服务可以自行配置进行覆盖
   data:
     redis:
-      host: localhost
+      host: redis.myimkit.com
       port: 6379
       # redis 密码必须配置
-      password: ruoyi123
+      password: F4TCVnfZVxUc3tP4
       database: 0
       # 需要使用数字
       timeout: 10000
@@ -116,23 +116,23 @@ redisson:
   # redis key前缀
   keyPrefix:
   # 线程池数量
-  threads: 4
+  threads: 2
   # Netty线程池数量
-  nettyThreads: 8
+  nettyThreads: 4
   # 单节点配置
   singleServerConfig:
     # 客户端名称
     clientName: ${spring.application.name}
     # 最小空闲连接数
-    connectionMinimumIdleSize: 8
+    connectionMinimumIdleSize: 6
     # 连接池大小
-    connectionPoolSize: 32
+    connectionPoolSize: 12
     # 连接空闲超时，单位：毫秒
     idleConnectionTimeout: 10000
     # 命令等待超时，单位：毫秒
     timeout: 3000
     # 发布和订阅连接池大小
-    subscriptionConnectionPoolSize: 50
+    subscriptionConnectionPoolSize: 10
 
 # 分布式锁 lock4j 全局配置
 lock4j:
@@ -177,17 +177,17 @@ sa-token:
   # 在多人登录同一账号时，是否共用一个token (为true时所有登录共用一个token, 为false时每次登录新建一个token)
   is-share: false
   # jwt秘钥
-  jwt-secret-key: abcdefghijklmnopqrstuvwxyz
+  jwt-secret-key: abcdadfaklmnadf2rstuvwxyz
 
 # MyBatisPlus配置
 # https://baomidou.com/config/
 mybatis-plus:
   # 多包名使用 例如 org.dromara.**.mapper,org.xxx.**.mapper
-  mapperPackage: org.dromara.**.mapper
+  mapperPackage: org.dromara.**.mapper,com.imai.**.mapper
   # 对应的 XML 文件位置
   mapperLocations: classpath*:mapper/**/*Mapper.xml
   # 实体扫描，多个package用逗号或者分号分隔
-  typeAliasesPackage: org.dromara.**.domain
+  typeAliasesPackage: org.dromara.**.domain,com.imai.**.domain
   global-config:
     dbConfig:
       # 主键类型
@@ -212,7 +212,7 @@ mybatis-encryptor:
 # api接口加密
 api-decrypt:
   # 是否开启全局接口加密
-  enabled: true
+  enabled: false
   # AES 加密头标识
   headerFlag: encrypt-key
   # 响应加密公钥 非对称算法的公私钥 如：SM2，RSA 使用者请自行更换

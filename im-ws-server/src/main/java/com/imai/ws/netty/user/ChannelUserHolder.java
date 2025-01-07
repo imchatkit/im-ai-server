@@ -1,4 +1,4 @@
-package com.imai.ws.netty;
+package com.imai.ws.netty.user;
 
 
 import com.imai.ws.netty.config.ChannelAttributes;
