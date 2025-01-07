@@ -15,6 +15,6 @@ public class ImServerApplication {
         SpringApplication application = new SpringApplication(ImServerApplication.class);
         application.setApplicationStartup(new BufferingApplicationStartup(2048));
         application.run(args);
-        System.out.println("(♥◠‿◠)ﾉﾞ  ImServer启动成功   ლ(´ڡ`ლ)ﾞ  ");
+        System.out.println("(♥◠‿◠)ﾉﾞ  ImNettyServer启动成功   ლ(´ڡ`ლ)ﾞ  ");
     }
 }

@@ -1,5 +1,7 @@
 package com.imai.ws.netty.handler;
 
+import com.imai.ws.netty.ChannelUserHolder;
+import com.imai.ws.netty.config.ChannelAttributes;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 @ChannelHandler.Sharable
-public class WebSocketHeartbeatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
+public class HeartbeatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
     private static final HashedWheelTimer WHEEL_TIMER = new HashedWheelTimer();
     private static final int BEAT_INTERVAL = 55;
     private static final String PING_MSG = "ping";

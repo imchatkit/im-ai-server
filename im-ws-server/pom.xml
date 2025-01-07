@@ -9,6 +9,7 @@
         <version>${revision}</version>
     </parent>
 
+    <packaging>jar</packaging>
     <artifactId>im-ws-server</artifactId>
 
 
@@ -23,6 +24,11 @@
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
             <version>4.1.113.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-common</artifactId>
+            <version>4.1.114.Final</version>
         </dependency>
 
         <!--        <dependency>-->
@@ -111,6 +117,7 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
 
     </dependencies>
 

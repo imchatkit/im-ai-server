@@ -1,9 +1,9 @@
 package com.imai.ws.netty.handler;
 
-import com.alibaba.nacos.shaded.com.google.protobuf.MessageLite;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import kotlin.reflect.jvm.internal.impl.protobuf.MessageLite;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

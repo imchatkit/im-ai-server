@@ -29,8 +29,8 @@ package com.imai.ws.filter;//package com.recircle.gateway.filter;
 // * Token认证过滤器，用于全局过滤请求，验证Token合法性
 // * 实现了GlobalFilter和Ordered接口，以支持全局过滤和排序执行
 // *
-// * @author wei
-// * @date 2024/11/6 14:58
+// * @author
+// * @date
 // */
 //
 //@Slf4j
@@ -78,21 +78,7 @@ package com.imai.ws.filter;//package com.recircle.gateway.filter;
 //            if (isEmpty(issuer)) {
 //                return commonResult(exchange, HttpStatus.UNAUTHORIZED, "Token不合法");
 //            }
-//            // 如果请求的uri以/common-api开头，则调用forwardCommonApi方法
-//            if (exchange.getRequest().getURI().getPath().startsWith("/common-api")) {
-//                return forwardCommonApi(exchange, chain, jwtToken);
-//            }
-//            // 根据发行者调用不同的方法
-//            switch (issuer) {
-//                case "ops-system": // 运营后台
-//                    return forwardOpsSystem(exchange, chain, jwtToken);
-//                case "openapi-service": // 开放平台
-//                    return forwardOpenApiService(exchange, chain, jwtToken);
-//                case "user-center": // 用户运营中心账号(租户用户登录)
-//                    return forwardTenantSystem(exchange, chain, jwtToken);
-//                default:
-//                    return unauthorized(exchange);
-//            }
+//
 //        } catch (JWTVerificationException e) {
 //            log.warn("token 校验失败", e);
 //            return commonResult(exchange, HttpStatus.UNAUTHORIZED, "Token校验失败");
@@ -116,63 +102,7 @@ package com.imai.ws.filter;//package com.recircle.gateway.filter;
 //        return chain.filter(newExchange);
 //    }
 //
-//    /**
-//     * 处理运营后台请求的函数
-//     *
-//     * @param exchange 服务器Web交换对象
-//     * @param chain    过滤链
-//     * @param jwtToken 解码后的JWT Token
-//     * @return Mono<Void> 异步处理结果
-//     */
-//    private Mono<Void> forwardOpsSystem(ServerWebExchange exchange, GatewayFilterChain chain, DecodedJWT jwtToken) {
-//        // 获取请求的uri
-//        String path = exchange.getRequest().getURI().getPath();
-//        // 如果uri以/admin-api开头，则构造新的ServerWebExchange，添加用户id和用户名的header
-//        if (path.startsWith("/admin-api")) {
-//            ServerWebExchange newExchange = exchange.mutate().request(builder -> builder
-//                .header("RC-User-Id", jwtToken.getClaim("login_user_id").toString())
-//                .header("RC-User-Name", jwtToken.getClaim("username").asString())
-//            ).build();
-//            return chain.filter(newExchange);
-//            // 否则返回拒绝访问
-//        } else {
-//            return forbidden(exchange);
-//        }
-//    }
 //
-//    private Mono<Void> forwardOpenApiService(ServerWebExchange exchange, GatewayFilterChain chain, DecodedJWT jwtToken) {
-//        // 获取请求的uri
-//        String path = exchange.getRequest().getURI().getPath();
-//        // 如果uri以/open-api开头，则构造新的ServerWebExchange，添加app_id的header
-//        if (path.startsWith("/open-api")) {
-//            ServerWebExchange newExchange = exchange.mutate().request(builder -> builder
-//                .header("RC-App-Id", jwtToken.getClaim("app_id").toString())
-//            ).build();
-//            return chain.filter(newExchange);
-//            // 否则返回拒绝访问
-//        } else {
-//            return forbidden(exchange);
-//        }
-//    }
-//
-//
-//    private Mono<Void> forwardTenantSystem(ServerWebExchange exchange, GatewayFilterChain chain, DecodedJWT jwtToken) {
-//        // 获取请求的uri
-//        String path = exchange.getRequest().getURI().getPath();
-//        // 如果uri以/tenant-api开头，则构造新的ServerWebExchange，添加用户id、用户名、组织id和租户id的header
-//        if (path.startsWith("/tenant-api")) {
-//            ServerWebExchange newExchange = exchange.mutate().request(builder -> builder
-//                .header("RC-User-Id", jwtToken.getClaim("login_user_id").toString())
-//                .header("RC-User-Name", jwtToken.getClaim("username").asString())
-//                .header("RC-Org-Id", jwtToken.getClaim("org_id").asString())
-//                .header("RC-Tenant-Id", jwtToken.getClaim("tenant_id").asString())
-//            ).build();
-//            return chain.filter(newExchange);
-//            // 否则返回拒绝访问
-//        } else {
-//            return forbidden(exchange);
-//        }
-//    }
 //
 //    private Mono<Void> unauthorized(ServerWebExchange exchange) {
 //        // 返回未授权

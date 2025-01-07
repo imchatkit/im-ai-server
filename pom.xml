@@ -8,9 +8,10 @@
     <artifactId>im-ai-server</artifactId>
     <version>${revision}</version>
 
-    <name>im-kit</name>
+    <name>im-ai-server</name>
     <url>https://github.com/imchatkit/ImKit</url>
     <description>IM即时通讯项目</description>
+    <packaging>pom</packaging>
 
     <properties>
         <revision>2.2.2</revision>
@@ -386,7 +387,6 @@
         <module>im-core</module>
         <module>framework</module>
     </modules>
-    <packaging>pom</packaging>
 
     <dependencies>
 
