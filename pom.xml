@@ -9,7 +9,7 @@
     <version>${revision}</version>
 
     <name>im-ai-server</name>
-    <url>https://github.com/imchatkit/ImKit</url>
+    <url>https://github.com/imchatkit/im-ai-server</url>
     <description>IM即时通讯项目</description>
     <packaging>pom</packaging>
 
@@ -392,13 +392,13 @@
 
     <modules>
 <!--        <module>ruoyi-auth</module>-->
-        <module>api-gateway</module>
+        <module>im-gateway</module>
 <!--        <module>ruoyi-visual</module>-->
 <!--        <module>ruoyi-modules</module>-->
 <!--        <module>ruoyi-api</module>-->
 <!--        <module>ruoyi-common</module>-->
 <!--        <module>ruoyi-example</module>-->
-        <module>im-ws-server</module>
+<!--        <module>im-ws-server</module>-->
         <module>im-core</module>
         <module>framework</module>
     </modules>

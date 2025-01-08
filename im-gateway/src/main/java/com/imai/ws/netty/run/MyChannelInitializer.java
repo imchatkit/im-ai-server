@@ -1,7 +1,7 @@
 package com.imai.ws.netty.run;
 
 
-import com.imai.ws.netty.handler.HttpHandler;
+import com.imai.ws.netty.handler.ImHttpHandler;
 import com.imai.ws.netty.handler.HeartbeatHandler;
 import com.imai.ws.netty.handler.WsMsgHandler;
 import io.netty.channel.ChannelInitializer;
@@ -20,7 +20,7 @@ public class MyChannelInitializer extends ChannelInitializer<NioSocketChannel> {
     @Resource
     private WsMsgHandler wsMsgHandler;
     @Resource
-    private HttpHandler httpHandler;
+    private ImHttpHandler imHttpHandler;
     @Resource
     private HeartbeatHandler heartbeatHandler;
 
@@ -28,7 +28,7 @@ public class MyChannelInitializer extends ChannelInitializer<NioSocketChannel> {
     protected void initChannel(NioSocketChannel channel) throws Exception {
         channel.pipeline().addLast(new HttpServerCodec());
         channel.pipeline().addLast(new HttpObjectAggregator(65536));
-        channel.pipeline().addLast(httpHandler);
+        channel.pipeline().addLast(imHttpHandler);
 
         // --- 心跳检测 ---
         // 添加 IdleStateHandler 来处理空闲状态事件

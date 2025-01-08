@@ -1,4 +1,4 @@
-//package com.imai.ws.netty.handler;
+package com.imai.ws.netty.handler;//package com.imai.ws.netty.handler;
 //
 //import io.netty.channel.ChannelHandler;
 //import io.netty.channel.ChannelHandlerContext;

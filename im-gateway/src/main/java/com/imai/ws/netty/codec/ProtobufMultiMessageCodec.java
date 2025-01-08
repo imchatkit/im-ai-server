@@ -1,4 +1,4 @@
-//package com.imai.ws.netty.codec;
+package com.imai.ws.netty.codec;//package com.imai.ws.netty.codec;
 //
 //import io.netty.buffer.ByteBuf;
 //import io.netty.channel.ChannelHandlerContext;
