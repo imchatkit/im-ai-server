@@ -48,7 +48,7 @@ public class ImSensitiveWordsController extends BaseController {
     /**
      * 查询敏感词过滤列表
      */
-    @SaCheckPermission("imai:sensitiveWords:list")
+    @SaCheckPermission("imcore:sensitiveWords:list")
     @GetMapping("/list")
     public TableDataInfo<ImSensitiveWordsVo> list(ImSensitiveWordsBo bo, PageQuery pageQuery) {
         return imSensitiveWordsService.queryPageList(bo, pageQuery);
@@ -57,7 +57,7 @@ public class ImSensitiveWordsController extends BaseController {
     /**
      * 导出敏感词过滤列表
      */
-    @SaCheckPermission("imai:sensitiveWords:export")
+    @SaCheckPermission("imcore:sensitiveWords:export")
     @Log(title = "敏感词过滤", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImSensitiveWordsBo bo, HttpServletResponse response) {
@@ -70,7 +70,7 @@ public class ImSensitiveWordsController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imai:sensitiveWords:query")
+    @SaCheckPermission("imcore:sensitiveWords:query")
     @GetMapping("/{id}")
     public R<ImSensitiveWordsVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +80,7 @@ public class ImSensitiveWordsController extends BaseController {
     /**
      * 新增敏感词过滤
      */
-    @SaCheckPermission("imai:sensitiveWords:add")
+    @SaCheckPermission("imcore:sensitiveWords:add")
     @Log(title = "敏感词过滤", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +91,7 @@ public class ImSensitiveWordsController extends BaseController {
     /**
      * 修改敏感词过滤
      */
-    @SaCheckPermission("imai:sensitiveWords:edit")
+    @SaCheckPermission("imcore:sensitiveWords:edit")
     @Log(title = "敏感词过滤", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +104,7 @@ public class ImSensitiveWordsController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imai:sensitiveWords:remove")
+    @SaCheckPermission("imcore:sensitiveWords:remove")
     @Log(title = "敏感词过滤", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

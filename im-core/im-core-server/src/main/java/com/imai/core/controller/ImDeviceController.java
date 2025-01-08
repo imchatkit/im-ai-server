@@ -48,7 +48,7 @@ public class ImDeviceController extends BaseController {
     /**
      * 查询客户端设备列表
      */
-    @SaCheckPermission("imai:device:list")
+    @SaCheckPermission("imcore:device:list")
     @GetMapping("/list")
     public TableDataInfo<ImDeviceVo> list(ImDeviceBo bo, PageQuery pageQuery) {
         return imDeviceService.queryPageList(bo, pageQuery);
@@ -57,7 +57,7 @@ public class ImDeviceController extends BaseController {
     /**
      * 导出客户端设备列表
      */
-    @SaCheckPermission("imai:device:export")
+    @SaCheckPermission("imcore:device:export")
     @Log(title = "客户端设备", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImDeviceBo bo, HttpServletResponse response) {
@@ -70,7 +70,7 @@ public class ImDeviceController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imai:device:query")
+    @SaCheckPermission("imcore:device:query")
     @GetMapping("/{id}")
     public R<ImDeviceVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +80,7 @@ public class ImDeviceController extends BaseController {
     /**
      * 新增客户端设备
      */
-    @SaCheckPermission("imai:device:add")
+    @SaCheckPermission("imcore:device:add")
     @Log(title = "客户端设备", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +91,7 @@ public class ImDeviceController extends BaseController {
     /**
      * 修改客户端设备
      */
-    @SaCheckPermission("imai:device:edit")
+    @SaCheckPermission("imcore:device:edit")
     @Log(title = "客户端设备", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +104,7 @@ public class ImDeviceController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imai:device:remove")
+    @SaCheckPermission("imcore:device:remove")
     @Log(title = "客户端设备", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

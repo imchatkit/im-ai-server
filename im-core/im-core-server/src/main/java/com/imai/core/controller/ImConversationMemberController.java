@@ -48,7 +48,7 @@ public class ImConversationMemberController extends BaseController {
     /**
      * 查询会话成员列表
      */
-    @SaCheckPermission("imai:conversationMember:list")
+    @SaCheckPermission("imcore:conversationMember:list")
     @GetMapping("/list")
     public TableDataInfo<ImConversationMemberVo> list(ImConversationMemberBo bo, PageQuery pageQuery) {
         return imConversationMemberService.queryPageList(bo, pageQuery);
@@ -57,7 +57,7 @@ public class ImConversationMemberController extends BaseController {
     /**
      * 导出会话成员列表
      */
-    @SaCheckPermission("imai:conversationMember:export")
+    @SaCheckPermission("imcore:conversationMember:export")
     @Log(title = "会话成员", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImConversationMemberBo bo, HttpServletResponse response) {
@@ -70,7 +70,7 @@ public class ImConversationMemberController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imai:conversationMember:query")
+    @SaCheckPermission("imcore:conversationMember:query")
     @GetMapping("/{id}")
     public R<ImConversationMemberVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +80,7 @@ public class ImConversationMemberController extends BaseController {
     /**
      * 新增会话成员
      */
-    @SaCheckPermission("imai:conversationMember:add")
+    @SaCheckPermission("imcore:conversationMember:add")
     @Log(title = "会话成员", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +91,7 @@ public class ImConversationMemberController extends BaseController {
     /**
      * 修改会话成员
      */
-    @SaCheckPermission("imai:conversationMember:edit")
+    @SaCheckPermission("imcore:conversationMember:edit")
     @Log(title = "会话成员", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +104,7 @@ public class ImConversationMemberController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imai:conversationMember:remove")
+    @SaCheckPermission("imcore:conversationMember:remove")
     @Log(title = "会话成员", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

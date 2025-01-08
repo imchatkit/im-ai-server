@@ -48,7 +48,7 @@ public class ImConversationController extends BaseController {
     /**
      * 查询聊天会话基础列表
      */
-    @SaCheckPermission("imai:conversation:list")
+    @SaCheckPermission("imcore:conversation:list")
     @GetMapping("/list")
     public TableDataInfo<ImConversationVo> list(ImConversationBo bo, PageQuery pageQuery) {
         return imConversationService.queryPageList(bo, pageQuery);
@@ -57,7 +57,7 @@ public class ImConversationController extends BaseController {
     /**
      * 导出聊天会话基础列表
      */
-    @SaCheckPermission("imai:conversation:export")
+    @SaCheckPermission("imcore:conversation:export")
     @Log(title = "聊天会话基础", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImConversationBo bo, HttpServletResponse response) {
@@ -70,7 +70,7 @@ public class ImConversationController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imai:conversation:query")
+    @SaCheckPermission("imcore:conversation:query")
     @GetMapping("/{id}")
     public R<ImConversationVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +80,7 @@ public class ImConversationController extends BaseController {
     /**
      * 新增聊天会话基础
      */
-    @SaCheckPermission("imai:conversation:add")
+    @SaCheckPermission("imcore:conversation:add")
     @Log(title = "聊天会话基础", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +91,7 @@ public class ImConversationController extends BaseController {
     /**
      * 修改聊天会话基础
      */
-    @SaCheckPermission("imai:conversation:edit")
+    @SaCheckPermission("imcore:conversation:edit")
     @Log(title = "聊天会话基础", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +104,7 @@ public class ImConversationController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imai:conversation:remove")
+    @SaCheckPermission("imcore:conversation:remove")
     @Log(title = "聊天会话基础", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

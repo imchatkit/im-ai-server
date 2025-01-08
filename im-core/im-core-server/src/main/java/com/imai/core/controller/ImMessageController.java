@@ -48,7 +48,7 @@ public class ImMessageController extends BaseController {
     /**
      * 查询消息存储列表
      */
-    @SaCheckPermission("imai:message:list")
+    @SaCheckPermission("imcore:message:list")
     @GetMapping("/list")
     public TableDataInfo<ImMessageVo> list(ImMessageBo bo, PageQuery pageQuery) {
         return imMessageService.queryPageList(bo, pageQuery);
@@ -57,7 +57,7 @@ public class ImMessageController extends BaseController {
     /**
      * 导出消息存储列表
      */
-    @SaCheckPermission("imai:message:export")
+    @SaCheckPermission("imcore:message:export")
     @Log(title = "消息存储", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImMessageBo bo, HttpServletResponse response) {
@@ -70,7 +70,7 @@ public class ImMessageController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imai:message:query")
+    @SaCheckPermission("imcore:message:query")
     @GetMapping("/{id}")
     public R<ImMessageVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +80,7 @@ public class ImMessageController extends BaseController {
     /**
      * 新增消息存储
      */
-    @SaCheckPermission("imai:message:add")
+    @SaCheckPermission("imcore:message:add")
     @Log(title = "消息存储", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +91,7 @@ public class ImMessageController extends BaseController {
     /**
      * 修改消息存储
      */
-    @SaCheckPermission("imai:message:edit")
+    @SaCheckPermission("imcore:message:edit")
     @Log(title = "消息存储", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +104,7 @@ public class ImMessageController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imai:message:remove")
+    @SaCheckPermission("imcore:message:remove")
     @Log(title = "消息存储", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

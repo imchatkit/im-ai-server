@@ -48,7 +48,7 @@ public class ImSysConversationInitController extends BaseController {
     /**
      * 查询系统会话初始化列表
      */
-    @SaCheckPermission("imai:sysConversationInit:list")
+    @SaCheckPermission("imcore:sysConversationInit:list")
     @GetMapping("/list")
     public TableDataInfo<ImSysConversationInitVo> list(ImSysConversationInitBo bo, PageQuery pageQuery) {
         return imSysConversationInitService.queryPageList(bo, pageQuery);
@@ -57,7 +57,7 @@ public class ImSysConversationInitController extends BaseController {
     /**
      * 导出系统会话初始化列表
      */
-    @SaCheckPermission("imai:sysConversationInit:export")
+    @SaCheckPermission("imcore:sysConversationInit:export")
     @Log(title = "系统会话初始化", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImSysConversationInitBo bo, HttpServletResponse response) {
@@ -70,7 +70,7 @@ public class ImSysConversationInitController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imai:sysConversationInit:query")
+    @SaCheckPermission("imcore:sysConversationInit:query")
     @GetMapping("/{id}")
     public R<ImSysConversationInitVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +80,7 @@ public class ImSysConversationInitController extends BaseController {
     /**
      * 新增系统会话初始化
      */
-    @SaCheckPermission("imai:sysConversationInit:add")
+    @SaCheckPermission("imcore:sysConversationInit:add")
     @Log(title = "系统会话初始化", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +91,7 @@ public class ImSysConversationInitController extends BaseController {
     /**
      * 修改系统会话初始化
      */
-    @SaCheckPermission("imai:sysConversationInit:edit")
+    @SaCheckPermission("imcore:sysConversationInit:edit")
     @Log(title = "系统会话初始化", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +104,7 @@ public class ImSysConversationInitController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imai:sysConversationInit:remove")
+    @SaCheckPermission("imcore:sysConversationInit:remove")
     @Log(title = "系统会话初始化", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

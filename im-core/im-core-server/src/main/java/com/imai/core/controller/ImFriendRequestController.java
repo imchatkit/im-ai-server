@@ -40,7 +40,7 @@ public class ImFriendRequestController extends BaseController {
     /**
      * 查询好友申请列表
      */
-    @SaCheckPermission("imai:friendRequest:list")
+    @SaCheckPermission("imcore:friendRequest:list")
     @GetMapping("/list")
     public TableDataInfo<ImFriendRequestVo> list(ImFriendRequestBo bo, PageQuery pageQuery) {
         return imFriendRequestService.queryPageList(bo, pageQuery);
@@ -49,7 +49,7 @@ public class ImFriendRequestController extends BaseController {
     /**
      * 导出好友申请列表
      */
-    @SaCheckPermission("imai:friendRequest:export")
+    @SaCheckPermission("imcore:friendRequest:export")
     @Log(title = "好友申请", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImFriendRequestBo bo, HttpServletResponse response) {
@@ -62,7 +62,7 @@ public class ImFriendRequestController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imai:friendRequest:query")
+    @SaCheckPermission("imcore:friendRequest:query")
     @GetMapping("/{id}")
     public R<ImFriendRequestVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -72,7 +72,7 @@ public class ImFriendRequestController extends BaseController {
     /**
      * 新增好友申请
      */
-    @SaCheckPermission("imai:friendRequest:add")
+    @SaCheckPermission("imcore:friendRequest:add")
     @Log(title = "好友申请", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -83,7 +83,7 @@ public class ImFriendRequestController extends BaseController {
     /**
      * 修改好友申请
      */
-    @SaCheckPermission("imai:friendRequest:edit")
+    @SaCheckPermission("imcore:friendRequest:edit")
     @Log(title = "好友申请", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -96,7 +96,7 @@ public class ImFriendRequestController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imai:friendRequest:remove")
+    @SaCheckPermission("imcore:friendRequest:remove")
     @Log(title = "好友申请", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

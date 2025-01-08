@@ -48,7 +48,7 @@ public class ImGroupMemberController extends BaseController {
     /**
      * 查询群成员列表
      */
-    @SaCheckPermission("imai:groupMember:list")
+    @SaCheckPermission("imcore:groupMember:list")
     @GetMapping("/list")
     public TableDataInfo<ImGroupMemberVo> list(ImGroupMemberBo bo, PageQuery pageQuery) {
         return imGroupMemberService.queryPageList(bo, pageQuery);
@@ -57,7 +57,7 @@ public class ImGroupMemberController extends BaseController {
     /**
      * 导出群成员列表
      */
-    @SaCheckPermission("imai:groupMember:export")
+    @SaCheckPermission("imcore:groupMember:export")
     @Log(title = "群成员", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImGroupMemberBo bo, HttpServletResponse response) {
@@ -70,7 +70,7 @@ public class ImGroupMemberController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imai:groupMember:query")
+    @SaCheckPermission("imcore:groupMember:query")
     @GetMapping("/{id}")
     public R<ImGroupMemberVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +80,7 @@ public class ImGroupMemberController extends BaseController {
     /**
      * 新增群成员
      */
-    @SaCheckPermission("imai:groupMember:add")
+    @SaCheckPermission("imcore:groupMember:add")
     @Log(title = "群成员", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +91,7 @@ public class ImGroupMemberController extends BaseController {
     /**
      * 修改群成员
      */
-    @SaCheckPermission("imai:groupMember:edit")
+    @SaCheckPermission("imcore:groupMember:edit")
     @Log(title = "群成员", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +104,7 @@ public class ImGroupMemberController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imai:groupMember:remove")
+    @SaCheckPermission("imcore:groupMember:remove")
     @Log(title = "群成员", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

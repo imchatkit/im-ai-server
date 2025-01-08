@@ -48,7 +48,7 @@ public class ImMsgReceiverController extends BaseController {
     /**
      * 查询消息接收列表
      */
-    @SaCheckPermission("imai:msgReceiver:list")
+    @SaCheckPermission("imcore:msgReceiver:list")
     @GetMapping("/list")
     public TableDataInfo<ImMsgReceiverVo> list(ImMsgReceiverBo bo, PageQuery pageQuery) {
         return imMsgReceiverService.queryPageList(bo, pageQuery);
@@ -57,7 +57,7 @@ public class ImMsgReceiverController extends BaseController {
     /**
      * 导出消息接收列表
      */
-    @SaCheckPermission("imai:msgReceiver:export")
+    @SaCheckPermission("imcore:msgReceiver:export")
     @Log(title = "消息接收", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImMsgReceiverBo bo, HttpServletResponse response) {
@@ -70,7 +70,7 @@ public class ImMsgReceiverController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imai:msgReceiver:query")
+    @SaCheckPermission("imcore:msgReceiver:query")
     @GetMapping("/{id}")
     public R<ImMsgReceiverVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +80,7 @@ public class ImMsgReceiverController extends BaseController {
     /**
      * 新增消息接收
      */
-    @SaCheckPermission("imai:msgReceiver:add")
+    @SaCheckPermission("imcore:msgReceiver:add")
     @Log(title = "消息接收", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +91,7 @@ public class ImMsgReceiverController extends BaseController {
     /**
      * 修改消息接收
      */
-    @SaCheckPermission("imai:msgReceiver:edit")
+    @SaCheckPermission("imcore:msgReceiver:edit")
     @Log(title = "消息接收", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +104,7 @@ public class ImMsgReceiverController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imai:msgReceiver:remove")
+    @SaCheckPermission("imcore:msgReceiver:remove")
     @Log(title = "消息接收", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

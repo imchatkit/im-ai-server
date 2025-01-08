@@ -48,7 +48,7 @@ public class ImConversationRecentController extends BaseController {
     /**
      * 查询首页对话列列表
      */
-    @SaCheckPermission("imai:conversationRecent:list")
+    @SaCheckPermission("imcore:conversationRecent:list")
     @GetMapping("/list")
     public TableDataInfo<ImConversationRecentVo> list(ImConversationRecentBo bo, PageQuery pageQuery) {
         return imConversationRecentService.queryPageList(bo, pageQuery);
@@ -57,7 +57,7 @@ public class ImConversationRecentController extends BaseController {
     /**
      * 导出首页对话列列表
      */
-    @SaCheckPermission("imai:conversationRecent:export")
+    @SaCheckPermission("imcore:conversationRecent:export")
     @Log(title = "首页对话列", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImConversationRecentBo bo, HttpServletResponse response) {
@@ -70,7 +70,7 @@ public class ImConversationRecentController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imai:conversationRecent:query")
+    @SaCheckPermission("imcore:conversationRecent:query")
     @GetMapping("/{id}")
     public R<ImConversationRecentVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +80,7 @@ public class ImConversationRecentController extends BaseController {
     /**
      * 新增首页对话列
      */
-    @SaCheckPermission("imai:conversationRecent:add")
+    @SaCheckPermission("imcore:conversationRecent:add")
     @Log(title = "首页对话列", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +91,7 @@ public class ImConversationRecentController extends BaseController {
     /**
      * 修改首页对话列
      */
-    @SaCheckPermission("imai:conversationRecent:edit")
+    @SaCheckPermission("imcore:conversationRecent:edit")
     @Log(title = "首页对话列", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +104,7 @@ public class ImConversationRecentController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imai:conversationRecent:remove")
+    @SaCheckPermission("imcore:conversationRecent:remove")
     @Log(title = "首页对话列", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

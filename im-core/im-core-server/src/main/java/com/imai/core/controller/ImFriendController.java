@@ -48,7 +48,7 @@ public class ImFriendController extends BaseController {
     /**
      * 查询好友关系列表
      */
-    @SaCheckPermission("imai:friend:list")
+    @SaCheckPermission("imcore:friend:list")
     @GetMapping("/list")
     public TableDataInfo<ImFriendVo> list(ImFriendBo bo, PageQuery pageQuery) {
         return imFriendService.queryPageList(bo, pageQuery);
@@ -57,7 +57,7 @@ public class ImFriendController extends BaseController {
     /**
      * 导出好友关系列表
      */
-    @SaCheckPermission("imai:friend:export")
+    @SaCheckPermission("imcore:friend:export")
     @Log(title = "好友关系", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImFriendBo bo, HttpServletResponse response) {
@@ -70,7 +70,7 @@ public class ImFriendController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imai:friend:query")
+    @SaCheckPermission("imcore:friend:query")
     @GetMapping("/{id}")
     public R<ImFriendVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +80,7 @@ public class ImFriendController extends BaseController {
     /**
      * 新增好友关系
      */
-    @SaCheckPermission("imai:friend:add")
+    @SaCheckPermission("imcore:friend:add")
     @Log(title = "好友关系", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +91,7 @@ public class ImFriendController extends BaseController {
     /**
      * 修改好友关系
      */
-    @SaCheckPermission("imai:friend:edit")
+    @SaCheckPermission("imcore:friend:edit")
     @Log(title = "好友关系", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +104,7 @@ public class ImFriendController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imai:friend:remove")
+    @SaCheckPermission("imcore:friend:remove")
     @Log(title = "好友关系", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

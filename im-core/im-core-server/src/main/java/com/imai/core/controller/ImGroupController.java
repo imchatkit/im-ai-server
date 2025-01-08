@@ -48,7 +48,7 @@ public class ImGroupController extends BaseController {
     /**
      * 查询群组列表
      */
-    @SaCheckPermission("imai:group:list")
+    @SaCheckPermission("imcore:group:list")
     @GetMapping("/list")
     public TableDataInfo<ImGroupVo> list(ImGroupBo bo, PageQuery pageQuery) {
         return imGroupService.queryPageList(bo, pageQuery);
@@ -57,7 +57,7 @@ public class ImGroupController extends BaseController {
     /**
      * 导出群组列表
      */
-    @SaCheckPermission("imai:group:export")
+    @SaCheckPermission("imcore:group:export")
     @Log(title = "群组", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImGroupBo bo, HttpServletResponse response) {
@@ -70,7 +70,7 @@ public class ImGroupController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imai:group:query")
+    @SaCheckPermission("imcore:group:query")
     @GetMapping("/{id}")
     public R<ImGroupVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +80,7 @@ public class ImGroupController extends BaseController {
     /**
      * 新增群组
      */
-    @SaCheckPermission("imai:group:add")
+    @SaCheckPermission("imcore:group:add")
     @Log(title = "群组", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +91,7 @@ public class ImGroupController extends BaseController {
     /**
      * 修改群组
      */
-    @SaCheckPermission("imai:group:edit")
+    @SaCheckPermission("imcore:group:edit")
     @Log(title = "群组", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +104,7 @@ public class ImGroupController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imai:group:remove")
+    @SaCheckPermission("imcore:group:remove")
     @Log(title = "群组", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

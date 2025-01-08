@@ -48,7 +48,7 @@ public class ImMsgRecallController extends BaseController {
     /**
      * 查询消息撤回记录列表
      */
-    @SaCheckPermission("imai:msgRecall:list")
+    @SaCheckPermission("imcore:msgRecall:list")
     @GetMapping("/list")
     public TableDataInfo<ImMsgRecallVo> list(ImMsgRecallBo bo, PageQuery pageQuery) {
         return imMsgRecallService.queryPageList(bo, pageQuery);
@@ -57,7 +57,7 @@ public class ImMsgRecallController extends BaseController {
     /**
      * 导出消息撤回记录列表
      */
-    @SaCheckPermission("imai:msgRecall:export")
+    @SaCheckPermission("imcore:msgRecall:export")
     @Log(title = "消息撤回记录", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImMsgRecallBo bo, HttpServletResponse response) {
@@ -70,7 +70,7 @@ public class ImMsgRecallController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imai:msgRecall:query")
+    @SaCheckPermission("imcore:msgRecall:query")
     @GetMapping("/{id}")
     public R<ImMsgRecallVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +80,7 @@ public class ImMsgRecallController extends BaseController {
     /**
      * 新增消息撤回记录
      */
-    @SaCheckPermission("imai:msgRecall:add")
+    @SaCheckPermission("imcore:msgRecall:add")
     @Log(title = "消息撤回记录", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +91,7 @@ public class ImMsgRecallController extends BaseController {
     /**
      * 修改消息撤回记录
      */
-    @SaCheckPermission("imai:msgRecall:edit")
+    @SaCheckPermission("imcore:msgRecall:edit")
     @Log(title = "消息撤回记录", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +104,7 @@ public class ImMsgRecallController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imai:msgRecall:remove")
+    @SaCheckPermission("imcore:msgRecall:remove")
     @Log(title = "消息撤回记录", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

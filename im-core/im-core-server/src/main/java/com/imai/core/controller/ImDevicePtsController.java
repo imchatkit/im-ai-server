@@ -48,7 +48,7 @@ public class ImDevicePtsController extends BaseController {
     /**
      * 查询设备pts列表
      */
-    @SaCheckPermission("imai:devicePts:list")
+    @SaCheckPermission("imcore:devicePts:list")
     @GetMapping("/list")
     public TableDataInfo<ImDevicePtsVo> list(ImDevicePtsBo bo, PageQuery pageQuery) {
         return imDevicePtsService.queryPageList(bo, pageQuery);
@@ -57,7 +57,7 @@ public class ImDevicePtsController extends BaseController {
     /**
      * 导出设备pts列表
      */
-    @SaCheckPermission("imai:devicePts:export")
+    @SaCheckPermission("imcore:devicePts:export")
     @Log(title = "设备pts", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImDevicePtsBo bo, HttpServletResponse response) {
@@ -70,7 +70,7 @@ public class ImDevicePtsController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imai:devicePts:query")
+    @SaCheckPermission("imcore:devicePts:query")
     @GetMapping("/{id}")
     public R<ImDevicePtsVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +80,7 @@ public class ImDevicePtsController extends BaseController {
     /**
      * 新增设备pts
      */
-    @SaCheckPermission("imai:devicePts:add")
+    @SaCheckPermission("imcore:devicePts:add")
     @Log(title = "设备pts", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +91,7 @@ public class ImDevicePtsController extends BaseController {
     /**
      * 修改设备pts
      */
-    @SaCheckPermission("imai:devicePts:edit")
+    @SaCheckPermission("imcore:devicePts:edit")
     @Log(title = "设备pts", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +104,7 @@ public class ImDevicePtsController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imai:devicePts:remove")
+    @SaCheckPermission("imcore:devicePts:remove")
     @Log(title = "设备pts", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

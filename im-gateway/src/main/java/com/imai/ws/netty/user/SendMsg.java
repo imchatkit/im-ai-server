@@ -21,7 +21,8 @@ public class SendMsg {
     @Autowired
     private ChannelUserHolder channelUserHolder;
 
-    private static void write(String message, Channel channel) {
+
+    public  void write(String message, Channel channel) {
         Long userId = channel.attr(ChannelAttributes.USER_ID).get();
         String device = channel.attr(ChannelAttributes.DEVICE_TYPE).get();
         String channelId = channel.id().asLongText();

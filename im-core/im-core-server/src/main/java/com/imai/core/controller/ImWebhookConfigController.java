@@ -40,7 +40,7 @@ public class ImWebhookConfigController extends BaseController {
     /**
      * 查询Webhook配置列表
      */
-    @SaCheckPermission("imai:webhookConfig:list")
+    @SaCheckPermission("imcore:webhookConfig:list")
     @GetMapping("/list")
     public TableDataInfo<ImWebhookConfigVo> list(ImWebhookConfigBo bo, PageQuery pageQuery) {
         return imWebhookConfigService.queryPageList(bo, pageQuery);
@@ -49,7 +49,7 @@ public class ImWebhookConfigController extends BaseController {
     /**
      * 导出Webhook配置列表
      */
-    @SaCheckPermission("imai:webhookConfig:export")
+    @SaCheckPermission("imcore:webhookConfig:export")
     @Log(title = "Webhook配置", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImWebhookConfigBo bo, HttpServletResponse response) {
@@ -62,7 +62,7 @@ public class ImWebhookConfigController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imai:webhookConfig:query")
+    @SaCheckPermission("imcore:webhookConfig:query")
     @GetMapping("/{id}")
     public R<ImWebhookConfigVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -72,7 +72,7 @@ public class ImWebhookConfigController extends BaseController {
     /**
      * 新增Webhook配置
      */
-    @SaCheckPermission("imai:webhookConfig:add")
+    @SaCheckPermission("imcore:webhookConfig:add")
     @Log(title = "Webhook配置", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -83,7 +83,7 @@ public class ImWebhookConfigController extends BaseController {
     /**
      * 修改Webhook配置
      */
-    @SaCheckPermission("imai:webhookConfig:edit")
+    @SaCheckPermission("imcore:webhookConfig:edit")
     @Log(title = "Webhook配置", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -96,7 +96,7 @@ public class ImWebhookConfigController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imai:webhookConfig:remove")
+    @SaCheckPermission("imcore:webhookConfig:remove")
     @Log(title = "Webhook配置", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

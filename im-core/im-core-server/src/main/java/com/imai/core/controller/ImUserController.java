@@ -48,7 +48,7 @@ public class ImUserController extends BaseController {
     /**
      * 查询用户列表
      */
-    @SaCheckPermission("imai:user:list")
+    @SaCheckPermission("imcore:user:list")
     @GetMapping("/list")
     public TableDataInfo<ImUserVo> list(ImUserBo bo, PageQuery pageQuery) {
         return imUserService.queryPageList(bo, pageQuery);
@@ -57,7 +57,7 @@ public class ImUserController extends BaseController {
     /**
      * 导出用户列表
      */
-    @SaCheckPermission("imai:user:export")
+    @SaCheckPermission("imcore:user:export")
     @Log(title = "用户", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImUserBo bo, HttpServletResponse response) {
@@ -70,7 +70,7 @@ public class ImUserController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imai:user:query")
+    @SaCheckPermission("imcore:user:query")
     @GetMapping("/{id}")
     public R<ImUserVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +80,7 @@ public class ImUserController extends BaseController {
     /**
      * 新增用户
      */
-    @SaCheckPermission("imai:user:add")
+    @SaCheckPermission("imcore:user:add")
     @Log(title = "用户", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +91,7 @@ public class ImUserController extends BaseController {
     /**
      * 修改用户
      */
-    @SaCheckPermission("imai:user:edit")
+    @SaCheckPermission("imcore:user:edit")
     @Log(title = "用户", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +104,7 @@ public class ImUserController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imai:user:remove")
+    @SaCheckPermission("imcore:user:remove")
     @Log(title = "用户", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

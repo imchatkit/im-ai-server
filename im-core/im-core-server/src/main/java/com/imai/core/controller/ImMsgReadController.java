@@ -48,7 +48,7 @@ public class ImMsgReadController extends BaseController {
     /**
      * 查询消息已读记录列表
      */
-    @SaCheckPermission("imai:msgRead:list")
+    @SaCheckPermission("imcore:msgRead:list")
     @GetMapping("/list")
     public TableDataInfo<ImMsgReadVo> list(ImMsgReadBo bo, PageQuery pageQuery) {
         return imMsgReadService.queryPageList(bo, pageQuery);
@@ -57,7 +57,7 @@ public class ImMsgReadController extends BaseController {
     /**
      * 导出消息已读记录列表
      */
-    @SaCheckPermission("imai:msgRead:export")
+    @SaCheckPermission("imcore:msgRead:export")
     @Log(title = "消息已读记录", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImMsgReadBo bo, HttpServletResponse response) {
@@ -70,7 +70,7 @@ public class ImMsgReadController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imai:msgRead:query")
+    @SaCheckPermission("imcore:msgRead:query")
     @GetMapping("/{id}")
     public R<ImMsgReadVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +80,7 @@ public class ImMsgReadController extends BaseController {
     /**
      * 新增消息已读记录
      */
-    @SaCheckPermission("imai:msgRead:add")
+    @SaCheckPermission("imcore:msgRead:add")
     @Log(title = "消息已读记录", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +91,7 @@ public class ImMsgReadController extends BaseController {
     /**
      * 修改消息已读记录
      */
-    @SaCheckPermission("imai:msgRead:edit")
+    @SaCheckPermission("imcore:msgRead:edit")
     @Log(title = "消息已读记录", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +104,7 @@ public class ImMsgReadController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imai:msgRead:remove")
+    @SaCheckPermission("imcore:msgRead:remove")
     @Log(title = "消息已读记录", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

@@ -48,7 +48,7 @@ public class ImWorkspaceController extends BaseController {
     /**
      * 查询工作空间列表
      */
-    @SaCheckPermission("imai:workspace:list")
+    @SaCheckPermission("imcore:workspace:list")
     @GetMapping("/list")
     public TableDataInfo<ImWorkspaceVo> list(ImWorkspaceBo bo, PageQuery pageQuery) {
         return imWorkspaceService.queryPageList(bo, pageQuery);
@@ -57,7 +57,7 @@ public class ImWorkspaceController extends BaseController {
     /**
      * 导出工作空间列表
      */
-    @SaCheckPermission("imai:workspace:export")
+    @SaCheckPermission("imcore:workspace:export")
     @Log(title = "工作空间", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImWorkspaceBo bo, HttpServletResponse response) {
@@ -70,7 +70,7 @@ public class ImWorkspaceController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imai:workspace:query")
+    @SaCheckPermission("imcore:workspace:query")
     @GetMapping("/{id}")
     public R<ImWorkspaceVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +80,7 @@ public class ImWorkspaceController extends BaseController {
     /**
      * 新增工作空间
      */
-    @SaCheckPermission("imai:workspace:add")
+    @SaCheckPermission("imcore:workspace:add")
     @Log(title = "工作空间", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +91,7 @@ public class ImWorkspaceController extends BaseController {
     /**
      * 修改工作空间
      */
-    @SaCheckPermission("imai:workspace:edit")
+    @SaCheckPermission("imcore:workspace:edit")
     @Log(title = "工作空间", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +104,7 @@ public class ImWorkspaceController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imai:workspace:remove")
+    @SaCheckPermission("imcore:workspace:remove")
     @Log(title = "工作空间", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

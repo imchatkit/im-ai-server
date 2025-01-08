@@ -48,7 +48,7 @@ public class ImGroupAnnouncementController extends BaseController {
     /**
      * 查询群公告列表
      */
-    @SaCheckPermission("imai:groupAnnouncement:list")
+    @SaCheckPermission("imcore:groupAnnouncement:list")
     @GetMapping("/list")
     public TableDataInfo<ImGroupAnnouncementVo> list(ImGroupAnnouncementBo bo, PageQuery pageQuery) {
         return imGroupAnnouncementService.queryPageList(bo, pageQuery);
@@ -57,7 +57,7 @@ public class ImGroupAnnouncementController extends BaseController {
     /**
      * 导出群公告列表
      */
-    @SaCheckPermission("imai:groupAnnouncement:export")
+    @SaCheckPermission("imcore:groupAnnouncement:export")
     @Log(title = "群公告", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImGroupAnnouncementBo bo, HttpServletResponse response) {
@@ -70,7 +70,7 @@ public class ImGroupAnnouncementController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imai:groupAnnouncement:query")
+    @SaCheckPermission("imcore:groupAnnouncement:query")
     @GetMapping("/{id}")
     public R<ImGroupAnnouncementVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +80,7 @@ public class ImGroupAnnouncementController extends BaseController {
     /**
      * 新增群公告
      */
-    @SaCheckPermission("imai:groupAnnouncement:add")
+    @SaCheckPermission("imcore:groupAnnouncement:add")
     @Log(title = "群公告", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +91,7 @@ public class ImGroupAnnouncementController extends BaseController {
     /**
      * 修改群公告
      */
-    @SaCheckPermission("imai:groupAnnouncement:edit")
+    @SaCheckPermission("imcore:groupAnnouncement:edit")
     @Log(title = "群公告", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +104,7 @@ public class ImGroupAnnouncementController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imai:groupAnnouncement:remove")
+    @SaCheckPermission("imcore:groupAnnouncement:remove")
     @Log(title = "群公告", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

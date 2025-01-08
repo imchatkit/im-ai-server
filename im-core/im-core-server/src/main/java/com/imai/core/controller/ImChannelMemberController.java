@@ -48,7 +48,7 @@ public class ImChannelMemberController extends BaseController {
     /**
      * 查询频道成员列表
      */
-    @SaCheckPermission("imai:channelMember:list")
+    @SaCheckPermission("imcore:channelMember:list")
     @GetMapping("/list")
     public TableDataInfo<ImChannelMemberVo> list(ImChannelMemberBo bo, PageQuery pageQuery) {
         return imChannelMemberService.queryPageList(bo, pageQuery);
@@ -57,7 +57,7 @@ public class ImChannelMemberController extends BaseController {
     /**
      * 导出频道成员列表
      */
-    @SaCheckPermission("imai:channelMember:export")
+    @SaCheckPermission("imcore:channelMember:export")
     @Log(title = "频道成员", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImChannelMemberBo bo, HttpServletResponse response) {
@@ -70,7 +70,7 @@ public class ImChannelMemberController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imai:channelMember:query")
+    @SaCheckPermission("imcore:channelMember:query")
     @GetMapping("/{id}")
     public R<ImChannelMemberVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +80,7 @@ public class ImChannelMemberController extends BaseController {
     /**
      * 新增频道成员
      */
-    @SaCheckPermission("imai:channelMember:add")
+    @SaCheckPermission("imcore:channelMember:add")
     @Log(title = "频道成员", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +91,7 @@ public class ImChannelMemberController extends BaseController {
     /**
      * 修改频道成员
      */
-    @SaCheckPermission("imai:channelMember:edit")
+    @SaCheckPermission("imcore:channelMember:edit")
     @Log(title = "频道成员", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +104,7 @@ public class ImChannelMemberController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imai:channelMember:remove")
+    @SaCheckPermission("imcore:channelMember:remove")
     @Log(title = "频道成员", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

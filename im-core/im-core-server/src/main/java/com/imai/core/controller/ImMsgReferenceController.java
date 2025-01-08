@@ -48,7 +48,7 @@ public class ImMsgReferenceController extends BaseController {
     /**
      * 查询消息引用关系列表
      */
-    @SaCheckPermission("imai:msgReference:list")
+    @SaCheckPermission("imcore:msgReference:list")
     @GetMapping("/list")
     public TableDataInfo<ImMsgReferenceVo> list(ImMsgReferenceBo bo, PageQuery pageQuery) {
         return imMsgReferenceService.queryPageList(bo, pageQuery);
@@ -57,7 +57,7 @@ public class ImMsgReferenceController extends BaseController {
     /**
      * 导出消息引用关系列表
      */
-    @SaCheckPermission("imai:msgReference:export")
+    @SaCheckPermission("imcore:msgReference:export")
     @Log(title = "消息引用关系", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImMsgReferenceBo bo, HttpServletResponse response) {
@@ -70,7 +70,7 @@ public class ImMsgReferenceController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imai:msgReference:query")
+    @SaCheckPermission("imcore:msgReference:query")
     @GetMapping("/{id}")
     public R<ImMsgReferenceVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +80,7 @@ public class ImMsgReferenceController extends BaseController {
     /**
      * 新增消息引用关系
      */
-    @SaCheckPermission("imai:msgReference:add")
+    @SaCheckPermission("imcore:msgReference:add")
     @Log(title = "消息引用关系", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +91,7 @@ public class ImMsgReferenceController extends BaseController {
     /**
      * 修改消息引用关系
      */
-    @SaCheckPermission("imai:msgReference:edit")
+    @SaCheckPermission("imcore:msgReference:edit")
     @Log(title = "消息引用关系", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +104,7 @@ public class ImMsgReferenceController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imai:msgReference:remove")
+    @SaCheckPermission("imcore:msgReference:remove")
     @Log(title = "消息引用关系", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
