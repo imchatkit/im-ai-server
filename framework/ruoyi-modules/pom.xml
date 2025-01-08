@@ -14,7 +14,7 @@
         <module>ruoyi-gen</module>
         <module>ruoyi-job</module>
         <module>ruoyi-resource</module>
-        <module>ruoyi-workflow</module>
+<!--        <module>ruoyi-workflow</module>-->
     </modules>
 
     <artifactId>ruoyi-modules</artifactId>

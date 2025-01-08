@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.feiyancloud</groupId>
-        <artifactId>im-kit</artifactId>
+        <artifactId>im-ai-server</artifactId>
         <version>${revision}</version>
     </parent>
 
@@ -17,6 +17,6 @@
         <module>ai-server</module>
         <module>rest-open-api-server</module>
         <module>dubbo-interface</module>
-        <module>im-msg-service</module>
+        <module>im-core-server</module>
     </modules>
 </project>

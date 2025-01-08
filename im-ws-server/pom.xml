@@ -5,24 +5,41 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.feiyancloud</groupId>
-        <artifactId>im-kit</artifactId>
+        <artifactId>im-ai-server</artifactId>
         <version>${revision}</version>
     </parent>
 
+    <packaging>jar</packaging>
     <artifactId>im-ws-server</artifactId>
 
 
     <dependencies>
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>4.4.0</version>
+        </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>com.feiyancloud</groupId>-->
-<!--            <artifactId>ruoyi-common-nacos</artifactId>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.113.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-common</artifactId>
+            <version>4.1.114.Final</version>
+        </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>com.feiyancloud</groupId>-->
-<!--            <artifactId>ruoyi-common-sentinel</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.feiyancloud</groupId>-->
+        <!--            <artifactId>ruoyi-common-nacos</artifactId>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>com.feiyancloud</groupId>-->
+        <!--            <artifactId>ruoyi-common-sentinel</artifactId>-->
+        <!--        </dependency>-->
 
         <dependency>
             <groupId>com.feiyancloud</groupId>
@@ -49,25 +66,25 @@
             <artifactId>ruoyi-common-mybatis</artifactId>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>com.feiyancloud</groupId>-->
-<!--            <artifactId>ruoyi-common-dubbo</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.feiyancloud</groupId>-->
+        <!--            <artifactId>ruoyi-common-dubbo</artifactId>-->
+        <!--        </dependency>-->
 
         <dependency>
             <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-idempotent</artifactId>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>com.feiyancloud</groupId>-->
-<!--            <artifactId>ruoyi-common-mail</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.feiyancloud</groupId>-->
+        <!--            <artifactId>ruoyi-common-mail</artifactId>-->
+        <!--        </dependency>-->
 
-<!--        <dependency>-->
-<!--            <groupId>com.feiyancloud</groupId>-->
-<!--            <artifactId>ruoyi-common-sms</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.feiyancloud</groupId>-->
+        <!--            <artifactId>ruoyi-common-sms</artifactId>-->
+        <!--        </dependency>-->
 
         <dependency>
             <groupId>com.feiyancloud</groupId>
@@ -79,15 +96,15 @@
             <artifactId>ruoyi-common-tenant</artifactId>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>com.feiyancloud</groupId>-->
-<!--            <artifactId>ruoyi-common-elasticsearch</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.feiyancloud</groupId>-->
+        <!--            <artifactId>ruoyi-common-elasticsearch</artifactId>-->
+        <!--        </dependency>-->
 
-<!--        <dependency>-->
-<!--            <groupId>com.feiyancloud</groupId>-->
-<!--            <artifactId>ruoyi-common-sensitive</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.feiyancloud</groupId>-->
+        <!--            <artifactId>ruoyi-common-sensitive</artifactId>-->
+        <!--        </dependency>-->
 
         <!-- 测试消息总线使用 搭配 TestBusController -->
         <!--        <dependency>-->
@@ -100,6 +117,7 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
 
     </dependencies>
 

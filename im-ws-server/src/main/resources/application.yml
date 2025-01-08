@@ -1,12 +1,14 @@
 # Tomcat
 server:
-  port: 9402
+  port: 9686
 
+netty:
+  port: 9688
 # Spring
 spring:
   application:
     # 应用名称
-    name: im-server
+    name: im-ws-server
   profiles:
     # 环境配置
     active: @profiles.active@
@@ -31,42 +33,4 @@ spring:
     import:
       - optional:nacos:application-common.yml
       - optional:nacos:ruoyi-resource.yml
-      - optional:nacos:datasource.yml
 
---- # 数据源设置 需在 system 数据源下 执行 test.sql 文件
-spring:
-  datasource:
-    dynamic:
-      seata: false
-      # 设置默认的数据源或者数据源组,默认值即为 master
-      primary: master
-      datasource:
-        # 主库数据源
-        master:
-          type: ${spring.datasource.type}
-          driver-class-name: com.mysql.cj.jdbc.Driver
-          url: ${datasource.system-master.url}
-          username: ${datasource.system-master.username}
-          password: ${datasource.system-master.password}
-        sharding:
-          lazy: true
-          type: ${spring.datasource.type}
-          driver-class-name: com.mysql.cj.jdbc.Driver
-          # shardingproxy 服务的ip地址
-          url: jdbc:mysql://127.0.0.1:3307/data-center_db?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&tinyInt1isBit=false&allowMultiQueries=true&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
-          username: root
-          password: root
-#        oracle:
-#          type: ${spring.datasource.type}
-#          driverClassName: oracle.jdbc.OracleDriver
-#          url: ${datasource.system-oracle.url}
-#          username: ${datasource.system-oracle.username}
-#          password: ${datasource.system-oracle.password}
-#          hikari:
-#            connectionTestQuery: SELECT 1 FROM DUAL
-#        postgres:
-#          type: ${spring.datasource.type}
-#          driverClassName: org.postgresql.Driver
-#          url: ${datasource.system-postgres.url}
-#          username: ${datasource.system-postgres.username}
-#          password: ${datasource.system-postgres.password}
