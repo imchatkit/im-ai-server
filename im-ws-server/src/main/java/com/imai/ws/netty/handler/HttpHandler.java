@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Random;
+
 @Slf4j
 @Component
 @ChannelHandler.Sharable
@@ -44,17 +46,17 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         String deviceType = request.headers().get("deviceType");
 
         //  校验用户token
-        if (token == null || token.isEmpty()) {
-//            log.info("token:null");
-
-            // 如果token为空，则返回错误响应
-            FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
-            response.headers().set(HttpHeaders.Names.CONTENT_TYPE, "text/plain; charset=UTF-8");
-            response.content().writeBytes("Unauthorized".getBytes(CharsetUtil.UTF_8));
-            response.content().writeCharSequence("token is empty", CharsetUtil.UTF_8);
-            ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
-            return;
-        } else {
+//        if (token == null || token.isEmpty()) {
+////            log.info("token:null");
+//
+//            // 如果token为空，则返回错误响应
+//            FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
+//            response.headers().set(HttpHeaders.Names.CONTENT_TYPE, "text/plain; charset=UTF-8");
+//            response.content().writeBytes("Unauthorized".getBytes(CharsetUtil.UTF_8));
+//            response.content().writeCharSequence("token is empty", CharsetUtil.UTF_8);
+//            ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+//            return;
+//        } else {
 
 //            // 创建JWT验证器
 //            JWTVerifier verifier = JWT.require(algorithm).acceptExpiresAt(Duration.ofDays(30).toMillis()).build();
@@ -71,9 +73,12 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 //                    return;
 //                }
 //                Long userId = jwtToken.getClaim("login_user_id").asLong();
-//
-//                channelUserHolder.addChannel(userId, ctx.channel(), deviceType);
-//
+
+            // 生成随机数
+            Long userId = new Random().nextLong();
+
+            channelUserHolder.addChannel(userId, ctx.channel(), deviceType);
+
 ////                    .header("RC-User-Id", jwtToken.getClaim("login_user_id").toString())
 ////                    .header("RC-User-Name", jwtToken.getClaim("username").asString())
 ////                    .header("RC-Org-Id", jwtToken.getClaim("org_id").asString())
@@ -93,7 +98,7 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
             } else {
                 handleHttpRequest(ctx, request);
             }
-        }
+//        }
 
     }
 
