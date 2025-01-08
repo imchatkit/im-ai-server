@@ -1,6 +1,6 @@
 package com.imai.ws.netty.run;
 
-import com.imai.ws.netty.codec.ProtobufMultiMessageCodec;
+
 import com.imai.ws.netty.handler.HttpHandler;
 import com.imai.ws.netty.handler.HeartbeatHandler;
 import com.imai.ws.netty.handler.WsMsgHandler;
@@ -39,7 +39,7 @@ public class MyChannelInitializer extends ChannelInitializer<NioSocketChannel> {
         // --- 心跳检测 ---
 
         // 添加自定义的protobuf编解码器
-        channel.pipeline().addLast(new ProtobufMultiMessageCodec());
+//        channel.pipeline().addLast(new ProtobufMultiMessageCodec());
         channel.pipeline().addLast(new WebSocketServerProtocolHandler("/ws"));
         channel.pipeline().addLast(wsMsgHandler);
 
