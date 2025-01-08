@@ -15,6 +15,6 @@ public class ImCoreServerApplication {
         SpringApplication application = new SpringApplication(ImCoreServerApplication.class);
         application.setApplicationStartup(new BufferingApplicationStartup(2048));
         application.run(args);
-        System.out.println("(♥◠‿◠)ﾉﾞ  ImMsgServer启动成功   ლ(´ڡ`ლ)ﾞ  ");
+        System.out.println("(♥◠‿◠)ﾉﾞ  ImCoreServer启动成功   ლ(´ڡ`ლ)ﾞ  ");
     }
 }

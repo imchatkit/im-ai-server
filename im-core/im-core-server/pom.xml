@@ -6,7 +6,6 @@
     <parent>
         <groupId>com.feiyancloud</groupId>
         <artifactId>im-core</artifactId>
-
         <version>${revision}</version>
     </parent>
     <packaging>jar</packaging>
@@ -100,6 +99,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.feiyancloud</groupId>
+            <artifactId>ruoyi-common-translation</artifactId>
         </dependency>
 
     </dependencies>

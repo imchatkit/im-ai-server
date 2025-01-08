@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @ChannelHandler.Sharable
 public class WsMsgHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
-    @Autowired
+//    @Autowired
 //    private ReceiverProducer receiverProducer;
 
     @Override
@@ -36,6 +36,9 @@ public class WsMsgHandler extends SimpleChannelInboundHandler<TextWebSocketFrame
 //        mqMsgData.setChannelId(channelId);
 //        mqMsgData.setFrom(userId);
 //        receiverProducer.sendMessage(mqMsgData);
+
+                log.info("[wsRead]data:{}",  msg.text());
+
 
     }
 
