@@ -17,6 +17,6 @@
         <module>ai-server</module>
         <module>rest-open-api-server</module>
         <module>dubbo-interface</module>
-        <module>im-msg-service</module>
+        <module>im-core-server</module>
     </modules>
 </project>
