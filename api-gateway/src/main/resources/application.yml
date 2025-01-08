@@ -4,6 +4,9 @@ server:
   servlet:
     context-path: /
 
+netty:
+  port: 9688
+
 # Spring
 spring:
   application:
@@ -12,6 +15,8 @@ spring:
   profiles:
     # 环境配置
     active: @profiles.active@
+  main:
+    web-application-type: reactive
 
 --- # nacos 配置
 spring:

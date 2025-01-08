@@ -3,7 +3,6 @@ package com.imai.ws.netty.handler;
 
 import com.imai.ws.netty.user.ChannelUserHolder;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -19,7 +18,7 @@ import java.util.Random;
 @Slf4j
 @Component
 @ChannelHandler.Sharable
-public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+public class ImHttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
 //    @Autowired
 //    Algorithm algorithm;

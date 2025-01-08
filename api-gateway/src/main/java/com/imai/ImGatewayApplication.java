@@ -1,4 +1,4 @@
-package com.imai.gateway;
+package com.imai;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,13 +11,13 @@ import org.springframework.boot.context.metrics.buffering.BufferingApplicationSt
  * @author wei
  */
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
-public class ApiGatewayApplication {
+public class ImGatewayApplication {
     public static void main(String[] args) {
         // 标记 sentinel 类型为 网关
         System.setProperty("csp.sentinel.app.type", "1");
-        SpringApplication application = new SpringApplication(ApiGatewayApplication.class);
+        SpringApplication application = new SpringApplication(ImGatewayApplication.class);
         application.setApplicationStartup(new BufferingApplicationStartup(2048));
         application.run(args);
-        System.out.println("(♥◠‿◠)ﾉﾞ  api网关启动成功   ლ(´ڡ`ლ)ﾞ  ");
+        System.out.println("(♥◠‿◠)ﾉﾞ  im网关启动成功   ლ(´ڡ`ლ)ﾞ  ");
     }
 }
