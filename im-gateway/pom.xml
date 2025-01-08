@@ -8,7 +8,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>api-gateway</artifactId>
+    <artifactId>im-gateway</artifactId>
 
     <description>
         api-gateway网关模块
