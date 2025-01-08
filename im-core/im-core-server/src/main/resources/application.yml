@@ -1,6 +1,8 @@
 # Tomcat
 server:
   port: 9601
+  servlet:
+    context-path: /
 
 # Spring
 spring:
@@ -31,4 +33,6 @@ spring:
     import:
       - optional:nacos:application-common.yml
       - optional:nacos:ruoyi-resource.yml
+      - optional:nacos:datasource.yml
+      - optional:nacos:${spring.application.name}.yml
 

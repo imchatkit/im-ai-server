@@ -14,12 +14,23 @@
 
 
     <dependencies>
-        <dependency>
-            <groupId>com.auth0</groupId>
-            <artifactId>java-jwt</artifactId>
-            <version>4.4.0</version>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.auth0</groupId>-->
+        <!--            <artifactId>java-jwt</artifactId>-->
+        <!--            <version>4.4.0</version>-->
+        <!--        </dependency>-->
 
+
+        <!--        <dependency>-->
+        <!--            <groupId>com.feiyancloud</groupId>-->
+        <!--            <artifactId>ruoyi-common-dubbo</artifactId>-->
+        <!--        </dependency>-->
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
@@ -31,15 +42,11 @@
             <version>4.1.114.Final</version>
         </dependency>
 
-        <!--        <dependency>-->
-        <!--            <groupId>com.feiyancloud</groupId>-->
-        <!--            <artifactId>ruoyi-common-nacos</artifactId>-->
-        <!--        </dependency>-->
+        <dependency>
+            <groupId>com.feiyancloud</groupId>
+            <artifactId>ruoyi-common-nacos</artifactId>
+        </dependency>
 
-        <!--        <dependency>-->
-        <!--            <groupId>com.feiyancloud</groupId>-->
-        <!--            <artifactId>ruoyi-common-sentinel</artifactId>-->
-        <!--        </dependency>-->
 
         <dependency>
             <groupId>com.feiyancloud</groupId>
@@ -48,33 +55,31 @@
 
         <dependency>
             <groupId>com.feiyancloud</groupId>
-            <artifactId>ruoyi-common-doc</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.feiyancloud</groupId>
-            <artifactId>ruoyi-common-security</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-web</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.feiyancloud</groupId>
-            <artifactId>ruoyi-common-mybatis</artifactId>
-        </dependency>
 
         <!--        <dependency>-->
         <!--            <groupId>com.feiyancloud</groupId>-->
-        <!--            <artifactId>ruoyi-common-dubbo</artifactId>-->
+        <!--            <artifactId>ruoyi-common-sentinel</artifactId>-->
         <!--        </dependency>-->
 
-        <dependency>
-            <groupId>com.feiyancloud</groupId>
-            <artifactId>ruoyi-common-idempotent</artifactId>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.feiyancloud</groupId>-->
+        <!--            <artifactId>ruoyi-common-doc</artifactId>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>com.feiyancloud</groupId>-->
+        <!--            <artifactId>ruoyi-common-security</artifactId>-->
+        <!--        </dependency>-->
+
+
+
+<!--        <dependency>-->
+<!--            <groupId>com.feiyancloud</groupId>-->
+<!--            <artifactId>ruoyi-common-idempotent</artifactId>-->
+<!--        </dependency>-->
 
         <!--        <dependency>-->
         <!--            <groupId>com.feiyancloud</groupId>-->
@@ -86,15 +91,15 @@
         <!--            <artifactId>ruoyi-common-sms</artifactId>-->
         <!--        </dependency>-->
 
-        <dependency>
-            <groupId>com.feiyancloud</groupId>
-            <artifactId>ruoyi-common-encrypt</artifactId>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.feiyancloud</groupId>-->
+        <!--            <artifactId>ruoyi-common-encrypt</artifactId>-->
+        <!--        </dependency>-->
 
-        <dependency>
-            <groupId>com.feiyancloud</groupId>
-            <artifactId>ruoyi-common-tenant</artifactId>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.feiyancloud</groupId>-->
+        <!--            <artifactId>ruoyi-common-tenant</artifactId>-->
+        <!--        </dependency>-->
 
         <!--        <dependency>-->
         <!--            <groupId>com.feiyancloud</groupId>-->
@@ -112,11 +117,6 @@
         <!--            <artifactId>ruoyi-api-workflow</artifactId>-->
         <!--        </dependency>-->
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
 
 
     </dependencies>
