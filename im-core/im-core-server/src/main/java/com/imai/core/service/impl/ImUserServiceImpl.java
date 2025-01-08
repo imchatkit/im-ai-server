@@ -5,15 +5,24 @@ import com.imai.core.domain.bo.ImUserBo;
 import com.imai.core.domain.vo.ImUserVo;
 import com.imai.core.mapper.ImUserMapper;
 import com.imai.core.service.IImUserService;
+import com.imai.core.openapi.bo.ImUseRegisterBo;
+
+import cn.dev33.satoken.stp.SaLoginModel;
+
+import org.dromara.common.core.enums.DeviceType;
+import org.dromara.common.core.enums.UserType;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
+import org.dromara.common.satoken.utils.LoginHelper;
+import org.dromara.system.api.model.LoginUser;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -140,5 +149,52 @@ public class ImUserServiceImpl implements IImUserService {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;
+    }
+
+    /**
+     * 用户注册实现
+     *
+     * @param bo 注册信息
+     * @return 注册用户信息
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ImUserVo login(ImUseRegisterBo bo) {
+        // 将注册BO转换为用户BO
+        ImUserBo userBo = MapstructUtils.convert(bo, ImUserBo.class);
+
+        // 检查用户是否已注册
+        LambdaQueryWrapper<ImUser> lqw = Wrappers.lambdaQuery();
+        lqw.eq(ImUser::getId, userBo.getId());
+        ImUser existUser = baseMapper.selectOne(lqw);
+
+        Long userId;
+        if(existUser != null) {
+            // 用户已存在,直接使用已有用户ID
+            userId = existUser.getId();
+        } else {
+            // 执行注册逻辑
+            Boolean success = insertByBo(userBo);
+            if (!success) {
+                throw new RuntimeException("注册失败");
+            }
+            userId = userBo.getId();
+        }
+
+        // 创建IM用户token
+        LoginUser imUser = new LoginUser();
+        imUser.setUserId(userId);
+        imUser.setUserType(UserType.IM_USER.getUserType()); // 设置为IM用户类型
+        imUser.setUsername(userBo.getNickname());
+        imUser.setNickname(userBo.getNickname());
+
+        // 生成token
+        SaLoginModel model = new SaLoginModel();
+        model.setDevice(DeviceType.valueOf(bo.getDevice()).getDevice());
+        model.setTimeout(30 * 24 * 60 * 60L); // IM token可以设置更长时间
+        LoginHelper.login(imUser, model);
+
+        // 返回用户信息
+        return queryById(userId);
     }
 }
