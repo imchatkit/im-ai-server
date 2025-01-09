@@ -1,9 +1,9 @@
 package com.imai.core.api.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.imai.core.domain.bo.ImSyncBo;
-import com.imai.core.domain.vo.ImSyncVo;
-import com.imai.core.service.IImSyncService;
+import com.imai.core.domain.bo.ImGroupBo;
+import com.imai.core.domain.vo.ImGroupVo;
+import com.imai.core.service.IImGroupService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 多端同步
- * 前端访问路由地址为:/imai/sync
+ * 群组
+ * 前端访问路由地址为:/imai/group
  *
  * @author wei
  * @date 2025-01-07
@@ -40,75 +40,75 @@ import java.util.List;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/sync")
-public class ImSyncController extends BaseController {
+@RequestMapping("/api/v1/group")
+public class ApiImGroupController extends BaseController {
 
-    private final IImSyncService imSyncService;
+    private final IImGroupService imGroupService;
 
     /**
-     * 查询多端同步列表
+     * 查询群组列表
      */
-    @SaCheckPermission("imcore:sync:list")
+    @SaCheckPermission("imcore:group:list")
     @GetMapping("/list")
-    public TableDataInfo<ImSyncVo> list(ImSyncBo bo, PageQuery pageQuery) {
-        return imSyncService.queryPageList(bo, pageQuery);
+    public TableDataInfo<ImGroupVo> list(ImGroupBo bo, PageQuery pageQuery) {
+        return imGroupService.queryPageList(bo, pageQuery);
     }
 
     /**
-     * 导出多端同步列表
+     * 导出群组列表
      */
-    @SaCheckPermission("imcore:sync:export")
-    @Log(title = "多端同步", businessType = BusinessType.EXPORT)
+    @SaCheckPermission("imcore:group:export")
+    @Log(title = "群组", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(ImSyncBo bo, HttpServletResponse response) {
-        List<ImSyncVo> list = imSyncService.queryList(bo);
-        ExcelUtil.exportExcel(list, "多端同步", ImSyncVo.class, response);
+    public void export(ImGroupBo bo, HttpServletResponse response) {
+        List<ImGroupVo> list = imGroupService.queryList(bo);
+        ExcelUtil.exportExcel(list, "群组", ImGroupVo.class, response);
     }
 
     /**
-     * 获取多端同步详细信息
+     * 获取群组详细信息
      *
      * @param id 主键
      */
-    @SaCheckPermission("imcore:sync:query")
+    @SaCheckPermission("imcore:group:query")
     @GetMapping("/{id}")
-    public R<ImSyncVo> getInfo(@NotNull(message = "主键不能为空")
+    public R<ImGroupVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
-        return R.ok(imSyncService.queryById(id));
+        return R.ok(imGroupService.queryById(id));
     }
 
     /**
-     * 新增多端同步
+     * 新增群组
      */
-    @SaCheckPermission("imcore:sync:add")
-    @Log(title = "多端同步", businessType = BusinessType.INSERT)
+    @SaCheckPermission("imcore:group:add")
+    @Log(title = "群组", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) @RequestBody ImSyncBo bo) {
-        return toAjax(imSyncService.insertByBo(bo));
+    public R<Void> add(@Validated(AddGroup.class) @RequestBody ImGroupBo bo) {
+        return toAjax(imGroupService.insertByBo(bo));
     }
 
     /**
-     * 修改多端同步
+     * 修改群组
      */
-    @SaCheckPermission("imcore:sync:edit")
-    @Log(title = "多端同步", businessType = BusinessType.UPDATE)
+    @SaCheckPermission("imcore:group:edit")
+    @Log(title = "群组", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
-    public R<Void> edit(@Validated(EditGroup.class) @RequestBody ImSyncBo bo) {
-        return toAjax(imSyncService.updateByBo(bo));
+    public R<Void> edit(@Validated(EditGroup.class) @RequestBody ImGroupBo bo) {
+        return toAjax(imGroupService.updateByBo(bo));
     }
 
     /**
-     * 删除多端同步
+     * 删除群组
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imcore:sync:remove")
-    @Log(title = "多端同步", businessType = BusinessType.DELETE)
+    @SaCheckPermission("imcore:group:remove")
+    @Log(title = "群组", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        return toAjax(imSyncService.deleteWithValidByIds(List.of(ids), true));
+        return toAjax(imGroupService.deleteWithValidByIds(List.of(ids), true));
     }
 }

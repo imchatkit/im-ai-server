@@ -41,7 +41,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/conversationMember")
-public class ImConversationMemberController extends BaseController {
+public class ApiImConversationMemberController extends BaseController {
 
     private final IImConversationMemberService imConversationMemberService;
 

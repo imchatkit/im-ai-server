@@ -41,7 +41,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/friendRequest")
-public class ImFriendRequestController extends BaseController {
+public class ApiImFriendRequestController extends BaseController {
 
     private final IImFriendRequestService imFriendRequestService;
 

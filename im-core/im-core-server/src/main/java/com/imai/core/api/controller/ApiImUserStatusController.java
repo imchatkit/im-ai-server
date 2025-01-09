@@ -1,9 +1,9 @@
 package com.imai.core.api.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.imai.core.domain.bo.ImUserPtsBo;
-import com.imai.core.domain.vo.ImUserPtsVo;
-import com.imai.core.service.IImUserPtsService;
+import com.imai.core.domain.bo.ImUserStatusBo;
+import com.imai.core.domain.vo.ImUserStatusVo;
+import com.imai.core.service.IImUserStatusService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 用户pts
- * 前端访问路由地址为:/imai/userPts
+ * 用户状态
+ * 前端访问路由地址为:/imai/userStatus
  *
  * @author wei
  * @date 2025-01-07
@@ -40,75 +40,75 @@ import java.util.List;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/userPts")
-public class ImUserPtsController extends BaseController {
+@RequestMapping("/api/v1/userStatus")
+public class ApiImUserStatusController extends BaseController {
 
-    private final IImUserPtsService imUserPtsService;
+    private final IImUserStatusService imUserStatusService;
 
     /**
-     * 查询用户pts列表
+     * 查询用户状态列表
      */
-    @SaCheckPermission("imcore:userPts:list")
+    @SaCheckPermission("imcore:userStatus:list")
     @GetMapping("/list")
-    public TableDataInfo<ImUserPtsVo> list(ImUserPtsBo bo, PageQuery pageQuery) {
-        return imUserPtsService.queryPageList(bo, pageQuery);
+    public TableDataInfo<ImUserStatusVo> list(ImUserStatusBo bo, PageQuery pageQuery) {
+        return imUserStatusService.queryPageList(bo, pageQuery);
     }
 
     /**
-     * 导出用户pts列表
+     * 导出用户状态列表
      */
-    @SaCheckPermission("imcore:userPts:export")
-    @Log(title = "用户pts", businessType = BusinessType.EXPORT)
+    @SaCheckPermission("imcore:userStatus:export")
+    @Log(title = "用户状态", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(ImUserPtsBo bo, HttpServletResponse response) {
-        List<ImUserPtsVo> list = imUserPtsService.queryList(bo);
-        ExcelUtil.exportExcel(list, "用户pts", ImUserPtsVo.class, response);
+    public void export(ImUserStatusBo bo, HttpServletResponse response) {
+        List<ImUserStatusVo> list = imUserStatusService.queryList(bo);
+        ExcelUtil.exportExcel(list, "用户状态", ImUserStatusVo.class, response);
     }
 
     /**
-     * 获取用户pts详细信息
+     * 获取用户状态详细信息
      *
      * @param userId 主键
      */
-    @SaCheckPermission("imcore:userPts:query")
+    @SaCheckPermission("imcore:userStatus:query")
     @GetMapping("/{userId}")
-    public R<ImUserPtsVo> getInfo(@NotNull(message = "主键不能为空")
+    public R<ImUserStatusVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long userId) {
-        return R.ok(imUserPtsService.queryById(userId));
+        return R.ok(imUserStatusService.queryById(userId));
     }
 
     /**
-     * 新增用户pts
+     * 新增用户状态
      */
-    @SaCheckPermission("imcore:userPts:add")
-    @Log(title = "用户pts", businessType = BusinessType.INSERT)
+    @SaCheckPermission("imcore:userStatus:add")
+    @Log(title = "用户状态", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) @RequestBody ImUserPtsBo bo) {
-        return toAjax(imUserPtsService.insertByBo(bo));
+    public R<Void> add(@Validated(AddGroup.class) @RequestBody ImUserStatusBo bo) {
+        return toAjax(imUserStatusService.insertByBo(bo));
     }
 
     /**
-     * 修改用户pts
+     * 修改用户状态
      */
-    @SaCheckPermission("imcore:userPts:edit")
-    @Log(title = "用户pts", businessType = BusinessType.UPDATE)
+    @SaCheckPermission("imcore:userStatus:edit")
+    @Log(title = "用户状态", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
-    public R<Void> edit(@Validated(EditGroup.class) @RequestBody ImUserPtsBo bo) {
-        return toAjax(imUserPtsService.updateByBo(bo));
+    public R<Void> edit(@Validated(EditGroup.class) @RequestBody ImUserStatusBo bo) {
+        return toAjax(imUserStatusService.updateByBo(bo));
     }
 
     /**
-     * 删除用户pts
+     * 删除用户状态
      *
      * @param userIds 主键串
      */
-    @SaCheckPermission("imcore:userPts:remove")
-    @Log(title = "用户pts", businessType = BusinessType.DELETE)
+    @SaCheckPermission("imcore:userStatus:remove")
+    @Log(title = "用户状态", businessType = BusinessType.DELETE)
     @DeleteMapping("/{userIds}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] userIds) {
-        return toAjax(imUserPtsService.deleteWithValidByIds(List.of(userIds), true));
+        return toAjax(imUserStatusService.deleteWithValidByIds(List.of(userIds), true));
     }
 }

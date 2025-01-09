@@ -41,7 +41,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/msgRecall")
-public class ImMsgRecallController extends BaseController {
+public class ApiImMsgRecallController extends BaseController {
 
     private final IImMsgRecallService imMsgRecallService;
 

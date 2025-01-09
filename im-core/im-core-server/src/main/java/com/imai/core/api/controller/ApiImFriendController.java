@@ -1,9 +1,9 @@
 package com.imai.core.api.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.imai.core.domain.bo.ImGroupMemberBo;
-import com.imai.core.domain.vo.ImGroupMemberVo;
-import com.imai.core.service.IImGroupMemberService;
+import com.imai.core.domain.bo.ImFriendBo;
+import com.imai.core.domain.vo.ImFriendVo;
+import com.imai.core.service.IImFriendService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 群成员
- * 前端访问路由地址为:/imai/groupMember
+ * 好友关系
+ * 前端访问路由地址为:/imai/friend
  *
  * @author wei
  * @date 2025-01-07
@@ -40,75 +40,75 @@ import java.util.List;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/groupMember")
-public class ImGroupMemberController extends BaseController {
+@RequestMapping("/api/v1/friend")
+public class ApiImFriendController extends BaseController {
 
-    private final IImGroupMemberService imGroupMemberService;
+    private final IImFriendService imFriendService;
 
     /**
-     * 查询群成员列表
+     * 查询好友关系列表
      */
-    @SaCheckPermission("imcore:groupMember:list")
+    @SaCheckPermission("imcore:friend:list")
     @GetMapping("/list")
-    public TableDataInfo<ImGroupMemberVo> list(ImGroupMemberBo bo, PageQuery pageQuery) {
-        return imGroupMemberService.queryPageList(bo, pageQuery);
+    public TableDataInfo<ImFriendVo> list(ImFriendBo bo, PageQuery pageQuery) {
+        return imFriendService.queryPageList(bo, pageQuery);
     }
 
     /**
-     * 导出群成员列表
+     * 导出好友关系列表
      */
-    @SaCheckPermission("imcore:groupMember:export")
-    @Log(title = "群成员", businessType = BusinessType.EXPORT)
+    @SaCheckPermission("imcore:friend:export")
+    @Log(title = "好友关系", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(ImGroupMemberBo bo, HttpServletResponse response) {
-        List<ImGroupMemberVo> list = imGroupMemberService.queryList(bo);
-        ExcelUtil.exportExcel(list, "群成员", ImGroupMemberVo.class, response);
+    public void export(ImFriendBo bo, HttpServletResponse response) {
+        List<ImFriendVo> list = imFriendService.queryList(bo);
+        ExcelUtil.exportExcel(list, "好友关系", ImFriendVo.class, response);
     }
 
     /**
-     * 获取群成员详细信息
+     * 获取好友关系详细信息
      *
      * @param id 主键
      */
-    @SaCheckPermission("imcore:groupMember:query")
+    @SaCheckPermission("imcore:friend:query")
     @GetMapping("/{id}")
-    public R<ImGroupMemberVo> getInfo(@NotNull(message = "主键不能为空")
+    public R<ImFriendVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
-        return R.ok(imGroupMemberService.queryById(id));
+        return R.ok(imFriendService.queryById(id));
     }
 
     /**
-     * 新增群成员
+     * 新增好友关系
      */
-    @SaCheckPermission("imcore:groupMember:add")
-    @Log(title = "群成员", businessType = BusinessType.INSERT)
+    @SaCheckPermission("imcore:friend:add")
+    @Log(title = "好友关系", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) @RequestBody ImGroupMemberBo bo) {
-        return toAjax(imGroupMemberService.insertByBo(bo));
+    public R<Void> add(@Validated(AddGroup.class) @RequestBody ImFriendBo bo) {
+        return toAjax(imFriendService.insertByBo(bo));
     }
 
     /**
-     * 修改群成员
+     * 修改好友关系
      */
-    @SaCheckPermission("imcore:groupMember:edit")
-    @Log(title = "群成员", businessType = BusinessType.UPDATE)
+    @SaCheckPermission("imcore:friend:edit")
+    @Log(title = "好友关系", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
-    public R<Void> edit(@Validated(EditGroup.class) @RequestBody ImGroupMemberBo bo) {
-        return toAjax(imGroupMemberService.updateByBo(bo));
+    public R<Void> edit(@Validated(EditGroup.class) @RequestBody ImFriendBo bo) {
+        return toAjax(imFriendService.updateByBo(bo));
     }
 
     /**
-     * 删除群成员
+     * 删除好友关系
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imcore:groupMember:remove")
-    @Log(title = "群成员", businessType = BusinessType.DELETE)
+    @SaCheckPermission("imcore:friend:remove")
+    @Log(title = "好友关系", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        return toAjax(imGroupMemberService.deleteWithValidByIds(List.of(ids), true));
+        return toAjax(imFriendService.deleteWithValidByIds(List.of(ids), true));
     }
 }

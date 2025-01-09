@@ -1,9 +1,9 @@
 package com.imai.core.api.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.imai.core.domain.bo.ImMsgReadBo;
-import com.imai.core.domain.vo.ImMsgReadVo;
-import com.imai.core.service.IImMsgReadService;
+import com.imai.core.domain.bo.ImUserBo;
+import com.imai.core.domain.vo.ImUserVo;
+import com.imai.core.service.IImUserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 消息已读记录
- * 前端访问路由地址为:/imai/msgRead
+ * 用户
+ * 前端访问路由地址为:/imai/user
  *
  * @author wei
  * @date 2025-01-07
@@ -40,75 +40,75 @@ import java.util.List;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/msgRead")
-public class ImMsgReadController extends BaseController {
+@RequestMapping("/api/v1/user")
+public class ApiImUserController extends BaseController {
 
-    private final IImMsgReadService imMsgReadService;
+    private final IImUserService imUserService;
 
     /**
-     * 查询消息已读记录列表
+     * 查询用户列表
      */
-    @SaCheckPermission("imcore:msgRead:list")
+    @SaCheckPermission("imcore:user:list")
     @GetMapping("/list")
-    public TableDataInfo<ImMsgReadVo> list(ImMsgReadBo bo, PageQuery pageQuery) {
-        return imMsgReadService.queryPageList(bo, pageQuery);
+    public TableDataInfo<ImUserVo> list(ImUserBo bo, PageQuery pageQuery) {
+        return imUserService.queryPageList(bo, pageQuery);
     }
 
     /**
-     * 导出消息已读记录列表
+     * 导出用户列表
      */
-    @SaCheckPermission("imcore:msgRead:export")
-    @Log(title = "消息已读记录", businessType = BusinessType.EXPORT)
+    @SaCheckPermission("imcore:user:export")
+    @Log(title = "用户", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(ImMsgReadBo bo, HttpServletResponse response) {
-        List<ImMsgReadVo> list = imMsgReadService.queryList(bo);
-        ExcelUtil.exportExcel(list, "消息已读记录", ImMsgReadVo.class, response);
+    public void export(ImUserBo bo, HttpServletResponse response) {
+        List<ImUserVo> list = imUserService.queryList(bo);
+        ExcelUtil.exportExcel(list, "用户", ImUserVo.class, response);
     }
 
     /**
-     * 获取消息已读记录详细信息
+     * 获取用户详细信息
      *
      * @param id 主键
      */
-    @SaCheckPermission("imcore:msgRead:query")
+    @SaCheckPermission("imcore:user:query")
     @GetMapping("/{id}")
-    public R<ImMsgReadVo> getInfo(@NotNull(message = "主键不能为空")
+    public R<ImUserVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
-        return R.ok(imMsgReadService.queryById(id));
+        return R.ok(imUserService.queryById(id));
     }
 
     /**
-     * 新增消息已读记录
+     * 新增用户
      */
-    @SaCheckPermission("imcore:msgRead:add")
-    @Log(title = "消息已读记录", businessType = BusinessType.INSERT)
+    @SaCheckPermission("imcore:user:add")
+    @Log(title = "用户", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) @RequestBody ImMsgReadBo bo) {
-        return toAjax(imMsgReadService.insertByBo(bo));
+    public R<Void> add(@Validated(AddGroup.class) @RequestBody ImUserBo bo) {
+        return toAjax(imUserService.insertByBo(bo));
     }
 
     /**
-     * 修改消息已读记录
+     * 修改用户
      */
-    @SaCheckPermission("imcore:msgRead:edit")
-    @Log(title = "消息已读记录", businessType = BusinessType.UPDATE)
+    @SaCheckPermission("imcore:user:edit")
+    @Log(title = "用户", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
-    public R<Void> edit(@Validated(EditGroup.class) @RequestBody ImMsgReadBo bo) {
-        return toAjax(imMsgReadService.updateByBo(bo));
+    public R<Void> edit(@Validated(EditGroup.class) @RequestBody ImUserBo bo) {
+        return toAjax(imUserService.updateByBo(bo));
     }
 
     /**
-     * 删除消息已读记录
+     * 删除用户
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imcore:msgRead:remove")
-    @Log(title = "消息已读记录", businessType = BusinessType.DELETE)
+    @SaCheckPermission("imcore:user:remove")
+    @Log(title = "用户", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        return toAjax(imMsgReadService.deleteWithValidByIds(List.of(ids), true));
+        return toAjax(imUserService.deleteWithValidByIds(List.of(ids), true));
     }
 }

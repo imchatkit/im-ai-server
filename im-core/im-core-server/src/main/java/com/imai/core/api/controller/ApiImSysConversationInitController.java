@@ -41,7 +41,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/sysConversationInit")
-public class ImSysConversationInitController extends BaseController {
+public class ApiImSysConversationInitController extends BaseController {
 
     private final IImSysConversationInitService imSysConversationInitService;
 

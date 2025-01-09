@@ -41,7 +41,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/msgReference")
-public class ImMsgReferenceController extends BaseController {
+public class ApiImMsgReferenceController extends BaseController {
 
     private final IImMsgReferenceService imMsgReferenceService;
 

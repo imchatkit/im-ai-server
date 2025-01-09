@@ -41,7 +41,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/msgReferencePath")
-public class ImMsgReferencePathController extends BaseController {
+public class ApiImMsgReferencePathController extends BaseController {
 
     private final IImMsgReferencePathService imMsgReferencePathService;
 

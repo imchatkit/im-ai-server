@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/openapi/v1/user")
-public class ImUserController extends BaseController {
+public class OpenApiImUserController extends BaseController {
 
     private final IImUserService imUserService;
 

@@ -41,7 +41,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/groupAnnouncement")
-public class ImGroupAnnouncementController extends BaseController {
+public class ApiImGroupAnnouncementController extends BaseController {
 
     private final IImGroupAnnouncementService imGroupAnnouncementService;
 

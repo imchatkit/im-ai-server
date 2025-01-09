@@ -1,9 +1,9 @@
 package com.imai.core.api.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.imai.core.domain.bo.ImFriendBo;
-import com.imai.core.domain.vo.ImFriendVo;
-import com.imai.core.service.IImFriendService;
+import com.imai.core.domain.bo.ImSyncBo;
+import com.imai.core.domain.vo.ImSyncVo;
+import com.imai.core.service.IImSyncService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 好友关系
- * 前端访问路由地址为:/imai/friend
+ * 多端同步
+ * 前端访问路由地址为:/imai/sync
  *
  * @author wei
  * @date 2025-01-07
@@ -40,75 +40,75 @@ import java.util.List;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/friend")
-public class ImFriendController extends BaseController {
+@RequestMapping("/api/v1/sync")
+public class ApiImSyncController extends BaseController {
 
-    private final IImFriendService imFriendService;
+    private final IImSyncService imSyncService;
 
     /**
-     * 查询好友关系列表
+     * 查询多端同步列表
      */
-    @SaCheckPermission("imcore:friend:list")
+    @SaCheckPermission("imcore:sync:list")
     @GetMapping("/list")
-    public TableDataInfo<ImFriendVo> list(ImFriendBo bo, PageQuery pageQuery) {
-        return imFriendService.queryPageList(bo, pageQuery);
+    public TableDataInfo<ImSyncVo> list(ImSyncBo bo, PageQuery pageQuery) {
+        return imSyncService.queryPageList(bo, pageQuery);
     }
 
     /**
-     * 导出好友关系列表
+     * 导出多端同步列表
      */
-    @SaCheckPermission("imcore:friend:export")
-    @Log(title = "好友关系", businessType = BusinessType.EXPORT)
+    @SaCheckPermission("imcore:sync:export")
+    @Log(title = "多端同步", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(ImFriendBo bo, HttpServletResponse response) {
-        List<ImFriendVo> list = imFriendService.queryList(bo);
-        ExcelUtil.exportExcel(list, "好友关系", ImFriendVo.class, response);
+    public void export(ImSyncBo bo, HttpServletResponse response) {
+        List<ImSyncVo> list = imSyncService.queryList(bo);
+        ExcelUtil.exportExcel(list, "多端同步", ImSyncVo.class, response);
     }
 
     /**
-     * 获取好友关系详细信息
+     * 获取多端同步详细信息
      *
      * @param id 主键
      */
-    @SaCheckPermission("imcore:friend:query")
+    @SaCheckPermission("imcore:sync:query")
     @GetMapping("/{id}")
-    public R<ImFriendVo> getInfo(@NotNull(message = "主键不能为空")
+    public R<ImSyncVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
-        return R.ok(imFriendService.queryById(id));
+        return R.ok(imSyncService.queryById(id));
     }
 
     /**
-     * 新增好友关系
+     * 新增多端同步
      */
-    @SaCheckPermission("imcore:friend:add")
-    @Log(title = "好友关系", businessType = BusinessType.INSERT)
+    @SaCheckPermission("imcore:sync:add")
+    @Log(title = "多端同步", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) @RequestBody ImFriendBo bo) {
-        return toAjax(imFriendService.insertByBo(bo));
+    public R<Void> add(@Validated(AddGroup.class) @RequestBody ImSyncBo bo) {
+        return toAjax(imSyncService.insertByBo(bo));
     }
 
     /**
-     * 修改好友关系
+     * 修改多端同步
      */
-    @SaCheckPermission("imcore:friend:edit")
-    @Log(title = "好友关系", businessType = BusinessType.UPDATE)
+    @SaCheckPermission("imcore:sync:edit")
+    @Log(title = "多端同步", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
-    public R<Void> edit(@Validated(EditGroup.class) @RequestBody ImFriendBo bo) {
-        return toAjax(imFriendService.updateByBo(bo));
+    public R<Void> edit(@Validated(EditGroup.class) @RequestBody ImSyncBo bo) {
+        return toAjax(imSyncService.updateByBo(bo));
     }
 
     /**
-     * 删除好友关系
+     * 删除多端同步
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imcore:friend:remove")
-    @Log(title = "好友关系", businessType = BusinessType.DELETE)
+    @SaCheckPermission("imcore:sync:remove")
+    @Log(title = "多端同步", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        return toAjax(imFriendService.deleteWithValidByIds(List.of(ids), true));
+        return toAjax(imSyncService.deleteWithValidByIds(List.of(ids), true));
     }
 }

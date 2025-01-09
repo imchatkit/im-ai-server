@@ -41,7 +41,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/channel")
-public class ImChannelController extends BaseController {
+public class ApiImChannelController extends BaseController {
 
     private final IImChannelService imChannelService;
 

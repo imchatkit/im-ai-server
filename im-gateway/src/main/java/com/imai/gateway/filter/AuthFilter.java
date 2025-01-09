@@ -1,6 +1,7 @@
 package com.imai.gateway.filter;
 
 import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.exception.NotPermissionException;
 import cn.dev33.satoken.httpauth.basic.SaHttpBasicUtil;
 import cn.dev33.satoken.reactor.context.SaReactorSyncHolder;
 import cn.dev33.satoken.reactor.filter.SaReactorFilter;
@@ -9,10 +10,12 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
 import com.imai.gateway.config.properties.IgnoreWhiteProperties;
 import org.dromara.common.core.constant.HttpStatus;
+import org.dromara.common.core.enums.UserType;
 import org.dromara.common.core.exception.SseException;
 import org.dromara.common.core.utils.SpringUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.satoken.utils.LoginHelper;
+import org.dromara.system.api.model.LoginUser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -41,14 +44,31 @@ public class AuthFilter {
                     .notMatch(ignoreWhite.getWhites())
                     .check(r -> {
                         ServerHttpRequest request = SaReactorSyncHolder.getContext().getRequest();
+                        String path = request.getURI().getPath();
+
                         // 检查是否登录 是否有token
                         try {
                             StpUtil.checkLogin();
                         } catch (NotLoginException e) {
-                            if (request.getURI().getPath().contains("sse")) {
+                            if (path.contains("sse")) {
                                 throw new SseException(e.getMessage(), e.getCode());
                             } else {
                                 throw e;
+                            }
+                        }
+
+                        // IM开放API(第三方服务调用),不校验token
+                        if (path.startsWith("/openapi/")) {
+                            // 可以添加API签名验证等
+                            return;
+                        }
+                        // IM用户API,只校验登录状态
+                        else if (path.startsWith("/im/api")) {
+                            LoginUser loginUser = LoginHelper.getLoginUser();
+                            if (!UserType.IM_USER.getUserType().equals(loginUser.getUserType())) {
+                                throw new NotPermissionException("无访问权限");
+                            }else{
+                                return;
                             }
                         }
 

@@ -1,9 +1,9 @@
 package com.imai.core.api.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.imai.core.domain.bo.ImWorkspaceBo;
-import com.imai.core.domain.vo.ImWorkspaceVo;
-import com.imai.core.service.IImWorkspaceService;
+import com.imai.core.domain.bo.ImMsgReadBo;
+import com.imai.core.domain.vo.ImMsgReadVo;
+import com.imai.core.service.IImMsgReadService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 工作空间
- * 前端访问路由地址为:/imai/workspace
+ * 消息已读记录
+ * 前端访问路由地址为:/imai/msgRead
  *
  * @author wei
  * @date 2025-01-07
@@ -40,75 +40,75 @@ import java.util.List;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/workspace")
-public class ImWorkspaceController extends BaseController {
+@RequestMapping("/api/v1/msgRead")
+public class ApiImMsgReadController extends BaseController {
 
-    private final IImWorkspaceService imWorkspaceService;
+    private final IImMsgReadService imMsgReadService;
 
     /**
-     * 查询工作空间列表
+     * 查询消息已读记录列表
      */
-    @SaCheckPermission("imcore:workspace:list")
+    @SaCheckPermission("imcore:msgRead:list")
     @GetMapping("/list")
-    public TableDataInfo<ImWorkspaceVo> list(ImWorkspaceBo bo, PageQuery pageQuery) {
-        return imWorkspaceService.queryPageList(bo, pageQuery);
+    public TableDataInfo<ImMsgReadVo> list(ImMsgReadBo bo, PageQuery pageQuery) {
+        return imMsgReadService.queryPageList(bo, pageQuery);
     }
 
     /**
-     * 导出工作空间列表
+     * 导出消息已读记录列表
      */
-    @SaCheckPermission("imcore:workspace:export")
-    @Log(title = "工作空间", businessType = BusinessType.EXPORT)
+    @SaCheckPermission("imcore:msgRead:export")
+    @Log(title = "消息已读记录", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(ImWorkspaceBo bo, HttpServletResponse response) {
-        List<ImWorkspaceVo> list = imWorkspaceService.queryList(bo);
-        ExcelUtil.exportExcel(list, "工作空间", ImWorkspaceVo.class, response);
+    public void export(ImMsgReadBo bo, HttpServletResponse response) {
+        List<ImMsgReadVo> list = imMsgReadService.queryList(bo);
+        ExcelUtil.exportExcel(list, "消息已读记录", ImMsgReadVo.class, response);
     }
 
     /**
-     * 获取工作空间详细信息
+     * 获取消息已读记录详细信息
      *
      * @param id 主键
      */
-    @SaCheckPermission("imcore:workspace:query")
+    @SaCheckPermission("imcore:msgRead:query")
     @GetMapping("/{id}")
-    public R<ImWorkspaceVo> getInfo(@NotNull(message = "主键不能为空")
+    public R<ImMsgReadVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
-        return R.ok(imWorkspaceService.queryById(id));
+        return R.ok(imMsgReadService.queryById(id));
     }
 
     /**
-     * 新增工作空间
+     * 新增消息已读记录
      */
-    @SaCheckPermission("imcore:workspace:add")
-    @Log(title = "工作空间", businessType = BusinessType.INSERT)
+    @SaCheckPermission("imcore:msgRead:add")
+    @Log(title = "消息已读记录", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) @RequestBody ImWorkspaceBo bo) {
-        return toAjax(imWorkspaceService.insertByBo(bo));
+    public R<Void> add(@Validated(AddGroup.class) @RequestBody ImMsgReadBo bo) {
+        return toAjax(imMsgReadService.insertByBo(bo));
     }
 
     /**
-     * 修改工作空间
+     * 修改消息已读记录
      */
-    @SaCheckPermission("imcore:workspace:edit")
-    @Log(title = "工作空间", businessType = BusinessType.UPDATE)
+    @SaCheckPermission("imcore:msgRead:edit")
+    @Log(title = "消息已读记录", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
-    public R<Void> edit(@Validated(EditGroup.class) @RequestBody ImWorkspaceBo bo) {
-        return toAjax(imWorkspaceService.updateByBo(bo));
+    public R<Void> edit(@Validated(EditGroup.class) @RequestBody ImMsgReadBo bo) {
+        return toAjax(imMsgReadService.updateByBo(bo));
     }
 
     /**
-     * 删除工作空间
+     * 删除消息已读记录
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imcore:workspace:remove")
-    @Log(title = "工作空间", businessType = BusinessType.DELETE)
+    @SaCheckPermission("imcore:msgRead:remove")
+    @Log(title = "消息已读记录", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        return toAjax(imWorkspaceService.deleteWithValidByIds(List.of(ids), true));
+        return toAjax(imMsgReadService.deleteWithValidByIds(List.of(ids), true));
     }
 }

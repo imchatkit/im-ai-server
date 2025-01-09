@@ -41,7 +41,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/msgReceiver")
-public class ImMsgReceiverController extends BaseController {
+public class ApiImMsgReceiverController extends BaseController {
 
     private final IImMsgReceiverService imMsgReceiverService;
 

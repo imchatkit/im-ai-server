@@ -41,7 +41,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/groupSetting")
-public class ImGroupSettingController extends BaseController {
+public class ApiImGroupSettingController extends BaseController {
 
     private final IImGroupSettingService imGroupSettingService;
 

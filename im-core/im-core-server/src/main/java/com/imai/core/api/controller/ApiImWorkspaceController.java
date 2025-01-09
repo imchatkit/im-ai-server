@@ -1,9 +1,9 @@
 package com.imai.core.api.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.imai.core.domain.bo.ImUserBo;
-import com.imai.core.domain.vo.ImUserVo;
-import com.imai.core.service.IImUserService;
+import com.imai.core.domain.bo.ImWorkspaceBo;
+import com.imai.core.domain.vo.ImWorkspaceVo;
+import com.imai.core.service.IImWorkspaceService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 用户
- * 前端访问路由地址为:/imai/user
+ * 工作空间
+ * 前端访问路由地址为:/imai/workspace
  *
  * @author wei
  * @date 2025-01-07
@@ -40,75 +40,75 @@ import java.util.List;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/user")
-public class ImUserController extends BaseController {
+@RequestMapping("/api/v1/workspace")
+public class ApiImWorkspaceController extends BaseController {
 
-    private final IImUserService imUserService;
+    private final IImWorkspaceService imWorkspaceService;
 
     /**
-     * 查询用户列表
+     * 查询工作空间列表
      */
-    @SaCheckPermission("imcore:user:list")
+    @SaCheckPermission("imcore:workspace:list")
     @GetMapping("/list")
-    public TableDataInfo<ImUserVo> list(ImUserBo bo, PageQuery pageQuery) {
-        return imUserService.queryPageList(bo, pageQuery);
+    public TableDataInfo<ImWorkspaceVo> list(ImWorkspaceBo bo, PageQuery pageQuery) {
+        return imWorkspaceService.queryPageList(bo, pageQuery);
     }
 
     /**
-     * 导出用户列表
+     * 导出工作空间列表
      */
-    @SaCheckPermission("imcore:user:export")
-    @Log(title = "用户", businessType = BusinessType.EXPORT)
+    @SaCheckPermission("imcore:workspace:export")
+    @Log(title = "工作空间", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(ImUserBo bo, HttpServletResponse response) {
-        List<ImUserVo> list = imUserService.queryList(bo);
-        ExcelUtil.exportExcel(list, "用户", ImUserVo.class, response);
+    public void export(ImWorkspaceBo bo, HttpServletResponse response) {
+        List<ImWorkspaceVo> list = imWorkspaceService.queryList(bo);
+        ExcelUtil.exportExcel(list, "工作空间", ImWorkspaceVo.class, response);
     }
 
     /**
-     * 获取用户详细信息
+     * 获取工作空间详细信息
      *
      * @param id 主键
      */
-    @SaCheckPermission("imcore:user:query")
+    @SaCheckPermission("imcore:workspace:query")
     @GetMapping("/{id}")
-    public R<ImUserVo> getInfo(@NotNull(message = "主键不能为空")
+    public R<ImWorkspaceVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
-        return R.ok(imUserService.queryById(id));
+        return R.ok(imWorkspaceService.queryById(id));
     }
 
     /**
-     * 新增用户
+     * 新增工作空间
      */
-    @SaCheckPermission("imcore:user:add")
-    @Log(title = "用户", businessType = BusinessType.INSERT)
+    @SaCheckPermission("imcore:workspace:add")
+    @Log(title = "工作空间", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) @RequestBody ImUserBo bo) {
-        return toAjax(imUserService.insertByBo(bo));
+    public R<Void> add(@Validated(AddGroup.class) @RequestBody ImWorkspaceBo bo) {
+        return toAjax(imWorkspaceService.insertByBo(bo));
     }
 
     /**
-     * 修改用户
+     * 修改工作空间
      */
-    @SaCheckPermission("imcore:user:edit")
-    @Log(title = "用户", businessType = BusinessType.UPDATE)
+    @SaCheckPermission("imcore:workspace:edit")
+    @Log(title = "工作空间", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
-    public R<Void> edit(@Validated(EditGroup.class) @RequestBody ImUserBo bo) {
-        return toAjax(imUserService.updateByBo(bo));
+    public R<Void> edit(@Validated(EditGroup.class) @RequestBody ImWorkspaceBo bo) {
+        return toAjax(imWorkspaceService.updateByBo(bo));
     }
 
     /**
-     * 删除用户
+     * 删除工作空间
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imcore:user:remove")
-    @Log(title = "用户", businessType = BusinessType.DELETE)
+    @SaCheckPermission("imcore:workspace:remove")
+    @Log(title = "工作空间", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        return toAjax(imUserService.deleteWithValidByIds(List.of(ids), true));
+        return toAjax(imWorkspaceService.deleteWithValidByIds(List.of(ids), true));
     }
 }

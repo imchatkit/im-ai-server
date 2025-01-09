@@ -41,7 +41,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/webhookConfig")
-public class ImWebhookConfigController extends BaseController {
+public class ApiImWebhookConfigController extends BaseController {
 
     private final IImWebhookConfigService imWebhookConfigService;
 

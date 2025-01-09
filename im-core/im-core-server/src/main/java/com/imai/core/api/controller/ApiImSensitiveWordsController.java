@@ -41,7 +41,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/sensitiveWords")
-public class ImSensitiveWordsController extends BaseController {
+public class ApiImSensitiveWordsController extends BaseController {
 
     private final IImSensitiveWordsService imSensitiveWordsService;
 

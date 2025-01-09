@@ -1,9 +1,9 @@
 package com.imai.core.api.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.imai.core.domain.bo.ImMessageBo;
-import com.imai.core.domain.vo.ImMessageVo;
-import com.imai.core.service.IImMessageService;
+import com.imai.core.domain.bo.ImDeviceBo;
+import com.imai.core.domain.vo.ImDeviceVo;
+import com.imai.core.service.IImDeviceService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 消息存储
- * 前端访问路由地址为:/imai/message
+ * 客户端设备
+ * 前端访问路由地址为:/imai/device
  *
  * @author wei
  * @date 2025-01-07
@@ -40,75 +40,75 @@ import java.util.List;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/message")
-public class ImMessageController extends BaseController {
+@RequestMapping("/api/v1/device")
+public class ApiImDeviceController extends BaseController {
 
-    private final IImMessageService imMessageService;
+    private final IImDeviceService imDeviceService;
 
     /**
-     * 查询消息存储列表
+     * 查询客户端设备列表
      */
-    @SaCheckPermission("imcore:message:list")
+    @SaCheckPermission("imcore:device:list")
     @GetMapping("/list")
-    public TableDataInfo<ImMessageVo> list(ImMessageBo bo, PageQuery pageQuery) {
-        return imMessageService.queryPageList(bo, pageQuery);
+    public TableDataInfo<ImDeviceVo> list(ImDeviceBo bo, PageQuery pageQuery) {
+        return imDeviceService.queryPageList(bo, pageQuery);
     }
 
     /**
-     * 导出消息存储列表
+     * 导出客户端设备列表
      */
-    @SaCheckPermission("imcore:message:export")
-    @Log(title = "消息存储", businessType = BusinessType.EXPORT)
+    @SaCheckPermission("imcore:device:export")
+    @Log(title = "客户端设备", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(ImMessageBo bo, HttpServletResponse response) {
-        List<ImMessageVo> list = imMessageService.queryList(bo);
-        ExcelUtil.exportExcel(list, "消息存储", ImMessageVo.class, response);
+    public void export(ImDeviceBo bo, HttpServletResponse response) {
+        List<ImDeviceVo> list = imDeviceService.queryList(bo);
+        ExcelUtil.exportExcel(list, "客户端设备", ImDeviceVo.class, response);
     }
 
     /**
-     * 获取消息存储详细信息
+     * 获取客户端设备详细信息
      *
      * @param id 主键
      */
-    @SaCheckPermission("imcore:message:query")
+    @SaCheckPermission("imcore:device:query")
     @GetMapping("/{id}")
-    public R<ImMessageVo> getInfo(@NotNull(message = "主键不能为空")
+    public R<ImDeviceVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
-        return R.ok(imMessageService.queryById(id));
+        return R.ok(imDeviceService.queryById(id));
     }
 
     /**
-     * 新增消息存储
+     * 新增客户端设备
      */
-    @SaCheckPermission("imcore:message:add")
-    @Log(title = "消息存储", businessType = BusinessType.INSERT)
+    @SaCheckPermission("imcore:device:add")
+    @Log(title = "客户端设备", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) @RequestBody ImMessageBo bo) {
-        return toAjax(imMessageService.insertByBo(bo));
+    public R<Void> add(@Validated(AddGroup.class) @RequestBody ImDeviceBo bo) {
+        return toAjax(imDeviceService.insertByBo(bo));
     }
 
     /**
-     * 修改消息存储
+     * 修改客户端设备
      */
-    @SaCheckPermission("imcore:message:edit")
-    @Log(title = "消息存储", businessType = BusinessType.UPDATE)
+    @SaCheckPermission("imcore:device:edit")
+    @Log(title = "客户端设备", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
-    public R<Void> edit(@Validated(EditGroup.class) @RequestBody ImMessageBo bo) {
-        return toAjax(imMessageService.updateByBo(bo));
+    public R<Void> edit(@Validated(EditGroup.class) @RequestBody ImDeviceBo bo) {
+        return toAjax(imDeviceService.updateByBo(bo));
     }
 
     /**
-     * 删除消息存储
+     * 删除客户端设备
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imcore:message:remove")
-    @Log(title = "消息存储", businessType = BusinessType.DELETE)
+    @SaCheckPermission("imcore:device:remove")
+    @Log(title = "客户端设备", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        return toAjax(imMessageService.deleteWithValidByIds(List.of(ids), true));
+        return toAjax(imDeviceService.deleteWithValidByIds(List.of(ids), true));
     }
 }

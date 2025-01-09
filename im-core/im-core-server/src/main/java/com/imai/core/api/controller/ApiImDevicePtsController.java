@@ -1,9 +1,9 @@
 package com.imai.core.api.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.imai.core.domain.bo.ImGroupBo;
-import com.imai.core.domain.vo.ImGroupVo;
-import com.imai.core.service.IImGroupService;
+import com.imai.core.domain.bo.ImDevicePtsBo;
+import com.imai.core.domain.vo.ImDevicePtsVo;
+import com.imai.core.service.IImDevicePtsService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 群组
- * 前端访问路由地址为:/imai/group
+ * 设备pts
+ * 前端访问路由地址为:/imai/devicePts
  *
  * @author wei
  * @date 2025-01-07
@@ -40,75 +40,75 @@ import java.util.List;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/group")
-public class ImGroupController extends BaseController {
+@RequestMapping("/api/v1/devicePts")
+public class ApiImDevicePtsController extends BaseController {
 
-    private final IImGroupService imGroupService;
+    private final IImDevicePtsService imDevicePtsService;
 
     /**
-     * 查询群组列表
+     * 查询设备pts列表
      */
-    @SaCheckPermission("imcore:group:list")
+    @SaCheckPermission("imcore:devicePts:list")
     @GetMapping("/list")
-    public TableDataInfo<ImGroupVo> list(ImGroupBo bo, PageQuery pageQuery) {
-        return imGroupService.queryPageList(bo, pageQuery);
+    public TableDataInfo<ImDevicePtsVo> list(ImDevicePtsBo bo, PageQuery pageQuery) {
+        return imDevicePtsService.queryPageList(bo, pageQuery);
     }
 
     /**
-     * 导出群组列表
+     * 导出设备pts列表
      */
-    @SaCheckPermission("imcore:group:export")
-    @Log(title = "群组", businessType = BusinessType.EXPORT)
+    @SaCheckPermission("imcore:devicePts:export")
+    @Log(title = "设备pts", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(ImGroupBo bo, HttpServletResponse response) {
-        List<ImGroupVo> list = imGroupService.queryList(bo);
-        ExcelUtil.exportExcel(list, "群组", ImGroupVo.class, response);
+    public void export(ImDevicePtsBo bo, HttpServletResponse response) {
+        List<ImDevicePtsVo> list = imDevicePtsService.queryList(bo);
+        ExcelUtil.exportExcel(list, "设备pts", ImDevicePtsVo.class, response);
     }
 
     /**
-     * 获取群组详细信息
+     * 获取设备pts详细信息
      *
      * @param id 主键
      */
-    @SaCheckPermission("imcore:group:query")
+    @SaCheckPermission("imcore:devicePts:query")
     @GetMapping("/{id}")
-    public R<ImGroupVo> getInfo(@NotNull(message = "主键不能为空")
+    public R<ImDevicePtsVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
-        return R.ok(imGroupService.queryById(id));
+        return R.ok(imDevicePtsService.queryById(id));
     }
 
     /**
-     * 新增群组
+     * 新增设备pts
      */
-    @SaCheckPermission("imcore:group:add")
-    @Log(title = "群组", businessType = BusinessType.INSERT)
+    @SaCheckPermission("imcore:devicePts:add")
+    @Log(title = "设备pts", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) @RequestBody ImGroupBo bo) {
-        return toAjax(imGroupService.insertByBo(bo));
+    public R<Void> add(@Validated(AddGroup.class) @RequestBody ImDevicePtsBo bo) {
+        return toAjax(imDevicePtsService.insertByBo(bo));
     }
 
     /**
-     * 修改群组
+     * 修改设备pts
      */
-    @SaCheckPermission("imcore:group:edit")
-    @Log(title = "群组", businessType = BusinessType.UPDATE)
+    @SaCheckPermission("imcore:devicePts:edit")
+    @Log(title = "设备pts", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
-    public R<Void> edit(@Validated(EditGroup.class) @RequestBody ImGroupBo bo) {
-        return toAjax(imGroupService.updateByBo(bo));
+    public R<Void> edit(@Validated(EditGroup.class) @RequestBody ImDevicePtsBo bo) {
+        return toAjax(imDevicePtsService.updateByBo(bo));
     }
 
     /**
-     * 删除群组
+     * 删除设备pts
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imcore:group:remove")
-    @Log(title = "群组", businessType = BusinessType.DELETE)
+    @SaCheckPermission("imcore:devicePts:remove")
+    @Log(title = "设备pts", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        return toAjax(imGroupService.deleteWithValidByIds(List.of(ids), true));
+        return toAjax(imDevicePtsService.deleteWithValidByIds(List.of(ids), true));
     }
 }
