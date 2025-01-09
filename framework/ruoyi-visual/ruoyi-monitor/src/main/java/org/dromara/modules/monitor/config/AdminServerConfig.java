@@ -12,7 +12,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.util.concurrent.Executor;
 
 /**
- * springboot-admin server配置类
+ * springboot-console server配置类
  *
  * @author Lion Li
  */

@@ -30,7 +30,7 @@ public interface TenantConstants {
     /**
      * 租户管理员角色 roleKey
      */
-    String TENANT_ADMIN_ROLE_KEY = "admin";
+    String TENANT_ADMIN_ROLE_KEY = "console";
 
     /**
      * 租户管理员角色名称

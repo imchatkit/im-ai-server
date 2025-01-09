@@ -13,7 +13,7 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
- * admin 监控 安全配置
+ * console 监控 安全配置
  *
  * @author Lion Li
  */

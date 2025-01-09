@@ -20,6 +20,16 @@ public enum UserType {
     SYS_USER("sys_user"),
 
     /**
+     * IM用户
+     */
+    IM_USER("im_user"),
+
+    /**
+     * IM_API用户
+     */
+    IM_API_USER("im_api_user"),
+
+    /**
      * app端
      */
     APP_USER("app_user");

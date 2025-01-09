@@ -73,7 +73,7 @@ spring:
     nacos:
       discovery:
         metadata:
-          # admin 监控账号密码
+          # console 监控账号密码
           username: imadmin
           userpassword: a123456a
     # sentinel 配置

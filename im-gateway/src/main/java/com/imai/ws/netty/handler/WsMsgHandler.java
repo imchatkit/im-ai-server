@@ -1,12 +1,12 @@
 package com.imai.ws.netty.handler;
 
 
+import com.imai.ws.netty.user.SendMsg;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.common.json.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +21,8 @@ public class WsMsgHandler extends SimpleChannelInboundHandler<TextWebSocketFrame
 
 //    @Autowired
 //    private ReceiverProducer receiverProducer;
+    @Autowired
+    private SendMsg sendMsg;
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
@@ -37,9 +39,8 @@ public class WsMsgHandler extends SimpleChannelInboundHandler<TextWebSocketFrame
 //        mqMsgData.setFrom(userId);
 //        receiverProducer.sendMessage(mqMsgData);
 
-                log.info("[wsRead]data:{}",  msg.text());
-
-
+        log.info("[wsRead]data:{}", msg.text());
+        sendMsg.write( "res:"+msg.text(),ctx.channel());
     }
 
 

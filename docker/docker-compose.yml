@@ -501,7 +501,7 @@ services:
       TZ: Asia/Shanghai
       # 服务地址 用于指定外网ip或域名
       GF_SERVER_ROOT_URL: ""
-      # admin 管理员密码
+      # console 管理员密码
       GF_SECURITY_ADMIN_PASSWORD: 123456
     ports:
       - "3000:3000"
