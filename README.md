@@ -6,7 +6,7 @@ IM-AI-Server 是一个开源的企业级即时通讯系统,采用分布式微服
 
 - 文档：[IM AI 详细文档](https://github.com/imchatkit/im-doc)
 
-![IM集成流程](.\doc\img\IM_integration_process.png)
+![IM集成流程](/doc/img/IM_integration_process.png)
 
 ## 🚀 特性
 
