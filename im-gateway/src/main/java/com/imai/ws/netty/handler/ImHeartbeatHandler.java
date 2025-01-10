@@ -52,7 +52,7 @@ public class ImHeartbeatHandler extends SimpleChannelInboundHandler<TextWebSocke
 
         String message = msg.text();
         if (message.equals(PONG_MSG)) {
-            log.info("[RecPong]: {},userId:{},device:{},channelId:{}", msg.text(), userId, device, channelId);
+            log.info("[ReadPong]: {},userId:{},device:{},channelId:{}", msg.text(), userId, device, channelId);
             return;
         }
         if (message.equals(PING_MSG)) {

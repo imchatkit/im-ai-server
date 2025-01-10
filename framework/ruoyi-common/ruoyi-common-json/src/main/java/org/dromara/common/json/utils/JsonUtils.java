@@ -47,6 +47,16 @@ public class JsonUtils {
             throw new RuntimeException(e);
         }
     }
+    public static String toJsonStringPrettyPrint(Object object) {
+        if (ObjectUtil.isNull(object)) {
+            return null;
+        }
+        try {
+            return OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * 将JSON格式的字符串转换为指定类型的对象
