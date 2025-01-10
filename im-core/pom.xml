@@ -17,5 +17,6 @@
         <module>rest-open-api-server</module>
         <module>dubbo-interface</module>
         <module>im-core-server</module>
+        <module>im-entity</module>
     </modules>
 </project>

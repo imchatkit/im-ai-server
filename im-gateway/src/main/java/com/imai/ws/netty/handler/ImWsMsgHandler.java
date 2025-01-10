@@ -1,12 +1,14 @@
 package com.imai.ws.netty.handler;
 
 
+import com.imai.dispatcher.ImDispatcher;
 import com.imai.ws.netty.user.SendMsgUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,10 +21,13 @@ import org.springframework.stereotype.Component;
 @ChannelHandler.Sharable
 public class ImWsMsgHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
-//    @Autowired
+    //    @Autowired
 //    private ReceiverProducer receiverProducer;
     @Autowired
     private SendMsgUtil sendMsgUtil;
+
+    @DubboReference
+    private ImDispatcher imDispatcher;
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
@@ -40,7 +45,8 @@ public class ImWsMsgHandler extends SimpleChannelInboundHandler<TextWebSocketFra
 //        receiverProducer.sendMessage(mqMsgData);
 
         log.info("[WsRead]:{}", msg.text());
-        sendMsgUtil.send( "res:"+msg.text(),ctx.channel());
+        imDispatcher.dispatch(msg.text());
+        sendMsgUtil.send("res:" + msg.text(), ctx.channel());
     }
 
 

@@ -1,5 +1,6 @@
 package com.imai;
 
+import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -11,6 +12,7 @@ import org.springframework.boot.context.metrics.buffering.BufferingApplicationSt
  * @author wei
  */
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+@EnableDubbo
 public class ImGatewayApplication {
     public static void main(String[] args) {
         // 标记 sentinel 类型为 网关
