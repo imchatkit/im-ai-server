@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 系统会话初始化
+ * 管理系统/系统会话初始化
  * 前端访问路由地址为:/imai/sysConversationInit
  *
  * @author wei

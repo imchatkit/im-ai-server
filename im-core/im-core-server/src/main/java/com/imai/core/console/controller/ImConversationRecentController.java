@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 首页对话列
+ * 管理系统/首页对话列
  * 前端访问路由地址为:/imai/conversationRecent
  *
  * @author wei

@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 敏感词过滤
+ * 管理系统/敏感词过滤
  * 前端访问路由地址为:/imai/sensitiveWords
  *
  * @author wei

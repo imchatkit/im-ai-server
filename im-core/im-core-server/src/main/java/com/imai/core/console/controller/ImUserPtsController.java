@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 用户pts
+ * 管理系统/用户pts
  * 前端访问路由地址为:/imai/userPts
  *
  * @author wei

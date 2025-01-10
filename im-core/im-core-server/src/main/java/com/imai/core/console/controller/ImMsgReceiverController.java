@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 消息接收
+ * 管理系统/消息接收
  * 前端访问路由地址为:/imai/msgReceiver
  *
  * @author wei

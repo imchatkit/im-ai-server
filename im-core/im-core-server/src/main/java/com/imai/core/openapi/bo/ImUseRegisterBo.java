@@ -1,17 +1,18 @@
 package com.imai.core.openapi.bo;
 
 import com.imai.core.domain.ImUser;
+import com.imai.core.domain.bo.ImUserBo;
+
 import io.github.linpeilie.annotations.AutoMapper;
+import io.github.linpeilie.annotations.AutoMappers;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.dromara.common.core.validate.AddGroup;
 import org.dromara.common.core.validate.EditGroup;
-import org.dromara.common.mybatis.core.domain.BaseEntity;
 
+import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  *  注册im_user
@@ -20,8 +21,14 @@ import java.util.Date;
  * @date 2025-01-07
  */
 @Data
-@AutoMapper(target = ImUser.class, reverseConvertGenerate = false)
+@AutoMappers({
+    @AutoMapper(target = ImUser.class, reverseConvertGenerate = false),
+    @AutoMapper(target = ImUserBo.class, reverseConvertGenerate = false)
+})
 public class ImUseRegisterBo  implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     /**
      * 主键id
@@ -34,9 +41,15 @@ public class ImUseRegisterBo  implements Serializable {
      */
     @NotBlank(message = "不能为空", groups = { AddGroup.class, EditGroup.class })
     private String nickname;
-
     /**
-     * 设备类型 See {@link org.dromara.common.core.enums.DeviceType}
+     * 设备类型 
+     * 参考 {@link org.dromara.common.core.enums.DeviceType}
+     * 可选值:
+     * - im_app_ios: iOS端
+     * - im_app_android: Android端  
+     * - im_web: Web端
+     * - im_pc_win: Windows端
+     * - im_pc_mac: Mac端
      */
     private String device;
 

@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 /**
- * 用户
- * 前端访问路由地址为:/imai/user
+ * 开放接口/用户
+ * 前端访问路由地址为: /openapi/v1/user
  *
  * @author wei
  * @date 2025-01-07
