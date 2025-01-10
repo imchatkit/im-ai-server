@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 消息回调记录
- * 前端访问路由地址为:/imai/callbackRecord
+ * IM应用/消息回调记录
+ * 前端访问路由地址为:/api/v1/callbackRecord
  *
  * @author wei
  * @date 2025-01-07

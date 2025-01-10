@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 敏感词过滤
- * 前端访问路由地址为:/imai/sensitiveWords
+ * IM应用/敏感词过滤
+ * 前端访问路由地址为:/api/v1/sensitiveWords
  *
  * @author wei
  * @date 2025-01-07

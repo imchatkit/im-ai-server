@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 好友申请
- * 前端访问路由地址为:/imai/friendRequest
+ * IM应用/好友申请
+ * 前端访问路由地址为:/api/v1/friendRequest
  *
  * @author wei
  * @date 2025-01-07
