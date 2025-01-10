@@ -25,7 +25,7 @@ import java.io.Serializable;
     @AutoMapper(target = ImUser.class, reverseConvertGenerate = false),
     @AutoMapper(target = ImUserBo.class, reverseConvertGenerate = false)
 })
-public class ImUseRegisterBo  implements Serializable {
+public class OpenApiImUseRegisterBo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -42,11 +42,11 @@ public class ImUseRegisterBo  implements Serializable {
     @NotBlank(message = "不能为空", groups = { AddGroup.class, EditGroup.class })
     private String nickname;
     /**
-     * 设备类型 
+     * 设备类型
      * 参考 {@link org.dromara.common.core.enums.DeviceType}
      * 可选值:
      * - im_app_ios: iOS端
-     * - im_app_android: Android端  
+     * - im_app_android: Android端
      * - im_web: Web端
      * - im_pc_win: Windows端
      * - im_pc_mac: Mac端
