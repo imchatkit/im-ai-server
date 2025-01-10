@@ -1,12 +1,14 @@
 package com.imai.ws.netty.handler;
 
 
-import com.imai.ws.netty.user.SendMsg;
+import com.imai.dispatcher.ImDispatcher;
+import com.imai.ws.netty.user.SendMsgUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,12 +19,15 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @ChannelHandler.Sharable
-public class WsMsgHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
+public class ImWsMsgHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
-//    @Autowired
+    //    @Autowired
 //    private ReceiverProducer receiverProducer;
     @Autowired
-    private SendMsg sendMsg;
+    private SendMsgUtil sendMsgUtil;
+
+    @DubboReference
+    private ImDispatcher imDispatcher;
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
@@ -30,8 +35,8 @@ public class WsMsgHandler extends SimpleChannelInboundHandler<TextWebSocketFrame
 //        String device = ctx.channel().attr(ChannelAttributes.DEVICE_TYPE).get();
 //        String channelId = ctx.channel().id().asLongText();
 //
-//        log.info("[wsRead]_userId:{},channelId:{},device:{},\n-data:{}", userId, channelId, device, msg.text());
-//
+//        log.info("[WsRead]_userId:{},channelId:{},device:{},\n-data:{}", userId, channelId, device, msg.text());
+
 //        ReqMessageData reqMessageData = JsonUtils.parseObject(msg.text(), ReqMessageData.class);
 //        MqMsgData mqMsgData = new MqMsgData();
 //        mqMsgData.setReqMessageData(reqMessageData);
@@ -39,8 +44,9 @@ public class WsMsgHandler extends SimpleChannelInboundHandler<TextWebSocketFrame
 //        mqMsgData.setFrom(userId);
 //        receiverProducer.sendMessage(mqMsgData);
 
-        log.info("[wsRead]data:{}", msg.text());
-        sendMsg.write( "res:"+msg.text(),ctx.channel());
+        log.info("[WsRead]:{}", msg.text());
+        imDispatcher.dispatch(msg.text());
+        sendMsgUtil.send("res:" + msg.text(), ctx.channel());
     }
 
 

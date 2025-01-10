@@ -1,6 +1,6 @@
 package com.imai.ws.netty.run;
 
-import com.imai.ws.netty.config.NettyConfig;
+import com.imai.ws.netty.config.ImNettyConfig;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -13,16 +13,16 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class NettyServer {
+public class ImNettyServer {
 
     @Resource
-    private NettyConfig nettyConfig;
+    private ImNettyConfig imNettyConfig;
 
     @Resource
-    private MyChannelInitializer myChannelInitializer;
+    private ImChannelInitializer imChannelInitializer;
 
     public void start() throws Exception {
-        int port = nettyConfig.getPort();
+        int port = imNettyConfig.getPort();
 
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -30,7 +30,7 @@ public class NettyServer {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
-                .childHandler(myChannelInitializer)
+                .childHandler(imChannelInitializer)
                 // TCP参数优化
                 .option(ChannelOption.SO_BACKLOG, 1024)
                 .childOption(ChannelOption.TCP_NODELAY, true)

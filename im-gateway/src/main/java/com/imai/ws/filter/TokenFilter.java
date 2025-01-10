@@ -35,7 +35,7 @@ package com.imai.ws.filter;//package com.recircle.gateway.filter;
 //
 //@Slf4j
 //@Component
-//public class TokenAuthFilter implements GlobalFilter, Ordered {
+//public class TokenFilter implements GlobalFilter, Ordered {
 //
 //    @Autowired
 //    Algorithm algorithm;

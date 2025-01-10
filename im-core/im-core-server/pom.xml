@@ -16,6 +16,12 @@
 
         <dependency>
             <groupId>com.feiyancloud</groupId>
+            <artifactId>dubbo-interface</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-nacos</artifactId>
         </dependency>
 

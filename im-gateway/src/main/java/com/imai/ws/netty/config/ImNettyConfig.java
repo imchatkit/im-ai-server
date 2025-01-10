@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @Data
-public class NettyConfig {
+public class ImNettyConfig {
 
     @Value("${netty.port}")
     private int port;

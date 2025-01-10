@@ -1,150 +1,234 @@
 package com.imai.ws.netty.user;
 
-
-import com.imai.ws.netty.config.ChannelAttributes;
+import com.imai.ws.netty.config.ImChannelAttributes;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.stream.Collectors;
 
 /**
- * Netty的channel与用户id关系的键值对，支持一个用户多个连接，并保存设备类型信息
- * <p>
- * 该类用于管理用户ID与连接ID之间的关系，以及每个连接的设备类型信息
+ * Netty Channel管理器
+ * 管理WebSocket连接的Channel与用户关系，支持用户多端在线
  *
  * @author wei
- * @date 2024/10/27 11:32
  */
 @Component
 @Slf4j
 public class ChannelUserHolder {
 
-    // 用户ID与连接ID集合的映射关系, Key: userId, Value: channelId集合
+    /**
+     * 用户ID -> 该用户的所有channelId集合
+     * Key: userId
+     * Value: Set<channelId>
+     */
     private final Map<Long, Set<String>> userChannelsMap = new ConcurrentHashMap<>();
 
-    // 连接ID与Channel对象的映射关系, Key: channelId, Value: Netty.Channel
+    /**
+     * channelId -> Channel对象映射
+     * Key: channelId
+     * Value: Channel
+     */
     private final Map<String, Channel> channelMap = new ConcurrentHashMap<>();
 
     /**
-     * 添加新的Channel到管理器中
+     * 添加新的Channel连接
      *
      * @param userId     用户ID
      * @param channel    Channel对象
-     * @param deviceType 设备类型，如 PC、手机等
+     * @param deviceType 设备类型
+     * @return 是否添加成功
      */
-    public void addChannel(Long userId, Channel channel, String deviceType) {
-        if (userId == null || channel == null) {
-//            log.warn("Invalid input: userId or channel is null");
-            return;
+    public boolean addChannel(Long userId, Channel channel, String deviceType) {
+        try {
+            // 参数校验
+            Assert.notNull(userId, "UserId cannot be null");
+            Assert.notNull(channel, "Channel cannot be null");
+            Assert.hasText(deviceType, "DeviceType cannot be empty");
+
+            String channelId = channel.id().asLongText();
+            Assert.hasText(channelId, "ChannelId cannot be empty");
+
+            // 如果已存在相同channelId的连接，先移除旧连接
+            Channel existingChannel = channelMap.get(channelId);
+            if (existingChannel != null) {
+                log.info("[channel_replace] Replacing existing channel - userId:{}, channelId:{}, deviceType:{}",
+                    userId, channelId, deviceType);
+                removeChannel(existingChannel);
+            }
+
+            // 添加用户与channelId的映射
+            Set<String> userChannels = userChannelsMap.computeIfAbsent(userId,
+                k -> new ConcurrentSkipListSet<>());
+            userChannels.add(channelId);
+
+            // 保存channelId与Channel的映射
+            channelMap.put(channelId, channel);
+
+            // 设置Channel属性
+            channel.attr(ImChannelAttributes.USER_ID).set(userId);
+            channel.attr(ImChannelAttributes.DEVICE_TYPE).set(deviceType);
+
+            log.info("[channel_add] Channel added successfully - userId:{}, channelId:{}, deviceType:{}",
+                userId, channelId, deviceType);
+            return true;
+        } catch (Exception e) {
+            log.error("[channel_add_error] Failed to add channel - userId:{}, error:{}", 
+                userId, e.getMessage(), e);
+            return false;
         }
-
-        String channelId = channel.id().asLongText();
-        if (channelId == null) {
-            log.warn("Invalid channel ID for user: {}", userId);
-            return;
-        }
-
-        // 检查是否已有相同ID的连接存在
-        if (channelMap.containsKey(channelId)) {
-            log.warn("Channel with ID {} already exists, replacing old connection", channelId);
-            removeChannel(channelMap.get(channelId)); // 先移除旧的连接
-        }
-
-        // 添加连接ID到用户ID的映射关系
-        userChannelsMap.computeIfAbsent(userId, k -> new ConcurrentSkipListSet<>()).add(channelId);
-
-        // 将连接ID与Channel对象关联存储
-        channelMap.put(channelId, channel);
-
-        channel.attr(ChannelAttributes.USER_ID).set(userId);
-        channel.attr(ChannelAttributes.DEVICE_TYPE).set(deviceType);
-
-        log.info("Added_channel:{},user:{}", channelId, userId);
     }
 
     /**
-     * 根据用户ID获取其所有连接ID集合
+     * 获取用户的所有在线Channel
      *
      * @param userId 用户ID
-     * @return 该用户的所有连接ID集合
+     * @return 用户的所有在线Channel列表
      */
-    public Set<String> getChannelsByUserId(Long userId) {
-        if (userId == null) {
-            log.warn("Invalid input: userId is null");
-            return Collections.emptySet();
-        }
+    public List<Channel> getUserChannels(Long userId) {
+        Assert.notNull(userId, "UserId cannot be null");
 
-        Set<String> channelIds = userChannelsMap.get(userId);
-        if (channelIds == null) {
-            return Collections.emptySet();
-        }
-
-        // 返回不可变集合视图，防止外部修改
-        return Collections.unmodifiableSet(channelIds);
+        Set<String> channelIds = userChannelsMap.getOrDefault(userId, Collections.emptySet());
+        return channelIds.stream()
+            .map(this::getChannelByChannelId)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
+    /**
+     * 获取用户指定设备类型的Channel
+     *
+     * @param userId     用户ID
+     * @param deviceType 设备类型
+     * @return 指定设备类型的Channel列表
+     */
+    public List<Channel> getUserChannelsByDevice(Long userId, String deviceType) {
+        Assert.notNull(userId, "UserId cannot be null");
+        Assert.hasText(deviceType, "DeviceType cannot be empty");
+
+        return getUserChannels(userId).stream()
+            .filter(channel -> deviceType.equals(channel.attr(ImChannelAttributes.DEVICE_TYPE).get()))
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * 获取用户的所有channelId
+     *
+     * @param userId 用户ID
+     * @return channelId集合
+     */
+    public Set<String> getChannelsByUserId(Long userId) {
+        Assert.notNull(userId, "UserId cannot be null");
+        return Collections.unmodifiableSet(
+            userChannelsMap.getOrDefault(userId, Collections.emptySet())
+        );
+    }
+
+    /**
+     * 根据channelId获取Channel对象
+     *
+     * @param channelId channelId
+     * @return Channel对象
+     */
     public Channel getChannelByChannelId(String channelId) {
-        if (channelId == null) {
-            log.warn("Invalid input: channelId is null");
-            return null;
-        } else {
-            return channelMap.get(channelId);
+        Assert.hasText(channelId, "ChannelId cannot be empty");
+        return channelMap.get(channelId);
+    }
+
+    /**
+     * 移除Channel连接
+     *
+     * @param channel Channel对象
+     * @return 是否移除成功
+     */
+    public boolean removeChannel(Channel channel) {
+        try {
+            Assert.notNull(channel, "Channel cannot be null");
+            String channelId = channel.id().asLongText();
+            Assert.hasText(channelId, "ChannelId cannot be empty");
+
+            // 获取用户ID
+            Long userId = channel.attr(ImChannelAttributes.USER_ID).get();
+            if (userId == null) {
+                log.warn("[channel_remove_warn] UserId not found for channel:{}", channelId);
+                return false;
+            }
+
+            // 移除Channel映射
+            Channel removedChannel = channelMap.remove(channelId);
+            if (removedChannel == null) {
+                log.warn("[channel_remove_warn] Channel not found in channelMap:{}", channelId);
+                return false;
+            }
+
+            // 移除用户Channel映射
+            Set<String> userChannels = userChannelsMap.get(userId);
+            if (userChannels != null) {
+                userChannels.remove(channelId);
+                // 如果用户没有其他Channel，则移除用户映射
+                if (userChannels.isEmpty()) {
+                    userChannelsMap.remove(userId);
+                }
+                log.info("[channel_remove] Channel removed successfully - userId:{}, channelId:{}", 
+                    userId, channelId);
+                return true;
+            }
+
+            log.warn("[channel_remove_warn] User channels not found - userId:{}, channelId:{}", 
+                userId, channelId);
+            return false;
+        } catch (Exception e) {
+            log.error("[channel_remove_error] Failed to remove channel - error:{}", e.getMessage(), e);
+            return false;
         }
     }
 
     /**
-     * 移除指定的连接ID及其关联信息
+     * 获取当前在线用户数
      *
-     * @param channel Channel对象
+     * @return 在线用户数
      */
-    public void removeChannel(Channel channel) {
-        if (channel == null) {
-            log.warn("Invalid input: channel is null");
-            return;
-        }
+    public int getOnlineUserCount() {
+        return userChannelsMap.size();
+    }
 
-        String channelId = channel.id().asLongText();
-        if (channelId == null) {
-            log.warn("Invalid channel ID for channel: {}", channel);
-            return;
-        }
+    /**
+     * 获取当前总连接数
+     *
+     * @return 总连接数
+     */
+    public int getTotalConnectionCount() {
+        return channelMap.size();
+    }
 
-        // 从channel的attribute中获取用户id
-        Long userId = channel.attr(ChannelAttributes.USER_ID).get();
-        if (userId == null) {
-            log.warn("Invalid user ID for channel: {}", channelId);
-            return;
-        }
+    /**
+     * 判断用户是否在线
+     *
+     * @param userId 用户ID
+     * @return 是否在线
+     */
+    public boolean isUserOnline(Long userId) {
+        Assert.notNull(userId, "UserId cannot be null");
+        Set<String> channels = userChannelsMap.get(userId);
+        return channels != null && !channels.isEmpty();
+    }
 
-        // 使用ConcurrentMap的原子操作移除Channel对象
-        Channel removedChannel = channelMap.remove(channelId);
-        if (removedChannel == null) {
-            log.warn("Channel with ID {} not found in channelMap", channelId);
-            return;
-        }
-
-        // 从用户ID映射中获取连接ID集合
-        Set<String> channelIds = userChannelsMap.get(userId);
-        if (channelIds != null) {
-            // 使用ConcurrentSkipListSet的原子操作删除channelId
-            boolean removed = channelIds.remove(channelId);
-            if (removed) {
-                log.info("Removed channel {} for user {}", channelId, userId);
-            } else {
-                log.warn("Failed to remove channel {} from user {}'s channel list", channelId, userId);
-            }
-
-            // 如果用户没有其他连接，移除用户ID的映射
-            if (channelIds.isEmpty()) {
-                userChannelsMap.remove(userId);
-            }
-        } else {
-            log.warn("User {} does not have any channels in userChannelsMap", userId);
-        }
+    /**
+     * 获取用户在指定设备类型上的在线状态
+     *
+     * @param userId     用户ID
+     * @param deviceType 设备类型
+     * @return 是否在该设备类型上在线
+     */
+    public boolean isUserOnlineOnDevice(Long userId, String deviceType) {
+        Assert.notNull(userId, "UserId cannot be null");
+        Assert.hasText(deviceType, "DeviceType cannot be empty");
+        
+        return getUserChannelsByDevice(userId, deviceType).stream()
+            .anyMatch(Channel::isActive);
     }
 }
