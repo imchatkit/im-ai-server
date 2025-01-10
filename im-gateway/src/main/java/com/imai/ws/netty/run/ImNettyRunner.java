@@ -11,14 +11,14 @@ import org.springframework.stereotype.Component;
  * @Description: spring启动后启动netty服务, 使用spring容器管理netty的bean
  */
 @Component
-public class NettyRunner implements ApplicationRunner {
+public class ImNettyRunner implements ApplicationRunner {
 
     @Resource
-    private NettyServer nettyServer;
+    private ImNettyServer imNettyServer;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        nettyServer.start();
+        imNettyServer.start();
     }
 
 }

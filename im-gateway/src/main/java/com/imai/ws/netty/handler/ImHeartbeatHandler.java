@@ -1,7 +1,7 @@
 package com.imai.ws.netty.handler;
 
 import com.imai.ws.netty.user.ChannelUserHolder;
-import com.imai.ws.netty.config.ChannelAttributes;
+import com.imai.ws.netty.config.ImChannelAttributes;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 @ChannelHandler.Sharable
-public class HeartbeatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
+public class ImHeartbeatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
     private static final HashedWheelTimer WHEEL_TIMER = new HashedWheelTimer();
     private static final int BEAT_INTERVAL = 55;
     private static final String PING_MSG = "ping";
@@ -37,8 +37,8 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<TextWebSocketF
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        Long userId = ctx.channel().attr(ChannelAttributes.USER_ID).get();
-        String device = ctx.channel().attr(ChannelAttributes.DEVICE_TYPE).get();
+        Long userId = ctx.channel().attr(ImChannelAttributes.USER_ID).get();
+        String device = ctx.channel().attr(ImChannelAttributes.DEVICE_TYPE).get();
         String channelId = ctx.channel().id().asLongText();
         log.info("[WsConnected],userId:{},device:{},channelId:{}", userId, device, channelId);
         startPingScheduler(ctx.channel());
@@ -46,8 +46,8 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<TextWebSocketF
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
-        Long userId = ctx.channel().attr(ChannelAttributes.USER_ID).get();
-        String device = ctx.channel().attr(ChannelAttributes.DEVICE_TYPE).get();
+        Long userId = ctx.channel().attr(ImChannelAttributes.USER_ID).get();
+        String device = ctx.channel().attr(ImChannelAttributes.DEVICE_TYPE).get();
         String channelId = ctx.channel().id().asLongText();
 
         String message = msg.text();
@@ -72,8 +72,8 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<TextWebSocketF
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        Long userId = ctx.channel().attr(ChannelAttributes.USER_ID).get();
-        String device = ctx.channel().attr(ChannelAttributes.DEVICE_TYPE).get();
+        Long userId = ctx.channel().attr(ImChannelAttributes.USER_ID).get();
+        String device = ctx.channel().attr(ImChannelAttributes.DEVICE_TYPE).get();
         String channelId = ctx.channel().id().asLongText();
 
         channelUserHolder.removeChannel(ctx.channel());
@@ -94,8 +94,8 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<TextWebSocketF
     }
 
     private void startTimeout(Channel channel) {
-        Long userId = channel.attr(ChannelAttributes.USER_ID).get();
-        String device = channel.attr(ChannelAttributes.DEVICE_TYPE).get();
+        Long userId = channel.attr(ImChannelAttributes.USER_ID).get();
+        String device = channel.attr(ImChannelAttributes.DEVICE_TYPE).get();
         String channelId = channel.id().asLongText();
         TimerTask task = new TimerTask() {
             @Override
