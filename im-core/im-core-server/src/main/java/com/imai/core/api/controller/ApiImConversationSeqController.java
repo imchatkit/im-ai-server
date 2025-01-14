@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 会话序列号
- * 前端访问路由地址为:/imai/conversationSeq
+ * IM应用/会话序列号
+ * 前端访问路由地址为:/api/v1/conversationSeq
  *
  * @author wei
  * @date 2025-01-07

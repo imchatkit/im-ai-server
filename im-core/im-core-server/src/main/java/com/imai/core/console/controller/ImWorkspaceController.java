@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 工作空间
+ * 管理系统/工作空间
  * 前端访问路由地址为:/imai/workspace
  *
  * @author wei

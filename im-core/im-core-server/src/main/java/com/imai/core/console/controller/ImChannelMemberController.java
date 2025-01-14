@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 频道成员
+ * 管理系统/频道成员
  * 前端访问路由地址为:/imai/channelMember
  *
  * @author wei

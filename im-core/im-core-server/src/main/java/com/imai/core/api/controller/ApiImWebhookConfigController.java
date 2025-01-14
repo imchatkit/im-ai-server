@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * Webhook配置
- * 前端访问路由地址为:/imai/webhookConfig
+ * IM应用/Webhook配置
+ * 前端访问路由地址为:/api/v1/webhookConfig
  *
  * @author wei
  * @date 2025-01-07

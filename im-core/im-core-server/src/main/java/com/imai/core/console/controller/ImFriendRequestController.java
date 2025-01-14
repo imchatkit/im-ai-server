@@ -23,7 +23,7 @@ import org.dromara.common.excel.utils.ExcelUtil;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 
 /**
- * 好友申请
+ * 管理系统/好友申请
  * 前端访问路由地址为:/imai/friendRequest
  *
  * @author wei

@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 客户端设备
- * 前端访问路由地址为:/imai/device
+ * IM应用/客户端设备
+ * 前端访问路由地址为:/api/v1/device
  *
  * @author wei
  * @date 2025-01-07

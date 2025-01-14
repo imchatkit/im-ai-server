@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 消息撤回记录
- * 前端访问路由地址为:/imai/msgRecall
+ * IM应用/消息撤回记录
+ * 前端访问路由地址为:/api/v1/msgRecall
  *
  * @author wei
  * @date 2025-01-07

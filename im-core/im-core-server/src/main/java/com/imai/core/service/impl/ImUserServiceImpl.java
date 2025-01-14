@@ -4,10 +4,12 @@ import com.imai.core.domain.ImUser;
 import com.imai.core.domain.bo.ImUserBo;
 import com.imai.core.domain.vo.ImUserVo;
 import com.imai.core.mapper.ImUserMapper;
+import com.imai.core.openapi.bo.OpenApiImUseRegisterBo;
+import com.imai.core.openapi.vo.OpenApiImUserVo;
 import com.imai.core.service.IImUserService;
-import com.imai.core.openapi.bo.ImUseRegisterBo;
 
 import cn.dev33.satoken.stp.SaLoginModel;
+import cn.dev33.satoken.stp.StpUtil;
 
 import org.dromara.common.core.enums.DeviceType;
 import org.dromara.common.core.enums.UserType;
@@ -159,7 +161,7 @@ public class ImUserServiceImpl implements IImUserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ImUserVo login(ImUseRegisterBo bo) {
+    public OpenApiImUserVo login(OpenApiImUseRegisterBo bo) {
         // 将注册BO转换为用户BO
         ImUserBo userBo = MapstructUtils.convert(bo, ImUserBo.class);
 
@@ -190,11 +192,23 @@ public class ImUserServiceImpl implements IImUserService {
 
         // 生成token
         SaLoginModel model = new SaLoginModel();
-        model.setDevice(DeviceType.valueOf(bo.getDevice()).getDevice());
+        // 验证设备类型是否有效
+        try {
+            DeviceType.valueOf(bo.getDevice());  // 验证设备类型是否存在于枚举中
+            model.setDevice(bo.getDevice());     // 设置设备类型
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("无效的设备类型: " + bo.getDevice());
+        }
         model.setTimeout(30 * 24 * 60 * 60L); // IM token可以设置更长时间
         LoginHelper.login(imUser, model);
 
+        ImUserVo imUserVo = queryById(userId);
+
+        OpenApiImUserVo openApiImUserVo = new OpenApiImUserVo();
+        openApiImUserVo.setImUserVo(imUserVo);
+        openApiImUserVo.setToken(StpUtil.getTokenValue());
+
         // 返回用户信息
-        return queryById(userId);
+        return openApiImUserVo;
     }
 }

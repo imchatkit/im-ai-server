@@ -23,7 +23,7 @@ import org.dromara.common.excel.utils.ExcelUtil;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 
 /**
- * Webhook配置
+ * 管理系统/Webhook配置
  * 前端访问路由地址为:/imai/webhookConfig
  *
  * @author wei

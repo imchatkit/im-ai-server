@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 设备pts
- * 前端访问路由地址为:/imai/devicePts
+ * IM应用/设备pts
+ * 前端访问路由地址为:/api/v1/devicePts
  *
  * @author wei
  * @date 2025-01-07

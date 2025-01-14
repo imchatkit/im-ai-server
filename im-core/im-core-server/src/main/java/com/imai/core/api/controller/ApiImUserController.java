@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 用户
- * 前端访问路由地址为:/imai/user
+ * IM应用/用户
+ * 前端访问路由地址为:/api/v1/user
  *
  * @author wei
  * @date 2025-01-07

@@ -1,8 +1,9 @@
 package com.imai.core.openapi;
 
 import com.imai.core.domain.vo.ImUserVo;
+import com.imai.core.openapi.bo.OpenApiImUseRegisterBo;
+import com.imai.core.openapi.vo.OpenApiImUserVo;
 import com.imai.core.service.IImUserService;
-import com.imai.core.openapi.bo.ImUseRegisterBo;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.domain.R;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
@@ -15,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 /**
- * 用户
- * 前端访问路由地址为:/imai/user
+ * 开放接口/用户
+ * 前端访问路由地址为: /openapi/v1/user
  *
  * @author wei
  * @date 2025-01-07
@@ -31,12 +32,22 @@ public class OpenApiImUserController extends BaseController {
 
 
     /**
-     * 用户登录注册
+     * IM客户端用户登录
+     * 
+     *
      */
     @PostMapping("/login")
     @RepeatSubmit
-    public R<ImUserVo> login(@RequestBody @Validated ImUseRegisterBo bo) {
+    public R<OpenApiImUserVo> login(@RequestBody @Validated OpenApiImUseRegisterBo bo) {
         return R.ok(imUserService.login(bo));
     }
 
+    // /**
+    //  * IM客户端用户登出
+    //  * 
+    //  */
+    // @PostMapping("/logout")
+    // public R<OpenApiImUserVo> logout(@RequestBody @Validated OpenApiImUseRegisterBo bo) {
+    //     return R.ok(imUserService.login(bo));
+    // }
 }

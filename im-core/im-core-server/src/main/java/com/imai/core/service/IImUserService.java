@@ -2,8 +2,9 @@ package com.imai.core.service;
 
 import com.imai.core.domain.bo.ImUserBo;
 import com.imai.core.domain.vo.ImUserVo;
-import com.imai.core.openapi.bo.ImUseRegisterBo;
+import com.imai.core.openapi.bo.OpenApiImUseRegisterBo;
 
+import com.imai.core.openapi.vo.OpenApiImUserVo;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 
@@ -74,5 +75,5 @@ public interface IImUserService {
      * @param bo 注册信息
      * @return 注册用户信息
      */
-    ImUserVo login(ImUseRegisterBo bo);
+    OpenApiImUserVo login(OpenApiImUseRegisterBo bo);
 }

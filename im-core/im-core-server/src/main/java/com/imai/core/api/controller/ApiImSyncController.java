@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 多端同步
- * 前端访问路由地址为:/imai/sync
+ * IM应用/多端同步
+ * 前端访问路由地址为:/api/v1/sync
  *
  * @author wei
  * @date 2025-01-07

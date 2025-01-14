@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 多端同步
+ * 管理系统/多端同步
  * 前端访问路由地址为:/imai/sync
  *
  * @author wei

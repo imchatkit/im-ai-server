@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 群组设置
+ * 管理系统/群组设置
  * 前端访问路由地址为:/imai/groupSetting
  *
  * @author wei

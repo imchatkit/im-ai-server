@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 消息引用关系
- * 前端访问路由地址为:/imai/msgReference
+ * IM应用/消息引用关系
+ * 前端访问路由地址为:/api/v1/msgReference
  *
  * @author wei
  * @date 2025-01-07
