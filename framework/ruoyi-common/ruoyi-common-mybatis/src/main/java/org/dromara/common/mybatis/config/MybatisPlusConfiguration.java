@@ -79,6 +79,7 @@ public class MybatisPlusConfiguration {
      */
     @Bean
     public MetaObjectHandler metaObjectHandler() {
+        log.info("初始化 MetaObjectHandler");
         return new InjectionMetaObjectHandler();
     }
 

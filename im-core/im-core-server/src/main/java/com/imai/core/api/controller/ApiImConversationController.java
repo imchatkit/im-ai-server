@@ -80,7 +80,7 @@ public class ApiImConversationController extends BaseController {
     /**
      * 新增聊天会话基础
      */
-    @SaCheckPermission("imcore:conversation:add")
+//    @SaCheckPermission("imcore:conversation:add")
     @Log(title = "聊天会话基础", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()

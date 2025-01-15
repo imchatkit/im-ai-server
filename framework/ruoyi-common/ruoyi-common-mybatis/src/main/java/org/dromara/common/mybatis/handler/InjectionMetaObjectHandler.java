@@ -28,10 +28,12 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         try {
+            log.info("开始进行插入填充...");
             if (ObjectUtil.isNotNull(metaObject) && metaObject.getOriginalObject() instanceof BaseEntity baseEntity) {
-                // 获取当前时间作为创建时间和更新时间，如果创建时间不为空，则使用创建时间，否则使用当前时间
+                log.info("获取到 BaseEntity 对象");
                 Date current = ObjectUtil.isNotNull(baseEntity.getCreateTime())
                     ? baseEntity.getCreateTime() : new Date();
+                log.info("设置的时间为: {}", current);
                 baseEntity.setCreateTime(current);
                 baseEntity.setUpdateTime(current);
 
@@ -53,6 +55,7 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
                 this.strictInsertFill(metaObject, "updateTime", Date.class, date);
             }
         } catch (Exception e) {
+            log.error("自动注入异常", e);
             throw new ServiceException("自动注入异常 => " + e.getMessage(), HttpStatus.HTTP_UNAUTHORIZED);
         }
     }
