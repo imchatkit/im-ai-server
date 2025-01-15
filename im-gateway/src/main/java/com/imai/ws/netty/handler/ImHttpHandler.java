@@ -1,6 +1,7 @@
 package com.imai.ws.netty.handler;
 
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.imai.ws.netty.user.ChannelUserHolder;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler;
@@ -10,93 +11,72 @@ import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.common.core.enums.UserType;
+import org.dromara.common.satoken.utils.LoginHelper;
+import org.dromara.system.api.model.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Random;
 
 @Slf4j
 @Component
 @ChannelHandler.Sharable
 public class ImHttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
-//    @Autowired
-//    Algorithm algorithm;
     @Autowired
     private ChannelUserHolder channelUserHolder;
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) {
         log.info("---nettyHttpRequest: {}", request);
-//        log.info("收到 HTTP 请求: {}", request.uri());
-        // 从请求路径问号参数中获取指定参数名
-
-        // 从请求路径中获取参数
-//        QueryStringDecoder queryStringDecoder = new QueryStringDecoder(request.uri());
-//        Map<String, List<String>> parameters = queryStringDecoder.parameters();
-//
-//        // 指定要获取的参数名
-//        String paramName = "token";
-//        // 获取指定参数名的值
-//        String token = parameters.get(paramName).iterator().next();
 
         String token = request.headers().get("token");
-
         String deviceType = request.headers().get("deviceType");
 
-        //  校验用户token
-//        if (token == null || token.isEmpty()) {
-////            log.info("token:null");
-//
-//            // 如果token为空，则返回错误响应
-//            FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
-//            response.headers().set(HttpHeaders.Names.CONTENT_TYPE, "text/plain; charset=UTF-8");
-//            response.content().writeBytes("Unauthorized".getBytes(CharsetUtil.UTF_8));
-//            response.content().writeCharSequence("token is empty", CharsetUtil.UTF_8);
-//            ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
-//            return;
-//        } else {
+        // 校验用户token
+        if (token == null || token.isEmpty()) {
+            // 如果token为空，则返回错误响应
+            FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
+            response.headers().set(HttpHeaders.Names.CONTENT_TYPE, "text/plain; charset=UTF-8");
+            response.content().writeBytes("Unauthorized: token is empty".getBytes(CharsetUtil.UTF_8));
+            ctx.writeAndFlush(response);
+            return;
+        }
 
-//            // 创建JWT验证器
-//            JWTVerifier verifier = JWT.require(algorithm).acceptExpiresAt(Duration.ofDays(30).toMillis()).build();
-//            try {
-//                // 获取token字符串，并去除前缀
-//                String tokenString = StringUtils.replace(token, "Bearer ", "");
-//                // 验证token
-//                DecodedJWT jwtToken = verifier.verify(tokenString);
-//                // 获取token的发行者
-//                String issuer = jwtToken.getIssuer();
-//                // 如果发行者为空，则返回未授权
-//                if (isEmpty(issuer)) {
-////                    return commonResult(exchange, HttpStatus.UNAUTHORIZED, "Token不合法");
-//                    return;
-//                }
-//                Long userId = jwtToken.getClaim("login_user_id").asLong();
+        try {
+            // 去除 Bearer 前缀
+            String tokenValue = token.replace("Bearer ", "");
+            // 验证token
+            Object loginId = StpUtil.getLoginIdByToken(tokenValue);
+            if (loginId == null) {
+                throw new RuntimeException("Token不合法");
+            }
 
-            // 生成随机数
-            Long userId = new Random().nextLong();
+            // 获取登录用户信息
+            LoginUser loginUser = LoginHelper.getLoginUser(tokenValue);
+            if (loginUser == null || !UserType.IM_USER.getUserType().equals(loginUser.getUserType())) {
+                throw new RuntimeException("非法的用户类型");
+            }
 
-            channelUserHolder.addChannel(userId, ctx.channel(), deviceType);
+            // 添加到channel管理器
+            channelUserHolder.addChannel(loginUser.getUserId(), ctx.channel(), deviceType);
 
-//            } catch (JWTVerificationException e) {
-//                log.warn("token 校验失败", e);
-////                return commonResult(exchange, HttpStatus.UNAUTHORIZED, "Token校验失败");
-//                return;
-//            }
-
-            // isWebSocketUpgradeRequest方法检查传入的请求是否是WebSocket升级请求。如果是，处理程序会跳过对该请求的处理，
-            // 让后续的管道中的WebSocketServerProtocolHandler处理该请求。如果是普通的HTTP请求，则继续处理请求。
-            // 这种方法应该有助于确保WebSocket升级请求不会被HTTP处理程序提前消耗，从而确保WebSocket连接能够成功建立。
+            // isWebSocketUpgradeRequest方法检查传入的请求是否是WebSocket升级请求
             if (isWebSocketUpgradeRequest(request)) {
                 // 跳过处理WebSocket升级请求
                 ctx.fireChannelRead(request.retain());
             } else {
                 handleHttpRequest(ctx, request);
             }
-//        }
 
+        } catch (Exception e) {
+            log.warn("token 校验失败", e);
+            FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
+            response.headers().set(HttpHeaders.Names.CONTENT_TYPE, "text/plain; charset=UTF-8");
+            response.content().writeBytes(("Unauthorized: " + e.getMessage()).getBytes(CharsetUtil.UTF_8));
+            ctx.writeAndFlush(response);
+            return;
+        }
     }
-
 
     private boolean isWebSocketUpgradeRequest(FullHttpRequest request) {
         HttpHeaders headers = request.headers();
@@ -123,7 +103,6 @@ public class ImHttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> 
             ReferenceCountUtil.release(request);
         }
     }
-
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {

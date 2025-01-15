@@ -2,6 +2,7 @@ package org.dromara.common.core.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import java.util.Arrays;
 
 /**
  * 设备类型
@@ -45,4 +46,13 @@ public enum DeviceType {
     XCX("xcx");
 
     private final String device;
+
+    // 根据device 获取对应的枚举
+    public static DeviceType getDeviceType(String device) {
+        return Arrays.stream(DeviceType.values())
+            .filter(type -> type.getDevice().equals(device))
+            .findFirst()
+            .orElse(null);
+    }
+
 }

@@ -40,7 +40,7 @@ import java.util.Collection;
 @Service
 public class ImUserServiceImpl implements IImUserService {
 
-    private final ImUserMapper baseMapper;
+    private final ImUserMapper imUserMapper;
 
     /**
      * 查询用户
@@ -50,7 +50,7 @@ public class ImUserServiceImpl implements IImUserService {
      */
     @Override
     public ImUserVo queryById(Long id){
-        return baseMapper.selectVoById(id);
+        return imUserMapper.selectVoById(id);
     }
 
     /**
@@ -63,7 +63,7 @@ public class ImUserServiceImpl implements IImUserService {
     @Override
     public TableDataInfo<ImUserVo> queryPageList(ImUserBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<ImUser> lqw = buildQueryWrapper(bo);
-        Page<ImUserVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        Page<ImUserVo> result = imUserMapper.selectVoPage(pageQuery.build(), lqw);
         return TableDataInfo.build(result);
     }
 
@@ -76,7 +76,7 @@ public class ImUserServiceImpl implements IImUserService {
     @Override
     public List<ImUserVo> queryList(ImUserBo bo) {
         LambdaQueryWrapper<ImUser> lqw = buildQueryWrapper(bo);
-        return baseMapper.selectVoList(lqw);
+        return imUserMapper.selectVoList(lqw);
     }
 
     private LambdaQueryWrapper<ImUser> buildQueryWrapper(ImUserBo bo) {
@@ -111,7 +111,7 @@ public class ImUserServiceImpl implements IImUserService {
     public Boolean insertByBo(ImUserBo bo) {
         ImUser add = MapstructUtils.convert(bo, ImUser.class);
         validEntityBeforeSave(add);
-        boolean flag = baseMapper.insert(add) > 0;
+        boolean flag = imUserMapper.insert(add) > 0;
         if (flag) {
             bo.setId(add.getId());
         }
@@ -128,7 +128,7 @@ public class ImUserServiceImpl implements IImUserService {
     public Boolean updateByBo(ImUserBo bo) {
         ImUser update = MapstructUtils.convert(bo, ImUser.class);
         validEntityBeforeSave(update);
-        return baseMapper.updateById(update) > 0;
+        return imUserMapper.updateById(update) > 0;
     }
 
     /**
@@ -150,7 +150,7 @@ public class ImUserServiceImpl implements IImUserService {
         if(isValid){
             //TODO 做一些业务上的校验,判断是否需要校验
         }
-        return baseMapper.deleteByIds(ids) > 0;
+        return imUserMapper.deleteByIds(ids) > 0;
     }
 
     /**
@@ -168,7 +168,7 @@ public class ImUserServiceImpl implements IImUserService {
         // 检查用户是否已注册
         LambdaQueryWrapper<ImUser> lqw = Wrappers.lambdaQuery();
         lqw.eq(ImUser::getId, userBo.getId());
-        ImUser existUser = baseMapper.selectOne(lqw);
+        ImUser existUser = imUserMapper.selectOne(lqw);
 
         Long userId;
         if(existUser != null) {
@@ -194,8 +194,12 @@ public class ImUserServiceImpl implements IImUserService {
         SaLoginModel model = new SaLoginModel();
         // 验证设备类型是否有效
         try {
-            DeviceType.valueOf(bo.getDevice());  // 验证设备类型是否存在于枚举中
-            model.setDevice(bo.getDevice());     // 设置设备类型
+            DeviceType deviceType = DeviceType.getDeviceType(bo.getDevice());  // 验证设备类型是否存在于枚举中
+            if (deviceType == null) {
+                throw new RuntimeException("无效的设备类型: " + bo.getDevice());
+            }
+
+            model.setDevice(deviceType.getDevice());     // 设置设备类型
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("无效的设备类型: " + bo.getDevice());
         }
@@ -206,7 +210,7 @@ public class ImUserServiceImpl implements IImUserService {
 
         OpenApiImUserVo openApiImUserVo = new OpenApiImUserVo();
         openApiImUserVo.setImUserVo(imUserVo);
-        openApiImUserVo.setToken(StpUtil.getTokenValue());
+        openApiImUserVo.setToken("Bearer "+StpUtil.getTokenValue());
 
         // 返回用户信息
         return openApiImUserVo;
