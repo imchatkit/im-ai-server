@@ -48,7 +48,6 @@ public class ApiImSyncController extends BaseController {
     /**
      * 查询多端同步列表
      */
-    @SaCheckPermission("imcore:sync:list")
     @GetMapping("/list")
     public TableDataInfo<ImSyncVo> list(ImSyncBo bo, PageQuery pageQuery) {
         return imSyncService.queryPageList(bo, pageQuery);
@@ -57,7 +56,6 @@ public class ApiImSyncController extends BaseController {
     /**
      * 导出多端同步列表
      */
-    @SaCheckPermission("imcore:sync:export")
     @Log(title = "多端同步", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImSyncBo bo, HttpServletResponse response) {
@@ -70,7 +68,6 @@ public class ApiImSyncController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imcore:sync:query")
     @GetMapping("/{id}")
     public R<ImSyncVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +77,6 @@ public class ApiImSyncController extends BaseController {
     /**
      * 新增多端同步
      */
-    @SaCheckPermission("imcore:sync:add")
     @Log(title = "多端同步", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +87,6 @@ public class ApiImSyncController extends BaseController {
     /**
      * 修改多端同步
      */
-    @SaCheckPermission("imcore:sync:edit")
     @Log(title = "多端同步", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +99,6 @@ public class ApiImSyncController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imcore:sync:remove")
     @Log(title = "多端同步", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

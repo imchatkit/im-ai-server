@@ -48,7 +48,6 @@ public class ApiImCallbackRecordController extends BaseController {
     /**
      * 查询消息回调记录列表
      */
-    @SaCheckPermission("imcore:callbackRecord:list")
     @GetMapping("/list")
     public TableDataInfo<ImCallbackRecordVo> list(ImCallbackRecordBo bo, PageQuery pageQuery) {
         return imCallbackRecordService.queryPageList(bo, pageQuery);
@@ -57,7 +56,6 @@ public class ApiImCallbackRecordController extends BaseController {
     /**
      * 导出消息回调记录列表
      */
-    @SaCheckPermission("imcore:callbackRecord:export")
     @Log(title = "消息回调记录", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImCallbackRecordBo bo, HttpServletResponse response) {
@@ -70,7 +68,6 @@ public class ApiImCallbackRecordController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imcore:callbackRecord:query")
     @GetMapping("/{id}")
     public R<ImCallbackRecordVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +77,6 @@ public class ApiImCallbackRecordController extends BaseController {
     /**
      * 新增消息回调记录
      */
-    @SaCheckPermission("imcore:callbackRecord:add")
     @Log(title = "消息回调记录", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +87,6 @@ public class ApiImCallbackRecordController extends BaseController {
     /**
      * 修改消息回调记录
      */
-    @SaCheckPermission("imcore:callbackRecord:edit")
     @Log(title = "消息回调记录", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +99,6 @@ public class ApiImCallbackRecordController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imcore:callbackRecord:remove")
     @Log(title = "消息回调记录", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

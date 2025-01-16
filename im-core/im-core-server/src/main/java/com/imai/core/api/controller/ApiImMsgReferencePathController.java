@@ -48,7 +48,6 @@ public class ApiImMsgReferencePathController extends BaseController {
     /**
      * 查询消息引用路径列表
      */
-    @SaCheckPermission("imcore:msgReferencePath:list")
     @GetMapping("/list")
     public TableDataInfo<ImMsgReferencePathVo> list(ImMsgReferencePathBo bo, PageQuery pageQuery) {
         return imMsgReferencePathService.queryPageList(bo, pageQuery);
@@ -57,7 +56,6 @@ public class ApiImMsgReferencePathController extends BaseController {
     /**
      * 导出消息引用路径列表
      */
-    @SaCheckPermission("imcore:msgReferencePath:export")
     @Log(title = "消息引用路径", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImMsgReferencePathBo bo, HttpServletResponse response) {
@@ -70,7 +68,6 @@ public class ApiImMsgReferencePathController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imcore:msgReferencePath:query")
     @GetMapping("/{id}")
     public R<ImMsgReferencePathVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +77,6 @@ public class ApiImMsgReferencePathController extends BaseController {
     /**
      * 新增消息引用路径
      */
-    @SaCheckPermission("imcore:msgReferencePath:add")
     @Log(title = "消息引用路径", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +87,6 @@ public class ApiImMsgReferencePathController extends BaseController {
     /**
      * 修改消息引用路径
      */
-    @SaCheckPermission("imcore:msgReferencePath:edit")
     @Log(title = "消息引用路径", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +99,6 @@ public class ApiImMsgReferencePathController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imcore:msgReferencePath:remove")
     @Log(title = "消息引用路径", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

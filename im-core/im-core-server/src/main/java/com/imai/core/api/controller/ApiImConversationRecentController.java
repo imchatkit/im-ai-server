@@ -48,7 +48,6 @@ public class ApiImConversationRecentController extends BaseController {
     /**
      * 查询首页对话列列表
      */
-    @SaCheckPermission("imcore:conversationRecent:list")
     @GetMapping("/list")
     public TableDataInfo<ImConversationRecentVo> list(ImConversationRecentBo bo, PageQuery pageQuery) {
         return imConversationRecentService.queryPageList(bo, pageQuery);
@@ -57,7 +56,6 @@ public class ApiImConversationRecentController extends BaseController {
     /**
      * 导出首页对话列列表
      */
-    @SaCheckPermission("imcore:conversationRecent:export")
     @Log(title = "首页对话列", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImConversationRecentBo bo, HttpServletResponse response) {
@@ -70,7 +68,6 @@ public class ApiImConversationRecentController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imcore:conversationRecent:query")
     @GetMapping("/{id}")
     public R<ImConversationRecentVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +77,6 @@ public class ApiImConversationRecentController extends BaseController {
     /**
      * 新增首页对话列
      */
-    @SaCheckPermission("imcore:conversationRecent:add")
     @Log(title = "首页对话列", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +87,6 @@ public class ApiImConversationRecentController extends BaseController {
     /**
      * 修改首页对话列
      */
-    @SaCheckPermission("imcore:conversationRecent:edit")
     @Log(title = "首页对话列", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +99,6 @@ public class ApiImConversationRecentController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imcore:conversationRecent:remove")
     @Log(title = "首页对话列", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

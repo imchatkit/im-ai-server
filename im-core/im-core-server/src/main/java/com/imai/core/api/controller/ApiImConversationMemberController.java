@@ -48,7 +48,6 @@ public class ApiImConversationMemberController extends BaseController {
     /**
      * 查询会话成员列表
      */
-    @SaCheckPermission("imcore:conversationMember:list")
     @GetMapping("/list")
     public TableDataInfo<ImConversationMemberVo> list(ImConversationMemberBo bo, PageQuery pageQuery) {
         return imConversationMemberService.queryPageList(bo, pageQuery);
@@ -57,7 +56,6 @@ public class ApiImConversationMemberController extends BaseController {
     /**
      * 导出会话成员列表
      */
-    @SaCheckPermission("imcore:conversationMember:export")
     @Log(title = "会话成员", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImConversationMemberBo bo, HttpServletResponse response) {
@@ -70,7 +68,6 @@ public class ApiImConversationMemberController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imcore:conversationMember:query")
     @GetMapping("/{id}")
     public R<ImConversationMemberVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +77,6 @@ public class ApiImConversationMemberController extends BaseController {
     /**
      * 新增会话成员
      */
-    @SaCheckPermission("imcore:conversationMember:add")
     @Log(title = "会话成员", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +87,6 @@ public class ApiImConversationMemberController extends BaseController {
     /**
      * 修改会话成员
      */
-    @SaCheckPermission("imcore:conversationMember:edit")
     @Log(title = "会话成员", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +99,6 @@ public class ApiImConversationMemberController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imcore:conversationMember:remove")
     @Log(title = "会话成员", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

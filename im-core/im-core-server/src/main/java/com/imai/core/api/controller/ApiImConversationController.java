@@ -1,5 +1,6 @@
 package com.imai.core.api.controller;
 
+import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.imai.core.domain.bo.ImConversationBo;
 import com.imai.core.domain.vo.ImConversationVo;
@@ -31,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * IM应用/聊天会话基础
+ * IM应用/会话Conversation
  * 前端访问路由地址为:/api/v1/conversation
  *
  * @author wei
@@ -48,7 +49,6 @@ public class ApiImConversationController extends BaseController {
     /**
      * 查询聊天会话基础列表
      */
-    @SaCheckPermission("imcore:conversation:list")
     @GetMapping("/list")
     public TableDataInfo<ImConversationVo> list(ImConversationBo bo, PageQuery pageQuery) {
         return imConversationService.queryPageList(bo, pageQuery);
@@ -57,7 +57,6 @@ public class ApiImConversationController extends BaseController {
     /**
      * 导出聊天会话基础列表
      */
-    @SaCheckPermission("imcore:conversation:export")
     @Log(title = "聊天会话基础", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImConversationBo bo, HttpServletResponse response) {
@@ -70,7 +69,6 @@ public class ApiImConversationController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imcore:conversation:query")
     @GetMapping("/{id}")
     public R<ImConversationVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -78,20 +76,22 @@ public class ApiImConversationController extends BaseController {
     }
 
     /**
-     * 新增聊天会话基础
+     * 新增会话
      */
-//    @SaCheckPermission("imcore:conversation:add")
     @Log(title = "聊天会话基础", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) @RequestBody ImConversationBo bo) {
-        return toAjax(imConversationService.insertByBo(bo));
+    public R<ImConversationBo> add(@Validated(AddGroup.class) @RequestBody ImConversationBo bo) {
+        imConversationService.insertByBo(bo);
+        if (bo == null) {
+            R.fail("新增失败");
+        }
+        return R.ok(bo);
     }
 
     /**
      * 修改聊天会话基础
      */
-    @SaCheckPermission("imcore:conversation:edit")
     @Log(title = "聊天会话基础", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +104,6 @@ public class ApiImConversationController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imcore:conversation:remove")
     @Log(title = "聊天会话基础", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

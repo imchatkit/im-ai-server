@@ -48,7 +48,6 @@ public class ApiImUserPtsController extends BaseController {
     /**
      * 查询用户pts列表
      */
-    @SaCheckPermission("imcore:userPts:list")
     @GetMapping("/list")
     public TableDataInfo<ImUserPtsVo> list(ImUserPtsBo bo, PageQuery pageQuery) {
         return imUserPtsService.queryPageList(bo, pageQuery);
@@ -57,7 +56,6 @@ public class ApiImUserPtsController extends BaseController {
     /**
      * 导出用户pts列表
      */
-    @SaCheckPermission("imcore:userPts:export")
     @Log(title = "用户pts", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImUserPtsBo bo, HttpServletResponse response) {
@@ -70,7 +68,6 @@ public class ApiImUserPtsController extends BaseController {
      *
      * @param userId 主键
      */
-    @SaCheckPermission("imcore:userPts:query")
     @GetMapping("/{userId}")
     public R<ImUserPtsVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long userId) {
@@ -80,7 +77,6 @@ public class ApiImUserPtsController extends BaseController {
     /**
      * 新增用户pts
      */
-    @SaCheckPermission("imcore:userPts:add")
     @Log(title = "用户pts", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +87,6 @@ public class ApiImUserPtsController extends BaseController {
     /**
      * 修改用户pts
      */
-    @SaCheckPermission("imcore:userPts:edit")
     @Log(title = "用户pts", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +99,6 @@ public class ApiImUserPtsController extends BaseController {
      *
      * @param userIds 主键串
      */
-    @SaCheckPermission("imcore:userPts:remove")
     @Log(title = "用户pts", businessType = BusinessType.DELETE)
     @DeleteMapping("/{userIds}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

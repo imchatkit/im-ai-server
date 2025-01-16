@@ -48,7 +48,6 @@ public class ApiImMsgReferenceController extends BaseController {
     /**
      * 查询消息引用关系列表
      */
-    @SaCheckPermission("imcore:msgReference:list")
     @GetMapping("/list")
     public TableDataInfo<ImMsgReferenceVo> list(ImMsgReferenceBo bo, PageQuery pageQuery) {
         return imMsgReferenceService.queryPageList(bo, pageQuery);
@@ -57,7 +56,6 @@ public class ApiImMsgReferenceController extends BaseController {
     /**
      * 导出消息引用关系列表
      */
-    @SaCheckPermission("imcore:msgReference:export")
     @Log(title = "消息引用关系", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImMsgReferenceBo bo, HttpServletResponse response) {
@@ -70,7 +68,6 @@ public class ApiImMsgReferenceController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imcore:msgReference:query")
     @GetMapping("/{id}")
     public R<ImMsgReferenceVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +77,6 @@ public class ApiImMsgReferenceController extends BaseController {
     /**
      * 新增消息引用关系
      */
-    @SaCheckPermission("imcore:msgReference:add")
     @Log(title = "消息引用关系", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +87,6 @@ public class ApiImMsgReferenceController extends BaseController {
     /**
      * 修改消息引用关系
      */
-    @SaCheckPermission("imcore:msgReference:edit")
     @Log(title = "消息引用关系", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +99,6 @@ public class ApiImMsgReferenceController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imcore:msgReference:remove")
     @Log(title = "消息引用关系", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

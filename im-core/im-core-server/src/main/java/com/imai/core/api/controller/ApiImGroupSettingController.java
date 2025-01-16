@@ -48,7 +48,6 @@ public class ApiImGroupSettingController extends BaseController {
     /**
      * 查询群组设置列表
      */
-    @SaCheckPermission("imcore:groupSetting:list")
     @GetMapping("/list")
     public TableDataInfo<ImGroupSettingVo> list(ImGroupSettingBo bo, PageQuery pageQuery) {
         return imGroupSettingService.queryPageList(bo, pageQuery);
@@ -57,7 +56,6 @@ public class ApiImGroupSettingController extends BaseController {
     /**
      * 导出群组设置列表
      */
-    @SaCheckPermission("imcore:groupSetting:export")
     @Log(title = "群组设置", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImGroupSettingBo bo, HttpServletResponse response) {
@@ -70,7 +68,6 @@ public class ApiImGroupSettingController extends BaseController {
      *
      * @param fkGroupId 主键
      */
-    @SaCheckPermission("imcore:groupSetting:query")
     @GetMapping("/{fkGroupId}")
     public R<ImGroupSettingVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long fkGroupId) {
@@ -80,7 +77,6 @@ public class ApiImGroupSettingController extends BaseController {
     /**
      * 新增群组设置
      */
-    @SaCheckPermission("imcore:groupSetting:add")
     @Log(title = "群组设置", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +87,6 @@ public class ApiImGroupSettingController extends BaseController {
     /**
      * 修改群组设置
      */
-    @SaCheckPermission("imcore:groupSetting:edit")
     @Log(title = "群组设置", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +99,6 @@ public class ApiImGroupSettingController extends BaseController {
      *
      * @param fkGroupIds 主键串
      */
-    @SaCheckPermission("imcore:groupSetting:remove")
     @Log(title = "群组设置", businessType = BusinessType.DELETE)
     @DeleteMapping("/{fkGroupIds}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
