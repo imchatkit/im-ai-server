@@ -231,4 +231,11 @@ public class ChannelUserHolder {
         return getUserChannelsByDevice(userId, deviceType).stream()
             .anyMatch(Channel::isActive);
     }
+
+    /**
+     * 根据Channel获取用户ID
+     */
+    public Long getUserIdByChannel(Channel channel) {
+        return channel.attr(ImChannelAttributes.USER_ID).get();
+    }
 }
