@@ -27,6 +27,13 @@
 
         <dependency>
             <groupId>com.feiyancloud</groupId>
+            <artifactId>im-entity</artifactId>
+            <version>${revision}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.feiyancloud</groupId>
             <artifactId>ruoyi-common-sentinel</artifactId>
         </dependency>
 
