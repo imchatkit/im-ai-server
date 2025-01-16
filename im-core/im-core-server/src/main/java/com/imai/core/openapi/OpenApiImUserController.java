@@ -1,11 +1,9 @@
 package com.imai.core.openapi;
 
-import com.imai.core.domain.vo.ImUserVo;
 import com.imai.core.openapi.bo.OpenApiImUseRegisterBo;
 import com.imai.core.openapi.vo.OpenApiImUserVo;
 import com.imai.core.service.IImUserService;
 import lombok.RequiredArgsConstructor;
-
 import org.dromara.common.core.domain.R;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
@@ -34,10 +32,8 @@ public class OpenApiImUserController extends BaseController {
 
     private final IImUserService imUserService;
 
-
     /**
      * IM客户端用户登录
-     *
      *
      */
     @PostMapping("/login")

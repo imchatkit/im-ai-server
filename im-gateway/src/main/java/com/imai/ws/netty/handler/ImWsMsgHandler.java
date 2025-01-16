@@ -1,7 +1,7 @@
 package com.imai.ws.netty.handler;
 
 
-import com.imai.dispatcher.ImDispatcher;
+import com.imai.handler.dispatcher.ImDispatcher;
 import com.imai.ws.netty.user.SendMsgUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
