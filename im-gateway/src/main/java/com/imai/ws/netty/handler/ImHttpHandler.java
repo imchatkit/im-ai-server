@@ -7,7 +7,12 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.CharsetUtil;
 import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -48,12 +53,22 @@ public class ImHttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> 
             // 验证token
             Object loginId = StpUtil.getLoginIdByToken(tokenValue);
             if (loginId == null) {
+                // 如果token为空，则返回错误响应
+                FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
+                response.headers().set(HttpHeaders.Names.CONTENT_TYPE, "text/plain; charset=UTF-8");
+                response.content().writeBytes("Unauthorized: token is empty".getBytes(CharsetUtil.UTF_8));
+                ctx.writeAndFlush(response);
                 throw new RuntimeException("Token不合法");
             }
 
             // 获取登录用户信息
             LoginUser loginUser = LoginHelper.getLoginUser(tokenValue);
             if (loginUser == null || !UserType.IM_USER.getUserType().equals(loginUser.getUserType())) {
+                // 如果token为空，则返回错误响应
+                FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.UNAUTHORIZED);
+                response.headers().set(HttpHeaders.Names.CONTENT_TYPE, "text/plain; charset=UTF-8");
+                response.content().writeBytes("Unauthorized: token is empty".getBytes(CharsetUtil.UTF_8));
+                ctx.writeAndFlush(response);
                 throw new RuntimeException("非法的用户类型");
             }
 
