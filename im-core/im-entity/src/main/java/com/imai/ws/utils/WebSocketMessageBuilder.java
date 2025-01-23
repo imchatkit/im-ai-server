@@ -7,7 +7,9 @@ import com.imai.ws.Content;
 import com.imai.ws.Control;
 import com.imai.ws.Options;
 import com.imai.ws.constants.WebSocketConstants;
-import com.imai.ws.enums.WebSocketEnums;
+import com.imai.ws.enums.CmdType;
+import com.imai.ws.enums.MsgType;
+import com.imai.ws.enums.RoomType;
 
 /**
  * WebSocket消息构建工具类
@@ -37,11 +39,11 @@ public class WebSocketMessageBuilder {
         
         // 设置路由信息
         Route route = new Route();
-        route.setCmd(WebSocketEnums.CmdType.SINGLE_CHAT.getCode());
-        route.setType(WebSocketEnums.MsgType.TEXT.getCode());
+        route.setCmd(CmdType.SINGLE_CHAT.getCode());
+        route.setType(MsgType.TEXT.getCode());
         route.setFrom(from);
         route.setTo(to);
-        route.setRoomType(WebSocketEnums.RoomType.SINGLE.getCode());
+        route.setRoomType(RoomType.SINGLE.getCode());
         route.setSource(WebSocketConstants.Source.WEBSOCKET);
         message.setRoute(route);
         
@@ -72,8 +74,8 @@ public class WebSocketMessageBuilder {
         
         // 设置路由信息
         Route route = new Route();
-        route.setCmd(WebSocketEnums.CmdType.SYS_NOTIFY.getCode());
-        route.setType(WebSocketEnums.MsgType.SYSTEM_NOTIFY.getCode());
+        route.setCmd(CmdType.SYS_NOTIFY.getCode());
+        route.setType(MsgType.SYSTEM_NOTIFY.getCode());
         route.setTo(to);
         route.setSource(WebSocketConstants.Source.SYSTEM);
         message.setRoute(route);
@@ -101,8 +103,8 @@ public class WebSocketMessageBuilder {
         
         // 设置路由信息
         Route route = new Route();
-        route.setCmd(WebSocketEnums.CmdType.ERROR.getCode());
-        route.setType(WebSocketEnums.MsgType.SYSTEM_NOTIFY.getCode());
+        route.setCmd(CmdType.ERROR.getCode());
+        route.setType(MsgType.SYSTEM_NOTIFY.getCode());
         route.setSource(WebSocketConstants.Source.SYSTEM);
         message.setRoute(route);
         
