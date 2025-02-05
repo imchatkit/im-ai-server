@@ -1,16 +1,18 @@
 package com.imai.core.openapi;
 
-import com.imai.core.domain.vo.ImUserVo;
 import com.imai.core.openapi.bo.OpenApiImUseRegisterBo;
 import com.imai.core.openapi.vo.OpenApiImUserVo;
 import com.imai.core.service.IImUserService;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.domain.R;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
+import org.dromara.common.log.annotation.Log;
+import org.dromara.common.log.enums.BusinessType;
 import org.dromara.common.web.core.BaseController;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,21 +32,20 @@ public class OpenApiImUserController extends BaseController {
 
     private final IImUserService imUserService;
 
-
     /**
      * IM客户端用户登录
-     * 
      *
      */
     @PostMapping("/login")
     @RepeatSubmit
-    public R<OpenApiImUserVo> login(@RequestBody @Validated OpenApiImUseRegisterBo bo) {
+    @Log(title = "IM客户端用户登录", businessType = BusinessType.INSERT)
+    public R<OpenApiImUserVo> login(@RequestHeader("X-App-Key") String appKey, @RequestBody @Validated OpenApiImUseRegisterBo bo) {
         return R.ok(imUserService.login(bo));
     }
 
     // /**
     //  * IM客户端用户登出
-    //  * 
+    //  *
     //  */
     // @PostMapping("/logout")
     // public R<OpenApiImUserVo> logout(@RequestBody @Validated OpenApiImUseRegisterBo bo) {

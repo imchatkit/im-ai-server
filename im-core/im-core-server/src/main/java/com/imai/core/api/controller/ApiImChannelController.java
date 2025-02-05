@@ -48,7 +48,6 @@ public class ApiImChannelController extends BaseController {
     /**
      * 查询频道列表
      */
-    @SaCheckPermission("imcore:channel:list")
     @GetMapping("/list")
     public TableDataInfo<ImChannelVo> list(ImChannelBo bo, PageQuery pageQuery) {
         return imChannelService.queryPageList(bo, pageQuery);
@@ -57,7 +56,6 @@ public class ApiImChannelController extends BaseController {
     /**
      * 导出频道列表
      */
-    @SaCheckPermission("imcore:channel:export")
     @Log(title = "频道", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImChannelBo bo, HttpServletResponse response) {
@@ -70,7 +68,6 @@ public class ApiImChannelController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imcore:channel:query")
     @GetMapping("/{id}")
     public R<ImChannelVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +77,6 @@ public class ApiImChannelController extends BaseController {
     /**
      * 新增频道
      */
-    @SaCheckPermission("imcore:channel:add")
     @Log(title = "频道", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +87,6 @@ public class ApiImChannelController extends BaseController {
     /**
      * 修改频道
      */
-    @SaCheckPermission("imcore:channel:edit")
     @Log(title = "频道", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +99,6 @@ public class ApiImChannelController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imcore:channel:remove")
     @Log(title = "频道", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

@@ -1,6 +1,5 @@
 package com.imai.ws.netty.run;
 
-
 import com.imai.ws.netty.handler.ImHttpHandler;
 import com.imai.ws.netty.handler.ImHeartbeatHandler;
 import com.imai.ws.netty.handler.ImWsMsgHandler;
@@ -9,13 +8,22 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler;
+import io.netty.handler.stream.ChunkedWriteHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.TimeUnit;
+
 @Slf4j
 @Component
 public class ImChannelInitializer extends ChannelInitializer<NioSocketChannel> {
+
+    private static final int READ_IDLE_TIME = 60; // 读空闲时间
+    private static final int WRITE_IDLE_TIME = 0;  // 写空闲时间
+    private static final int ALL_IDLE_TIME = 0;    // 读写空闲时间
 
     @Resource
     private ImWsMsgHandler imWsMsgHandler;
@@ -26,23 +34,23 @@ public class ImChannelInitializer extends ChannelInitializer<NioSocketChannel> {
 
     @Override
     protected void initChannel(NioSocketChannel channel) throws Exception {
+        // HTTP 编解码
         channel.pipeline().addLast(new HttpServerCodec());
         channel.pipeline().addLast(new HttpObjectAggregator(65536));
+        channel.pipeline().addLast(new ChunkedWriteHandler());
+        
+        // 认证处理
         channel.pipeline().addLast(imHttpHandler);
+        
+        // WebSocket 协议处理
+        channel.pipeline().addLast(new WebSocketServerCompressionHandler());
+        channel.pipeline().addLast(new WebSocketServerProtocolHandler("/ws", null, true, 65536, false, true));
 
-        // --- 心跳检测 ---
-        // 添加 IdleStateHandler 来处理空闲状态事件
-//        channel.pipeline().addLast(new IdleStateHandler(READ_IDLE_TIME, WRITE_IDLE_TIME, ALL_IDLE_TIME, TimeUnit.SECONDS));
-        // 添加自定义的处理器 通过IdleStateHandler设置了读空闲时间为10秒，写空闲时间为0秒，读写空闲时间为0秒。这表示如果10秒内没有读取到数据，就会触发读空闲事件；如果设置为0，表示对应的空闲检测不会被触发。你可以根据需要调整这些时间间隔来满足你的需求。
-        //请确保在Netty的ChannelInitializer中添加IdleStateHandler以便处理空闲状态事件，以及根据具体情况设置合适的空闲时间间隔。
+        // 心跳检测
+        channel.pipeline().addLast(new IdleStateHandler(READ_IDLE_TIME, WRITE_IDLE_TIME, ALL_IDLE_TIME, TimeUnit.SECONDS));
         channel.pipeline().addLast(imHeartbeatHandler);
-        // --- 心跳检测 ---
 
-        // 添加自定义的protobuf编解码器
-//        channel.pipeline().addLast(new ProtobufMultiMessageCodec());
-        channel.pipeline().addLast(new WebSocketServerProtocolHandler("/ws"));
+        // 消息处理
         channel.pipeline().addLast(imWsMsgHandler);
-
-
     }
 }

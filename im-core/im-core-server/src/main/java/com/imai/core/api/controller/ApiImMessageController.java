@@ -48,7 +48,6 @@ public class ApiImMessageController extends BaseController {
     /**
      * 查询消息存储列表
      */
-    @SaCheckPermission("imcore:message:list")
     @GetMapping("/list")
     public TableDataInfo<ImMessageVo> list(ImMessageBo bo, PageQuery pageQuery) {
         return imMessageService.queryPageList(bo, pageQuery);
@@ -57,7 +56,6 @@ public class ApiImMessageController extends BaseController {
     /**
      * 导出消息存储列表
      */
-    @SaCheckPermission("imcore:message:export")
     @Log(title = "消息存储", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImMessageBo bo, HttpServletResponse response) {
@@ -70,7 +68,6 @@ public class ApiImMessageController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imcore:message:query")
     @GetMapping("/{id}")
     public R<ImMessageVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +77,6 @@ public class ApiImMessageController extends BaseController {
     /**
      * 新增消息存储
      */
-    @SaCheckPermission("imcore:message:add")
     @Log(title = "消息存储", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +87,6 @@ public class ApiImMessageController extends BaseController {
     /**
      * 修改消息存储
      */
-    @SaCheckPermission("imcore:message:edit")
     @Log(title = "消息存储", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +99,6 @@ public class ApiImMessageController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imcore:message:remove")
     @Log(title = "消息存储", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

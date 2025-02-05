@@ -51,6 +51,7 @@ public class OpenApiImUseRegisterBo implements Serializable {
      * - im_pc_win: Windows端
      * - im_pc_mac: Mac端
      */
+    @NotBlank(message = "设备类型不能为空", groups = { AddGroup.class, EditGroup.class })
     private String device;
 
     /**

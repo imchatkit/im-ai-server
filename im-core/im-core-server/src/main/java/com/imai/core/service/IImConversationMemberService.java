@@ -1,6 +1,7 @@
 package com.imai.core.service;
 
 import com.imai.core.domain.bo.ImConversationMemberBo;
+import com.imai.core.domain.bo.ImConversationMemberBatchAddBo;
 import com.imai.core.domain.vo.ImConversationMemberVo;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
@@ -65,4 +66,20 @@ public interface IImConversationMemberService {
      * @return 是否删除成功
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    /**
+     * 批量添加用户到会话
+     *
+     * @param bo 批量添加会话成员参数
+     * @return 是否添加成功
+     */
+    Boolean batchAddUsersToConversationForApi(ImConversationMemberBatchAddBo bo);
+
+    /**
+     * 根据会话ID查询成员列表
+     *
+     * @param conversationId 会话ID
+     * @return 会话成员列表
+     */
+    List<ImConversationMemberVo> queryListByConversationIdForApi(Long conversationId);
 }

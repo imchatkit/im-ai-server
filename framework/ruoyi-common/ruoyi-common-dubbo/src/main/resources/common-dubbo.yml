@@ -24,8 +24,11 @@ dubbo:
       namespace: ${spring.profiles.active}
   metadata-report:
     cycle-report: true      # 定时上报
+
     # 增加同步报告确保元数据及时写入
     sync-report: true
+    retry-times: 3     # 配合重试机制
+    retry-period: 3000 # 重试间隔
     address: redis://${spring.data.redis.host}:${spring.data.redis.port}
     group: DUBBO_GROUP
     username: dubbo
@@ -36,26 +39,34 @@ dubbo:
       namespace: ${spring.profiles.active}
       database: ${spring.data.redis.database}
       timeout: ${spring.data.redis.timeout}
-      # 集群地址 cluster 为 true 生效
-      backup: 127.0.0.1:6379,127.0.0.1:6381
   # 消费者相关配置
   consumer:
     lazy: true                # 懒加载服务
     # 结果缓存(LRU算法)
     # 会有数据不一致问题 建议在注解局部开启
     cache: false
+    cluster: failfast
+    # 增加超时时间
+    timeout: 10000
     # 支持校验注解
     validation: jvalidationNew
     # 调用重试 不包括第一次 0为不需要重试
-    retries: 0
+    retries: 1
     # 初始化检查
     check: false
   provider:
-    threads: 20             # 服务线程池大小
+    cluster: failfast
+    threadpool: cached
+    threads: 200             # 服务线程池大小
+    accepts: 500            # 限制最大连接数
+    queues: 200                     # 默认值0
     # 延迟暴露服务，等待应用完全启动
-    delay: -1
-    # 增加启动超时时间
-    timeout: 10000
+    delay: 300              # 延迟300ms暴露服务
+    timeout: 3000
+    # 添加限流和熔断配置
+    executes: 200          # 服务级别并发执行数限制
+    actives: 100          # 每个消费者的最大并发调用数
+
   protocol:
     name: dubbo
     port: -1

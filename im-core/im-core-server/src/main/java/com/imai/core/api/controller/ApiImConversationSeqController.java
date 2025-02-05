@@ -48,7 +48,6 @@ public class ApiImConversationSeqController extends BaseController {
     /**
      * 查询会话序列号列表
      */
-    @SaCheckPermission("imcore:conversationSeq:list")
     @GetMapping("/list")
     public TableDataInfo<ImConversationSeqVo> list(ImConversationSeqBo bo, PageQuery pageQuery) {
         return imConversationSeqService.queryPageList(bo, pageQuery);
@@ -57,7 +56,6 @@ public class ApiImConversationSeqController extends BaseController {
     /**
      * 导出会话序列号列表
      */
-    @SaCheckPermission("imcore:conversationSeq:export")
     @Log(title = "会话序列号", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImConversationSeqBo bo, HttpServletResponse response) {
@@ -70,7 +68,6 @@ public class ApiImConversationSeqController extends BaseController {
      *
      * @param conversationId 主键
      */
-    @SaCheckPermission("imcore:conversationSeq:query")
     @GetMapping("/{conversationId}")
     public R<ImConversationSeqVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long conversationId) {
@@ -80,7 +77,6 @@ public class ApiImConversationSeqController extends BaseController {
     /**
      * 新增会话序列号
      */
-    @SaCheckPermission("imcore:conversationSeq:add")
     @Log(title = "会话序列号", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +87,6 @@ public class ApiImConversationSeqController extends BaseController {
     /**
      * 修改会话序列号
      */
-    @SaCheckPermission("imcore:conversationSeq:edit")
     @Log(title = "会话序列号", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +99,6 @@ public class ApiImConversationSeqController extends BaseController {
      *
      * @param conversationIds 主键串
      */
-    @SaCheckPermission("imcore:conversationSeq:remove")
     @Log(title = "会话序列号", businessType = BusinessType.DELETE)
     @DeleteMapping("/{conversationIds}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

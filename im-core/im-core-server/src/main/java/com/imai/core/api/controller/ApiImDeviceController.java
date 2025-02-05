@@ -48,7 +48,6 @@ public class ApiImDeviceController extends BaseController {
     /**
      * 查询客户端设备列表
      */
-    @SaCheckPermission("imcore:device:list")
     @GetMapping("/list")
     public TableDataInfo<ImDeviceVo> list(ImDeviceBo bo, PageQuery pageQuery) {
         return imDeviceService.queryPageList(bo, pageQuery);
@@ -57,7 +56,6 @@ public class ApiImDeviceController extends BaseController {
     /**
      * 导出客户端设备列表
      */
-    @SaCheckPermission("imcore:device:export")
     @Log(title = "客户端设备", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImDeviceBo bo, HttpServletResponse response) {
@@ -70,7 +68,6 @@ public class ApiImDeviceController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imcore:device:query")
     @GetMapping("/{id}")
     public R<ImDeviceVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +77,6 @@ public class ApiImDeviceController extends BaseController {
     /**
      * 新增客户端设备
      */
-    @SaCheckPermission("imcore:device:add")
     @Log(title = "客户端设备", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +87,6 @@ public class ApiImDeviceController extends BaseController {
     /**
      * 修改客户端设备
      */
-    @SaCheckPermission("imcore:device:edit")
     @Log(title = "客户端设备", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +99,6 @@ public class ApiImDeviceController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imcore:device:remove")
     @Log(title = "客户端设备", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

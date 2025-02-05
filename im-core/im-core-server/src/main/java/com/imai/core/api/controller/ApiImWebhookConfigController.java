@@ -48,7 +48,6 @@ public class ApiImWebhookConfigController extends BaseController {
     /**
      * 查询Webhook配置列表
      */
-    @SaCheckPermission("imcore:webhookConfig:list")
     @GetMapping("/list")
     public TableDataInfo<ImWebhookConfigVo> list(ImWebhookConfigBo bo, PageQuery pageQuery) {
         return imWebhookConfigService.queryPageList(bo, pageQuery);
@@ -57,7 +56,6 @@ public class ApiImWebhookConfigController extends BaseController {
     /**
      * 导出Webhook配置列表
      */
-    @SaCheckPermission("imcore:webhookConfig:export")
     @Log(title = "Webhook配置", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImWebhookConfigBo bo, HttpServletResponse response) {
@@ -70,7 +68,6 @@ public class ApiImWebhookConfigController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imcore:webhookConfig:query")
     @GetMapping("/{id}")
     public R<ImWebhookConfigVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +77,6 @@ public class ApiImWebhookConfigController extends BaseController {
     /**
      * 新增Webhook配置
      */
-    @SaCheckPermission("imcore:webhookConfig:add")
     @Log(title = "Webhook配置", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +87,6 @@ public class ApiImWebhookConfigController extends BaseController {
     /**
      * 修改Webhook配置
      */
-    @SaCheckPermission("imcore:webhookConfig:edit")
     @Log(title = "Webhook配置", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +99,6 @@ public class ApiImWebhookConfigController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imcore:webhookConfig:remove")
     @Log(title = "Webhook配置", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

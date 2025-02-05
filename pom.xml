@@ -400,6 +400,7 @@
 <!--        <module>ruoyi-example</module>-->
         <module>im-core</module>
         <module>framework</module>
+        <module>im-test</module>
     </modules>
 
     <dependencies>

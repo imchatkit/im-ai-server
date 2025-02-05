@@ -1,0 +1,189 @@
+package com.im.websocket;
+
+import lombok.Data;
+
+/**
+ * WebSocket消息基础结构
+ */
+@Data
+public class WebSocketMessage {
+    private Header header;      // 消息头
+    private Route route;        // 路由信息
+    private Content content;    // 消息内容
+    private Control control;    // 控制信息
+    private Options options;    // 可选配置
+}
+
+/**
+ * 消息头
+ */
+@Data
+public class Header {
+    private Integer ver;            // 协议版本号
+    private String seq;             // 客户端序列号
+    private String appId;           // 应用ID
+    private String tenantId;        // 租户ID
+    private String platform;        // 平台类型
+    private String deviceId;        // 设备ID
+    private Long timestamp;         // 客户端发送时间
+}
+
+/**
+ * 路由信息
+ */
+@Data
+public class Route {
+    private Integer cmd;            // 命令类型
+    private Integer type;           // 消息类型
+    private String room;            // 会话ID
+    private Integer roomType;       // 会话类型(1单聊/2群聊/3聊天室等)
+    private String from;            // 发送者ID
+    private String to;              // 接收者ID
+    private List<String> target;    // 目标用户列表
+    private String source;          // 消息来源(serverApi/websocket)
+}
+
+/**
+ * 消息内容
+ */
+@Data
+public class Content {
+    private String text;                    // 文本内容
+    private List<ContentItem> items;        // 富文本内容
+    private Mentions mentions;              // @功能
+    private Quote quote;                    // 引用消息
+    private Map<String, Object> extension;  // 消息扩展字段
+}
+
+/**
+ * 富文本内容项
+ */
+@Data
+public class ContentItem {
+    private String type;        // 内容类型
+    private Integer start;      // 起始位置
+    private Integer end;        // 结束位置
+    private String uid;         // 用户ID(at类型时使用)
+    private String name;        // 用户名称(at类型时使用)
+    private String url;         // 资源URL
+    private String thumbnail;   // 缩略图URL
+    private Integer width;      // 宽度
+    private Integer height;     // 高度
+    private Long size;         // 文件大小
+}
+
+/**
+ * @功能
+ */
+@Data
+public class Mentions {
+    private Boolean all;                // 是否@所有人
+    private List<String> uids;          // @的用户列表
+    private String pushContent;         // @推送内容
+}
+
+/**
+ * 引用消息
+ */
+@Data
+public class Quote {
+    private String msgId;       // 原消息ID
+    private String text;        // 原消息内容
+}
+
+/**
+ * 控制信息
+ */
+@Data
+public class Control {
+    private Boolean persistent;     // 是否持久化
+    private Boolean syncDevice;     // 是否多端同步
+    private Integer priority;       // 消息优先级(0-9)
+    private Integer ttl;           // 消息有效期(秒)
+    
+    private Boolean needReceipt;    // 是否需要回执
+    private Integer receiptType;    // 回执类型(1送达/2已读)
+    private Integer readTimeout;    // 已读超时时间(秒)
+    
+    private Push push;             // 推送控制
+    private Security security;     // 安全控制
+    private Callback callback;     // 回调控制
+}
+
+/**
+ * 推送控制
+ */
+@Data
+public class Push {
+    private Boolean enable;         // 是否开启推送
+    private String title;          // 推送标题
+    private String content;        // 推送内容
+    private Map<String, Object> payload;  // 推送自定义数据
+    private Integer badge;         // 角标数
+    private String sound;          // 推送声音
+    private String channelId;      // 推送通道
+}
+
+/**
+ * 安全控制
+ */
+@Data
+public class Security {
+    private Boolean checkSensitive;  // 是否检查敏感词
+    private Boolean checkSpam;       // 是否检查垃圾消息
+    private Boolean encryption;      // 是否加密
+    private String sign;            // 消息签名
+}
+
+/**
+ * 回调控制
+ */
+@Data
+public class Callback {
+    private Boolean enable;         // 是否开启回调
+    private String url;            // 回调地址
+    private List<String> events;    // 需要回调的事件类型
+    private Integer timeout;        // 回调超时时间(毫秒)
+    private CallbackRetry retry;    // 重试配置
+    private CallbackSecurity security;  // 回调安全配置
+}
+
+/**
+ * 回调重试配置
+ */
+@Data
+public class CallbackRetry {
+    private Integer maxTimes;       // 最大重试次数
+    private Integer interval;       // 重试间隔(毫秒)
+}
+
+/**
+ * 回调安全配置
+ */
+@Data
+public class CallbackSecurity {
+    private String token;          // 回调验证token
+    private String signType;       // 签名类型
+}
+
+/**
+ * 可选配置
+ */
+@Data
+public class Options {
+    private String bizType;         // 业务类型
+    private String bizId;           // 业务ID
+    private Conversation conversation;  // 会话配置
+    private Map<String, Object> custom;  // 自定义业务字段
+    private Map<String, Object> extra;   // 额外扩展字段
+}
+
+/**
+ * 会话配置
+ */
+@Data
+public class Conversation {
+    private Boolean top;            // 是否置顶会话
+    private Boolean mute;           // 是否免打扰
+    private Boolean unread;         // 是否计入未读
+} 

@@ -29,7 +29,7 @@ dubbo:
   # 消费者相关配置
   consumer:
     # 超时时间
-    timeout: 3000
+    timeout: 5000
   # 自定义配置
   custom:
     # 全局请求log

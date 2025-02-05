@@ -48,7 +48,6 @@ public class ApiImUserStatusController extends BaseController {
     /**
      * 查询用户状态列表
      */
-    @SaCheckPermission("imcore:userStatus:list")
     @GetMapping("/list")
     public TableDataInfo<ImUserStatusVo> list(ImUserStatusBo bo, PageQuery pageQuery) {
         return imUserStatusService.queryPageList(bo, pageQuery);
@@ -57,7 +56,6 @@ public class ApiImUserStatusController extends BaseController {
     /**
      * 导出用户状态列表
      */
-    @SaCheckPermission("imcore:userStatus:export")
     @Log(title = "用户状态", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImUserStatusBo bo, HttpServletResponse response) {
@@ -70,7 +68,6 @@ public class ApiImUserStatusController extends BaseController {
      *
      * @param userId 主键
      */
-    @SaCheckPermission("imcore:userStatus:query")
     @GetMapping("/{userId}")
     public R<ImUserStatusVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long userId) {
@@ -80,7 +77,6 @@ public class ApiImUserStatusController extends BaseController {
     /**
      * 新增用户状态
      */
-    @SaCheckPermission("imcore:userStatus:add")
     @Log(title = "用户状态", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +87,6 @@ public class ApiImUserStatusController extends BaseController {
     /**
      * 修改用户状态
      */
-    @SaCheckPermission("imcore:userStatus:edit")
     @Log(title = "用户状态", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,7 +99,6 @@ public class ApiImUserStatusController extends BaseController {
      *
      * @param userIds 主键串
      */
-    @SaCheckPermission("imcore:userStatus:remove")
     @Log(title = "用户状态", businessType = BusinessType.DELETE)
     @DeleteMapping("/{userIds}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

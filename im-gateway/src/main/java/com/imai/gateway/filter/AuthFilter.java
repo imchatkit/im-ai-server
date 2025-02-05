@@ -63,7 +63,7 @@ public class AuthFilter {
                             return;
                         }
                         // IM用户API,只校验登录状态
-                        else if (path.startsWith("/im/api")) {
+                        else if (path.startsWith("/imcore/api/v1/")) {
                             LoginUser loginUser = LoginHelper.getLoginUser();
                             if (!UserType.IM_USER.getUserType().equals(loginUser.getUserType())) {
                                 throw new NotPermissionException("无访问权限");

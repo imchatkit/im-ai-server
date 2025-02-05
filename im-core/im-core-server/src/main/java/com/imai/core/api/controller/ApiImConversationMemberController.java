@@ -2,6 +2,7 @@ package com.imai.core.api.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.imai.core.domain.bo.ImConversationMemberBo;
+import com.imai.core.domain.bo.ImConversationMemberBatchAddBo;
 import com.imai.core.domain.vo.ImConversationMemberVo;
 import com.imai.core.service.IImConversationMemberService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -48,7 +49,6 @@ public class ApiImConversationMemberController extends BaseController {
     /**
      * 查询会话成员列表
      */
-    @SaCheckPermission("imcore:conversationMember:list")
     @GetMapping("/list")
     public TableDataInfo<ImConversationMemberVo> list(ImConversationMemberBo bo, PageQuery pageQuery) {
         return imConversationMemberService.queryPageList(bo, pageQuery);
@@ -57,7 +57,6 @@ public class ApiImConversationMemberController extends BaseController {
     /**
      * 导出会话成员列表
      */
-    @SaCheckPermission("imcore:conversationMember:export")
     @Log(title = "会话成员", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImConversationMemberBo bo, HttpServletResponse response) {
@@ -70,7 +69,6 @@ public class ApiImConversationMemberController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("imcore:conversationMember:query")
     @GetMapping("/{id}")
     public R<ImConversationMemberVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
@@ -80,7 +78,6 @@ public class ApiImConversationMemberController extends BaseController {
     /**
      * 新增会话成员
      */
-    @SaCheckPermission("imcore:conversationMember:add")
     @Log(title = "会话成员", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -91,7 +88,6 @@ public class ApiImConversationMemberController extends BaseController {
     /**
      * 修改会话成员
      */
-    @SaCheckPermission("imcore:conversationMember:edit")
     @Log(title = "会话成员", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -104,11 +100,31 @@ public class ApiImConversationMemberController extends BaseController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("imcore:conversationMember:remove")
     @Log(title = "会话成员", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
         return toAjax(imConversationMemberService.deleteWithValidByIds(List.of(ids), true));
+    }
+
+    /**
+     * 批量添加用户到会话
+     */
+    @Log(title = "批量添加会话成员", businessType = BusinessType.INSERT)
+    @RepeatSubmit()
+    @PostMapping("/batchAdd")
+    public R<Void> batchAddUsers(@Validated @RequestBody ImConversationMemberBatchAddBo bo) {
+        return toAjax(imConversationMemberService.batchAddUsersToConversationForApi(bo));
+    }
+
+    /**
+     * 根据会话ID查询成员列表
+     *
+     * @param conversationId 会话ID
+     */
+    @GetMapping("/listByConversation/{conversationId}")
+    public R<List<ImConversationMemberVo>> listByConversation(
+        @NotNull(message = "会话ID不能为空") @PathVariable Long conversationId) {
+        return R.ok(imConversationMemberService.queryListByConversationIdForApi(conversationId));
     }
 }
