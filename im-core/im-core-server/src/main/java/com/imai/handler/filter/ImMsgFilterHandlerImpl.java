@@ -7,6 +7,8 @@ import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.config.annotation.DubboService;
 
 /**
+ * 过滤器,拦截消息,例如群聊判断用户是否在群内
+ * 
  * @author wei
  * @date 2025/1/16 10:45
  */
@@ -16,6 +18,7 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
 
     @DubboReference
     private ImSendMsg imSendMsg;
+    
 
     @Override
     public boolean filter(String message, String userId, String channelId) {

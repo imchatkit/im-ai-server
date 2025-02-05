@@ -10,8 +10,13 @@ import org.apache.dubbo.config.annotation.DubboService;
 @DubboService
 @Slf4j
 public class ImDispatcherImpl implements ImDispatcher {
+
+    /**
+     *  
+     */
     @Override
     public boolean dispatch(String message) {
+        
         log.info("dispatch message:{}", message);
         return true;
     }
