@@ -203,4 +203,13 @@ public class ImConversationMemberServiceImpl implements IImConversationMemberSer
            .eq(ImConversationMember::getDeleted, 0L); // 只查询未删除的成员
         return baseMapper.selectVoList(lqw);
     }
+
+    @Override
+    public Boolean contains(Long conversationId, Long userId) {
+        LambdaQueryWrapper<ImConversationMember> lqw = Wrappers.lambdaQuery();
+        lqw.eq(ImConversationMember::getFkConversationId, conversationId)
+           .eq(ImConversationMember::getFkUserId, userId)
+           .eq(ImConversationMember::getDeleted, 0L);
+        return baseMapper.exists(lqw);
+    }
 }

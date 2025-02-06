@@ -27,7 +27,7 @@
   - 群聊会话类型需验证用户是否在群内等
   - 验证失败通过WebSocket返回错误码
 
-    ConversationType: 
+    ConversationType:
     ```
         SINGLE(1, "单聊"),
         GROUP(2, "群聊"),

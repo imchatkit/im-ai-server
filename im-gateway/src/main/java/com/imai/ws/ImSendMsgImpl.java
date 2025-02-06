@@ -5,8 +5,6 @@ import com.imai.ws.netty.user.SendMsgUtil;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * @author wei
@@ -20,10 +18,10 @@ public class ImSendMsgImpl implements ImSendMsg {
     private SendMsgUtil sendMsgUtil;
 
     @Override
-    public boolean sendMsgToUser(String message, String userId) {
+    public boolean sendMsgToUser(String message, Long userId) {
         try {
             log.info("[sendMsgToUser] start - message:{}, userId:{}", message, userId);
-            sendMsgUtil.toUserAllChannel(Long.valueOf(userId), message);
+            sendMsgUtil.toUserAllChannel(userId, message);
             log.info("[sendMsgToUser] success");
             return true;
         } catch (Exception e) {
