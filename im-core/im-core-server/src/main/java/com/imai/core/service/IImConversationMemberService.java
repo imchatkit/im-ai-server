@@ -82,4 +82,13 @@ public interface IImConversationMemberService {
      * @return 会话成员列表
      */
     List<ImConversationMemberVo> queryListByConversationIdForApi(Long conversationId);
+
+    /**
+     * 检查用户是否在会话中
+     *
+     * @param conversationId 会话ID
+     * @param userId 用户ID
+     * @return 如果用户在会话中返回true，否则返回false
+     */
+    Boolean contains(Long conversationId, Long userId);
 }

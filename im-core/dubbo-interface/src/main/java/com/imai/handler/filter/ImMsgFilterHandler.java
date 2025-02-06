@@ -15,5 +15,5 @@ public interface ImMsgFilterHandler {
      * @param message
      * @return
      */
-    boolean filter(String message, String userId, String channelId);
+    boolean filter(String message, Long userId, String channelId);
 }
