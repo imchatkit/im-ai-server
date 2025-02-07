@@ -1,6 +1,8 @@
 package com.imai.handler.filter;
 
+import com.imai.core.domain.bo.ImConversationMemberBo;
 import com.imai.core.domain.bo.ImMessageBo;
+import com.imai.core.domain.vo.ImConversationMemberVo;
 import com.imai.core.domain.vo.ImConversationVo;
 import com.imai.core.service.IImConversationMemberService;
 import com.imai.core.service.IImConversationService;
@@ -102,21 +104,33 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
      */
     private boolean strangerChat(Long fromUserId, WebSocketMessage webSocketMessage) {
         Long conversationId = webSocketMessage.getRoute().getConversationId();
-        Long to = webSocketMessage.getRoute().getTo();
-        webSocketMessage.getRoute().setFrom(fromUserId);
+        ImConversationMemberBo imConversationMemberBo = new ImConversationMemberBo();
+        imConversationMemberBo.setFkConversationId(conversationId);
 
-        // 判断to是否在conversationId中
-        boolean isInConversation = conversationMemberService.contains(conversationId, to);
-        if (!isInConversation) {
-            sendErrorResponse(fromUserId, ImResponseCode.RECEIVER_NOT_IN_CONVERSATION);
-            return false;
+        // 查询会话成员
+        List<ImConversationMemberVo> memberVoList = conversationMemberService.queryList(imConversationMemberBo);
+        // memberVoList 转化为只要里面的userID 筛选出list
+        List<Long> toList = new ArrayList<>();
+
+        for (ImConversationMemberVo memberVo : memberVoList) {
+            toList.add(memberVo.getFkUserId());
         }
 
         // 判断from是否在conversationId中
-        boolean isFromInConversation = conversationMemberService.contains(conversationId, fromUserId);
+        boolean isFromInConversation = toList.contains(fromUserId);
         if (!isFromInConversation) {
             sendErrorResponse(fromUserId, ImResponseCode.SENDER_NOT_IN_CONVERSATION);
             return false;
+        } else {
+            toList.remove(fromUserId);
+        }
+
+        Long to;
+        if (!toList.iterator().hasNext()) {
+            sendErrorResponse(fromUserId, ImResponseCode.RECEIVER_NOT_IN_CONVERSATION);
+            return false;
+        } else {
+            to = toList.iterator().next();
         }
 
         // 检查必要的字段
@@ -129,7 +143,6 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
         // 设置基础信息
         messageBo.setFkConversationId(webSocketMessage.getRoute().getConversationId());
         messageBo.setFkFromUserId(fromUserId);
-        messageBo.setToUid(webSocketMessage.getRoute().getTo());
 
         // 设置消息状态和命令
         messageBo.setMsgStatus(1L); // 初始状态
@@ -143,8 +156,6 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
         // 从 Route 获取信息
         messageBo.setMsgType(webSocketMessage.getRoute().getType() != null ?
             Long.valueOf(webSocketMessage.getRoute().getType()) : null);
-        messageBo.setConversationType(webSocketMessage.getRoute().getConversationType() != null ?
-            Long.valueOf(webSocketMessage.getRoute().getConversationType()) : ConversationType.SINGLE.getCode());
 
         // 从 Content 获取信息
         String text = webSocketMessage.getContent().getText();
@@ -211,8 +222,8 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
         messageBo.setNeedReceipt(1L); // 需要回执
 
         List<Long> receiverIds = new ArrayList<>();
-        receiverIds.add(webSocketMessage.getRoute().getTo());
-        receiverIds.add(webSocketMessage.getRoute().getFrom());
+        receiverIds.add(to);
+        receiverIds.add(fromUserId);
 
         boolean store = imStoreHandler.store(messageBo, webSocketMessage, receiverIds);
         if (!store) {
