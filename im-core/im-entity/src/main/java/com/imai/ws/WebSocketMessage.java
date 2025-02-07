@@ -2,7 +2,6 @@ package com.imai.ws;
 
 import java.io.Serializable;
 
-import com.imai.ws.enums.MessageDirection;
 import lombok.Data;
 import lombok.Builder;
 import lombok.ToString;
