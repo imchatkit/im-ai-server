@@ -13,6 +13,7 @@ import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
@@ -124,5 +125,32 @@ public class ImConversationSeqServiceImpl implements IImConversationSeqService {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;
+    }
+
+    /**
+     * 获取并递增会话序列号
+     *
+     * @param conversationId 会话ID
+     * @return 递增后的序列号
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Long getAndIncrementSeq(Long conversationId) {
+        // 获取当前序列号
+        ImConversationSeq seq = baseMapper.selectById(conversationId);
+        if (seq == null) {
+            // 如果不存在，则初始化
+            seq = new ImConversationSeq();
+            seq.setConversationId(conversationId);
+            seq.setConversationSeq(1L);
+            baseMapper.insert(seq);
+            return 1L;
+        } else {
+            // 递增序列号
+            Long newSeq = seq.getConversationSeq() + 1;
+            seq.setConversationSeq(newSeq);
+            baseMapper.updateById(seq);
+            return newSeq;
+        }
     }
 }
