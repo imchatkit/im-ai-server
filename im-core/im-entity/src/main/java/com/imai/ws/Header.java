@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class Header implements Serializable{
     private String localId;         // 客户端序列号
-    private String platform;        // 平台类型
-    private String deviceId;        // 设备ID
+//    private String platform;        // 平台类型
+//    private String deviceId;        // 设备ID
     private Long timestamp;         // 客户端发送时间
 }

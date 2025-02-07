@@ -2,6 +2,7 @@ package com.imai.ws;
 
 import java.io.Serializable;
 
+import com.imai.ws.enums.MessageDirection;
 import lombok.Data;
 import lombok.Builder;
 import lombok.ToString;
@@ -30,5 +31,13 @@ public class WebSocketMessage implements Serializable {
     private Object data;            // 响应数据(direction=RESPONSE时选填)
 
     // === 推送消息字段 ===
-    private MessageExtra extra;     // 消息扩展信息(direction=PUSH时选填)
+    private MessageExtra messageExtra;     // 消息扩展信息(direction=PUSH时选填)
+
+
+    public void settingDirection(Integer direction, Integer code, String message, Object data){
+        this.direction = direction;
+        this.code = code;
+        this.message = message;
+        this.data = data;
+    }
 }

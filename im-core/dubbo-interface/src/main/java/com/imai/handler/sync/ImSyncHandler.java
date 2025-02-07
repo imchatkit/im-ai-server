@@ -9,7 +9,7 @@ import java.util.List;
  *  保存多端同步数据库
  *  下发在线消息
  */
-public interface ImSync {
+public interface ImSyncHandler {
 
     /**
      *   消息同步器

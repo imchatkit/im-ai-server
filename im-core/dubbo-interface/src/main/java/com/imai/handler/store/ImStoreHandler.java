@@ -10,7 +10,7 @@ import java.util.List;
  *  1.存消息数据库
  *  2.存已读未读数据库
  */
-public interface ImStore {
+public interface ImStoreHandler {
 
     /**
      *  分发消息

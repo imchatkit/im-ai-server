@@ -2,9 +2,8 @@ package com.imai.handler.filter;
 
 import com.imai.core.domain.bo.ImMessageBo;
 import com.imai.core.service.IImConversationMemberService;
-import com.imai.core.service.IImConversationSeqService;
 import com.imai.handler.ImSendMsg;
-import com.imai.handler.store.ImStore;
+import com.imai.handler.store.ImStoreHandler;
 import com.imai.ws.ContentItem;
 import com.imai.ws.Mentions;
 import com.imai.ws.Quote;
@@ -33,13 +32,9 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
     @DubboReference
     private ImSendMsg imSendMsg;
     @Resource
-    private ImStore imStore;
-
+    private ImStoreHandler imStoreHandler;
     @Resource
     private IImConversationMemberService conversationMemberService;
-
-    @Resource
-    private IImConversationSeqService conversationSeqService;
 
     /**
      * 过滤消息
@@ -122,10 +117,6 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
         if (webSocketMessage.getHeader() == null || webSocketMessage.getRoute() == null || webSocketMessage.getContent() == null) {
             throw new RuntimeException("消息头、路由信息或消息内容不能为空");
         }
-
-        // 获取并递增会话序列号
-        Long conversationSeq = conversationSeqService.getAndIncrementSeq(conversationId);
-
         // 保存消息表
         ImMessageBo messageBo = new ImMessageBo();
 
@@ -133,7 +124,6 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
         messageBo.setFkConversationId(webSocketMessage.getRoute().getConversationId());
         messageBo.setFkFromUserId(fromUserId);
         messageBo.setToUid(webSocketMessage.getRoute().getTo());
-        messageBo.setConversationSeq(conversationSeq);
 
         // 设置消息状态和命令
         messageBo.setMsgStatus(1L); // 初始状态
@@ -212,15 +202,13 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
         // 设置其他默认值
         messageBo.setRefCount(0L); // 被引用次数
         messageBo.setDeleted(0L); // 未删除
-        messageBo.setAppId(webSocketMessage.getHeader().getPlatform() != null ?
-            webSocketMessage.getHeader().getPlatform() : "IM_APP");
-        messageBo.setNeedReceipt(0L); // 不需要回执
+        messageBo.setNeedReceipt(1L); // 需要回执
 
         List<Long> receiverIds = new ArrayList<>();
         receiverIds.add(webSocketMessage.getRoute().getTo());
         receiverIds.add(webSocketMessage.getRoute().getFrom());
 
-        boolean store = imStore.store(messageBo, webSocketMessage, receiverIds);
+        boolean store = imStoreHandler.store(messageBo, webSocketMessage, receiverIds);
         if (!store) {
             log.error("[filter] 保存消息失败 message:{}", webSocketMessage);
             throw new RuntimeException("保存消息失败");
