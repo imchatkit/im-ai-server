@@ -73,7 +73,7 @@ public class ImSysConversationInitController extends BaseController {
     @SaCheckPermission("imcore:sysConversationInit:query")
     @GetMapping("/{id}")
     public R<ImSysConversationInitVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long id) {
+                                              @PathVariable Long id) {
         return R.ok(imSysConversationInitService.queryById(id));
     }
 

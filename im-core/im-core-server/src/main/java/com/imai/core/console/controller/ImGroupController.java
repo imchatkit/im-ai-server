@@ -73,7 +73,7 @@ public class ImGroupController extends BaseController {
     @SaCheckPermission("imcore:group:query")
     @GetMapping("/{id}")
     public R<ImGroupVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long id) {
+                                @PathVariable Long id) {
         return R.ok(imGroupService.queryById(id));
     }
 

@@ -1,5 +1,10 @@
 package com.imai.core.service.impl;
 
+import cn.dev33.satoken.stp.SaLoginModel;
+import cn.dev33.satoken.stp.StpUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.imai.core.domain.ImUser;
 import com.imai.core.domain.bo.ImUserBo;
 import com.imai.core.domain.vo.ImUserVo;
@@ -7,28 +12,21 @@ import com.imai.core.mapper.ImUserMapper;
 import com.imai.core.openapi.bo.OpenApiImUseRegisterBo;
 import com.imai.core.openapi.vo.OpenApiImUserVo;
 import com.imai.core.service.IImUserService;
-
-import cn.dev33.satoken.stp.SaLoginModel;
-import cn.dev33.satoken.stp.StpUtil;
-
+import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.enums.DeviceType;
 import org.dromara.common.core.enums.UserType;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
+import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.system.api.model.LoginUser;
-import org.dromara.common.mybatis.core.page.PageQuery;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Collection;
 
 /**
  * 用户Service业务层处理
@@ -49,7 +47,7 @@ public class ImUserServiceImpl implements IImUserService {
      * @return 用户
      */
     @Override
-    public ImUserVo queryById(Long id){
+    public ImUserVo queryById(Long id) {
         return imUserMapper.selectVoById(id);
     }
 
@@ -134,7 +132,7 @@ public class ImUserServiceImpl implements IImUserService {
     /**
      * 保存前的数据校验
      */
-    private void validEntityBeforeSave(ImUser entity){
+    private void validEntityBeforeSave(ImUser entity) {
         //TODO 做一些数据校验,如唯一约束
     }
 
@@ -147,7 +145,7 @@ public class ImUserServiceImpl implements IImUserService {
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        if(isValid){
+        if (isValid) {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return imUserMapper.deleteByIds(ids) > 0;
@@ -171,7 +169,7 @@ public class ImUserServiceImpl implements IImUserService {
         ImUser existUser = imUserMapper.selectOne(lqw);
 
         Long userId;
-        if(existUser != null) {
+        if (existUser != null) {
             // 用户已存在,直接使用已有用户ID
             userId = existUser.getId();
         } else {
@@ -210,7 +208,7 @@ public class ImUserServiceImpl implements IImUserService {
 
         OpenApiImUserVo openApiImUserVo = new OpenApiImUserVo();
         openApiImUserVo.setImUserVo(imUserVo);
-        openApiImUserVo.setToken("Bearer "+StpUtil.getTokenValue());
+        openApiImUserVo.setToken("Bearer " + StpUtil.getTokenValue());
 
         // 返回用户信息
         return openApiImUserVo;

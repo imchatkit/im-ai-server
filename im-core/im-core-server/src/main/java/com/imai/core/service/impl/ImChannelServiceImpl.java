@@ -38,7 +38,7 @@ public class ImChannelServiceImpl implements IImChannelService {
      * @return 频道
      */
     @Override
-    public ImChannelVo queryById(Long id){
+    public ImChannelVo queryById(Long id) {
         return baseMapper.selectVoById(id);
     }
 
@@ -119,7 +119,7 @@ public class ImChannelServiceImpl implements IImChannelService {
     /**
      * 保存前的数据校验
      */
-    private void validEntityBeforeSave(ImChannel entity){
+    private void validEntityBeforeSave(ImChannel entity) {
         //TODO 做一些数据校验,如唯一约束
     }
 
@@ -132,7 +132,7 @@ public class ImChannelServiceImpl implements IImChannelService {
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        if(isValid){
+        if (isValid) {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;

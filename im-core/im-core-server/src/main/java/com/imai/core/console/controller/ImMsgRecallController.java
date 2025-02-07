@@ -73,7 +73,7 @@ public class ImMsgRecallController extends BaseController {
     @SaCheckPermission("imcore:msgRecall:query")
     @GetMapping("/{id}")
     public R<ImMsgRecallVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long id) {
+                                    @PathVariable Long id) {
         return R.ok(imMsgRecallService.queryById(id));
     }
 

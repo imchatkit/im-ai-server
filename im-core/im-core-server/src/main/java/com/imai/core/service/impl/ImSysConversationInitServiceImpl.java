@@ -38,7 +38,7 @@ public class ImSysConversationInitServiceImpl implements IImSysConversationInitS
      * @return 系统会话初始化
      */
     @Override
-    public ImSysConversationInitVo queryById(Long id){
+    public ImSysConversationInitVo queryById(Long id) {
         return baseMapper.selectVoById(id);
     }
 
@@ -112,7 +112,7 @@ public class ImSysConversationInitServiceImpl implements IImSysConversationInitS
     /**
      * 保存前的数据校验
      */
-    private void validEntityBeforeSave(ImSysConversationInit entity){
+    private void validEntityBeforeSave(ImSysConversationInit entity) {
         //TODO 做一些数据校验,如唯一约束
     }
 
@@ -125,7 +125,7 @@ public class ImSysConversationInitServiceImpl implements IImSysConversationInitS
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        if(isValid){
+        if (isValid) {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;

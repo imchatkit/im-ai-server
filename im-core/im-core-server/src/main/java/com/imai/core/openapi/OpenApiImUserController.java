@@ -34,7 +34,6 @@ public class OpenApiImUserController extends BaseController {
 
     /**
      * IM客户端用户登录
-     *
      */
     @PostMapping("/login")
     @RepeatSubmit

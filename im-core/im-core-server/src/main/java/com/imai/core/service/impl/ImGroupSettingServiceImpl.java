@@ -38,7 +38,7 @@ public class ImGroupSettingServiceImpl implements IImGroupSettingService {
      * @return 群组设置
      */
     @Override
-    public ImGroupSettingVo queryById(Long fkGroupId){
+    public ImGroupSettingVo queryById(Long fkGroupId) {
         return baseMapper.selectVoById(fkGroupId);
     }
 
@@ -117,7 +117,7 @@ public class ImGroupSettingServiceImpl implements IImGroupSettingService {
     /**
      * 保存前的数据校验
      */
-    private void validEntityBeforeSave(ImGroupSetting entity){
+    private void validEntityBeforeSave(ImGroupSetting entity) {
         //TODO 做一些数据校验,如唯一约束
     }
 
@@ -130,7 +130,7 @@ public class ImGroupSettingServiceImpl implements IImGroupSettingService {
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        if(isValid){
+        if (isValid) {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;

@@ -37,6 +37,7 @@ public class ImStoreHandlerImpl implements ImStoreHandler {
 
     /**
      * 保存消息
+     *
      * @param messageBo
      * @param webSocketMessage
      * @param receiverIds
@@ -44,7 +45,7 @@ public class ImStoreHandlerImpl implements ImStoreHandler {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @Lock4j( keys = {"${webSocketMessage.route.conversationId}"}, expire = 30000L)
+    @Lock4j(keys = {"${webSocketMessage.route.conversationId}"}, expire = 30000L)
     public boolean store(ImMessageBo messageBo, WebSocketMessage webSocketMessage, List<Long> receiverIds) {
 
         // 获取并递增会话序列号
@@ -63,7 +64,7 @@ public class ImStoreHandlerImpl implements ImStoreHandler {
         webSocketMessage.setMessageExtra(messageExtra);
 
 
-        for(Long receiverId : receiverIds) {
+        for (Long receiverId : receiverIds) {
             // 持久化用户接收表-发送方
             ImMsgReceiverBo imMsgReceiverBo = new ImMsgReceiverBo();
             imMsgReceiverBo.setFkMsgId(messageBo.getId());

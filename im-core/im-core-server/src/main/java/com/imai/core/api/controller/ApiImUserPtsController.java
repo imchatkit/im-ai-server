@@ -1,6 +1,5 @@
 package com.imai.core.api.controller;
 
-import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.imai.core.domain.bo.ImUserPtsBo;
 import com.imai.core.domain.vo.ImUserPtsVo;
 import com.imai.core.service.IImUserPtsService;
@@ -70,7 +69,7 @@ public class ApiImUserPtsController extends BaseController {
      */
     @GetMapping("/{userId}")
     public R<ImUserPtsVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long userId) {
+                                  @PathVariable Long userId) {
         return R.ok(imUserPtsService.queryById(userId));
     }
 

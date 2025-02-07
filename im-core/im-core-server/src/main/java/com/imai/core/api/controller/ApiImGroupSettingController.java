@@ -1,6 +1,5 @@
 package com.imai.core.api.controller;
 
-import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.imai.core.domain.bo.ImGroupSettingBo;
 import com.imai.core.domain.vo.ImGroupSettingVo;
 import com.imai.core.service.IImGroupSettingService;
@@ -70,7 +69,7 @@ public class ApiImGroupSettingController extends BaseController {
      */
     @GetMapping("/{fkGroupId}")
     public R<ImGroupSettingVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long fkGroupId) {
+                                       @PathVariable Long fkGroupId) {
         return R.ok(imGroupSettingService.queryById(fkGroupId));
     }
 

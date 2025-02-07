@@ -1,6 +1,5 @@
 package com.imai.core.api.controller;
 
-import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.imai.core.domain.bo.ImMessageBo;
 import com.imai.core.domain.vo.ImMessageVo;
 import com.imai.core.service.IImMessageService;
@@ -70,7 +69,7 @@ public class ApiImMessageController extends BaseController {
      */
     @GetMapping("/{id}")
     public R<ImMessageVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long id) {
+                                  @PathVariable Long id) {
         return R.ok(imMessageService.queryById(id));
     }
 

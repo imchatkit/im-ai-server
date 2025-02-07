@@ -3,7 +3,6 @@ package com.imai.core.service;
 import com.imai.core.domain.bo.ImUserBo;
 import com.imai.core.domain.vo.ImUserVo;
 import com.imai.core.openapi.bo.OpenApiImUseRegisterBo;
-
 import com.imai.core.openapi.vo.OpenApiImUserVo;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;

@@ -73,7 +73,7 @@ public class ImMsgReadController extends BaseController {
     @SaCheckPermission("imcore:msgRead:query")
     @GetMapping("/{id}")
     public R<ImMsgReadVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long id) {
+                                  @PathVariable Long id) {
         return R.ok(imMsgReadService.queryById(id));
     }
 

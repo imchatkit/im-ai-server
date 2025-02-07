@@ -73,7 +73,7 @@ public class ImFriendController extends BaseController {
     @SaCheckPermission("imcore:friend:query")
     @GetMapping("/{id}")
     public R<ImFriendVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long id) {
+                                 @PathVariable Long id) {
         return R.ok(imFriendService.queryById(id));
     }
 

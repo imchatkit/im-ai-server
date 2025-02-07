@@ -73,7 +73,7 @@ public class ImDeviceController extends BaseController {
     @SaCheckPermission("imcore:device:query")
     @GetMapping("/{id}")
     public R<ImDeviceVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long id) {
+                                 @PathVariable Long id) {
         return R.ok(imDeviceService.queryById(id));
     }
 

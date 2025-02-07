@@ -73,7 +73,7 @@ public class ImConversationMemberController extends BaseController {
     @SaCheckPermission("imcore:conversationMember:query")
     @GetMapping("/{id}")
     public R<ImConversationMemberVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long id) {
+                                             @PathVariable Long id) {
         return R.ok(imConversationMemberService.queryById(id));
     }
 

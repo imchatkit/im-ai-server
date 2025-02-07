@@ -38,7 +38,7 @@ public class ImConversationSeqServiceImpl implements IImConversationSeqService {
      * @return 会话序列号
      */
     @Override
-    public ImConversationSeqVo queryById(Long conversationId){
+    public ImConversationSeqVo queryById(Long conversationId) {
         return baseMapper.selectVoById(conversationId);
     }
 
@@ -108,7 +108,7 @@ public class ImConversationSeqServiceImpl implements IImConversationSeqService {
     /**
      * 保存前的数据校验
      */
-    private void validEntityBeforeSave(ImConversationSeq entity){
+    private void validEntityBeforeSave(ImConversationSeq entity) {
         //TODO 做一些数据校验,如唯一约束
     }
 
@@ -121,7 +121,7 @@ public class ImConversationSeqServiceImpl implements IImConversationSeqService {
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        if(isValid){
+        if (isValid) {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;

@@ -1,7 +1,7 @@
 package com.imai.core.service;
 
-import com.imai.core.domain.bo.ImConversationMemberBo;
 import com.imai.core.domain.bo.ImConversationMemberBatchAddBo;
+import com.imai.core.domain.bo.ImConversationMemberBo;
 import com.imai.core.domain.vo.ImConversationMemberVo;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
@@ -87,7 +87,7 @@ public interface IImConversationMemberService {
      * 检查用户是否在会话中
      *
      * @param conversationId 会话ID
-     * @param userId 用户ID
+     * @param userId         用户ID
      * @return 如果用户在会话中返回true，否则返回false
      */
     Boolean contains(Long conversationId, Long userId);

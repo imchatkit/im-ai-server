@@ -38,7 +38,7 @@ public class ImMsgReferencePathServiceImpl implements IImMsgReferencePathService
      * @return 消息引用路径
      */
     @Override
-    public ImMsgReferencePathVo queryById(Long id){
+    public ImMsgReferencePathVo queryById(Long id) {
         return baseMapper.selectVoById(id);
     }
 
@@ -113,7 +113,7 @@ public class ImMsgReferencePathServiceImpl implements IImMsgReferencePathService
     /**
      * 保存前的数据校验
      */
-    private void validEntityBeforeSave(ImMsgReferencePath entity){
+    private void validEntityBeforeSave(ImMsgReferencePath entity) {
         //TODO 做一些数据校验,如唯一约束
     }
 
@@ -126,7 +126,7 @@ public class ImMsgReferencePathServiceImpl implements IImMsgReferencePathService
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        if(isValid){
+        if (isValid) {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;

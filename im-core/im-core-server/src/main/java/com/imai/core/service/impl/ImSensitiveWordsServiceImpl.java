@@ -38,7 +38,7 @@ public class ImSensitiveWordsServiceImpl implements IImSensitiveWordsService {
      * @return 敏感词过滤
      */
     @Override
-    public ImSensitiveWordsVo queryById(Long id){
+    public ImSensitiveWordsVo queryById(Long id) {
         return baseMapper.selectVoById(id);
     }
 
@@ -110,7 +110,7 @@ public class ImSensitiveWordsServiceImpl implements IImSensitiveWordsService {
     /**
      * 保存前的数据校验
      */
-    private void validEntityBeforeSave(ImSensitiveWords entity){
+    private void validEntityBeforeSave(ImSensitiveWords entity) {
         //TODO 做一些数据校验,如唯一约束
     }
 
@@ -123,7 +123,7 @@ public class ImSensitiveWordsServiceImpl implements IImSensitiveWordsService {
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        if(isValid){
+        if (isValid) {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;

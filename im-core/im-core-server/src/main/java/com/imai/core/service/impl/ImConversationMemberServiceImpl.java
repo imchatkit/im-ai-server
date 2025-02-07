@@ -42,7 +42,7 @@ public class ImConversationMemberServiceImpl implements IImConversationMemberSer
      * @return 会话成员
      */
     @Override
-    public ImConversationMemberVo queryById(Long id){
+    public ImConversationMemberVo queryById(Long id) {
         return baseMapper.selectVoById(id);
     }
 
@@ -122,7 +122,7 @@ public class ImConversationMemberServiceImpl implements IImConversationMemberSer
     /**
      * 保存前的数据校验
      */
-    private void validEntityBeforeSave(ImConversationMember entity){
+    private void validEntityBeforeSave(ImConversationMember entity) {
         //TODO 做一些数据校验,如唯一约束
     }
 
@@ -135,7 +135,7 @@ public class ImConversationMemberServiceImpl implements IImConversationMemberSer
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        if(isValid){
+        if (isValid) {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;
@@ -157,7 +157,7 @@ public class ImConversationMemberServiceImpl implements IImConversationMemberSer
         // 检查这些用户是否已经在会话中
         LambdaQueryWrapper<ImConversationMember> checkWrapper = Wrappers.lambdaQuery();
         checkWrapper.eq(ImConversationMember::getFkConversationId, bo.getConversationId())
-                   .in(ImConversationMember::getFkUserId, bo.getUserIds());
+            .in(ImConversationMember::getFkUserId, bo.getUserIds());
         List<ImConversationMember> existingMembers = baseMapper.selectList(checkWrapper);
 
         // 过滤掉已经存在的用户
@@ -200,7 +200,7 @@ public class ImConversationMemberServiceImpl implements IImConversationMemberSer
     public List<ImConversationMemberVo> queryListByConversationIdForApi(Long conversationId) {
         LambdaQueryWrapper<ImConversationMember> lqw = Wrappers.lambdaQuery();
         lqw.eq(ImConversationMember::getFkConversationId, conversationId)
-           .eq(ImConversationMember::getDeleted, 0L); // 只查询未删除的成员
+            .eq(ImConversationMember::getDeleted, 0L); // 只查询未删除的成员
         return baseMapper.selectVoList(lqw);
     }
 
@@ -208,8 +208,8 @@ public class ImConversationMemberServiceImpl implements IImConversationMemberSer
     public Boolean contains(Long conversationId, Long userId) {
         LambdaQueryWrapper<ImConversationMember> lqw = Wrappers.lambdaQuery();
         lqw.eq(ImConversationMember::getFkConversationId, conversationId)
-           .eq(ImConversationMember::getFkUserId, userId)
-           .eq(ImConversationMember::getDeleted, 0L);
+            .eq(ImConversationMember::getFkUserId, userId)
+            .eq(ImConversationMember::getDeleted, 0L);
         return baseMapper.exists(lqw);
     }
 }

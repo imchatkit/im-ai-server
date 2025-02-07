@@ -1,6 +1,5 @@
 package com.imai.core.api.controller;
 
-import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.imai.core.domain.bo.ImUserStatusBo;
 import com.imai.core.domain.vo.ImUserStatusVo;
 import com.imai.core.service.IImUserStatusService;

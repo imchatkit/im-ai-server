@@ -38,7 +38,7 @@ public class ImMsgReceiverServiceImpl implements IImMsgReceiverService {
      * @return 消息接收
      */
     @Override
-    public ImMsgReceiverVo queryById(Long id){
+    public ImMsgReceiverVo queryById(Long id) {
         return baseMapper.selectVoById(id);
     }
 
@@ -111,7 +111,7 @@ public class ImMsgReceiverServiceImpl implements IImMsgReceiverService {
     /**
      * 保存前的数据校验
      */
-    private void validEntityBeforeSave(ImMsgReceiver entity){
+    private void validEntityBeforeSave(ImMsgReceiver entity) {
         //TODO 做一些数据校验,如唯一约束
     }
 
@@ -124,7 +124,7 @@ public class ImMsgReceiverServiceImpl implements IImMsgReceiverService {
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        if(isValid){
+        if (isValid) {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;

@@ -38,7 +38,7 @@ public class ImConversationServiceImpl implements IImConversationService {
      * @return 聊天会话基础
      */
     @Override
-    public ImConversationVo queryById(Long id){
+    public ImConversationVo queryById(Long id) {
         return baseMapper.selectVoById(id);
     }
 
@@ -113,7 +113,7 @@ public class ImConversationServiceImpl implements IImConversationService {
     /**
      * 保存前的数据校验
      */
-    private void validEntityBeforeSave(ImConversation entity){
+    private void validEntityBeforeSave(ImConversation entity) {
         //TODO 做一些数据校验,如唯一约束
     }
 
@@ -126,7 +126,7 @@ public class ImConversationServiceImpl implements IImConversationService {
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        if(isValid){
+        if (isValid) {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;

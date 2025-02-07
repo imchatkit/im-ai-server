@@ -1,6 +1,5 @@
 package com.imai.core.api.controller;
 
-import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.imai.core.domain.bo.ImConversationSeqBo;
 import com.imai.core.domain.vo.ImConversationSeqVo;
 import com.imai.core.service.IImConversationSeqService;
@@ -70,7 +69,7 @@ public class ApiImConversationSeqController extends BaseController {
      */
     @GetMapping("/{conversationId}")
     public R<ImConversationSeqVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long conversationId) {
+                                          @PathVariable Long conversationId) {
         return R.ok(imConversationSeqService.queryById(conversationId));
     }
 
