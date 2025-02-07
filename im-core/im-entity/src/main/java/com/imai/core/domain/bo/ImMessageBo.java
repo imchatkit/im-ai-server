@@ -4,8 +4,12 @@ import com.imai.core.domain.ImMessage;
 import io.github.linpeilie.annotations.AutoMapper;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
 import org.dromara.common.core.validate.AddGroup;
 import org.dromara.common.core.validate.EditGroup;
 import org.dromara.common.mybatis.core.domain.BaseEntity;
@@ -19,6 +23,9 @@ import org.dromara.common.mybatis.core.domain.BaseEntity;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AutoMapper(target = ImMessage.class, reverseConvertGenerate = false)
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ImMessageBo extends BaseEntity {
 
     /**

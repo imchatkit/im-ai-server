@@ -65,4 +65,12 @@ public interface IImConversationSeqService {
      * @return 是否删除成功
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    /**
+     * 获取并递增会话序列号
+     *
+     * @param conversationId 会话ID
+     * @return 递增后的序列号
+     */
+    Long getAndIncrementSeq(Long conversationId);
 }

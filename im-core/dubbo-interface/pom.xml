@@ -10,6 +10,14 @@
         <version>${revision}</version>
     </parent>
     <packaging>jar</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>com.feiyancloud</groupId>
+            <artifactId>im-entity</artifactId>
+            <version>${revision}</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
     <artifactId>dubbo-interface</artifactId>
     <description>dubbo接口</description>
