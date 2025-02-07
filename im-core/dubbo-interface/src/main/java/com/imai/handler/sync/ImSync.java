@@ -1,5 +1,9 @@
 package com.imai.handler.sync;
 
+import com.imai.ws.WebSocketMessage;
+
+import java.util.List;
+
 /**
  *  IM 消息同步器
  *  保存多端同步数据库
@@ -9,8 +13,7 @@ public interface ImSync {
 
     /**
      *   消息同步器
-     * @param message
      * @return
      */
-    boolean sync(String message);
+    boolean sync(WebSocketMessage webSocketMessage, List<Long> receiverIds);
 }

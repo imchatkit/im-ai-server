@@ -2,24 +2,26 @@ package com.imai.handler.filter;
 
 import com.imai.core.domain.bo.ImMessageBo;
 import com.imai.core.service.IImConversationMemberService;
-import com.imai.core.service.IImMessageService;
 import com.imai.core.service.IImConversationSeqService;
 import com.imai.handler.ImSendMsg;
-import com.imai.ws.WebSocketMessage;
-import com.imai.ws.enums.CmdType;
-import com.imai.ws.enums.ImResponseCode;
-import com.imai.ws.enums.MessageDirection;
-import com.imai.ws.enums.MsgType;
-import com.imai.ws.enums.ConversationType;
+import com.imai.handler.store.ImStore;
+import com.imai.ws.ContentItem;
 import com.imai.ws.Mentions;
 import com.imai.ws.Quote;
-import com.imai.ws.ContentItem;
+import com.imai.ws.WebSocketMessage;
+import com.imai.ws.enums.CmdType;
+import com.imai.ws.enums.ConversationType;
+import com.imai.ws.enums.ImResponseCode;
+import com.imai.ws.enums.MessageDirection;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.dromara.common.json.utils.JsonUtils;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 过滤器,拦截消息,例如群聊判断用户是否在群内,
@@ -30,12 +32,11 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
 
     @DubboReference
     private ImSendMsg imSendMsg;
-
-    @DubboReference
-    private IImConversationMemberService conversationMemberService;
+    @Resource
+    private ImStore imStore;
 
     @Resource
-    private IImMessageService messageService;
+    private IImConversationMemberService conversationMemberService;
 
     @Resource
     private IImConversationSeqService conversationSeqService;
@@ -68,13 +69,12 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
 
         // 陌生人单聊
         if (cmd == CmdType.STRANGER_CHAT.getCode()) {
-            if (single(fromUserId, webSocketMessage, message)) {
+            if (strangerChat(fromUserId, webSocketMessage)) {
                 return false;
             }
         }
 
         if (cmd == CmdType.GROUP_CHAT.getCode()) {
-
             // 群聊
         }
 
@@ -94,171 +94,157 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
 
     /**
      * 陌生人单聊
-     * @param fromUserId 用户id
+     *
+     * @param fromUserId       用户id
      * @param webSocketMessage 消息
-     * @param message 消息
      * @return 是否过滤
      */
-    private boolean single(Long fromUserId, WebSocketMessage webSocketMessage, String message) {
+    private boolean strangerChat(Long fromUserId, WebSocketMessage webSocketMessage) {
         Long conversationId = webSocketMessage.getRoute().getConversationId();
         Long to = webSocketMessage.getRoute().getTo();
         webSocketMessage.getRoute().setFrom(fromUserId);
 
         // 判断to是否在conversationId中
         boolean isInConversation = conversationMemberService.contains(conversationId, to);
-
         if (!isInConversation) {
-            // 发送错误响应
-            WebSocketMessage errorResponse = WebSocketMessage.builder()
-                .direction(MessageDirection.RESPONSE.getCode())
-                .code(ImResponseCode.RECEIVER_NOT_IN_CONVERSATION.getCode())
-                .message(ImResponseCode.RECEIVER_NOT_IN_CONVERSATION.getDescChinese())
-                .build();
-
-            try {
-                imSendMsg.sendMsgToUser(JsonUtils.toJsonString(errorResponse), fromUserId);
-            } catch (Exception e) {
-                log.error("[filter] 发送错误响应失败", e);
-            }
-            return true;
+            sendErrorResponse(fromUserId, ImResponseCode.RECEIVER_NOT_IN_CONVERSATION);
+            return false;
         }
 
         // 判断from是否在conversationId中
         boolean isFromInConversation = conversationMemberService.contains(conversationId, fromUserId);
-
         if (!isFromInConversation) {
-
-            // 发送错误响应
-            WebSocketMessage errorResponse = WebSocketMessage.builder()
-                .direction(MessageDirection.RESPONSE.getCode())
-                .code(ImResponseCode.SENDER_NOT_IN_CONVERSATION.getCode())
-                .message(ImResponseCode.SENDER_NOT_IN_CONVERSATION.getDescChinese())
-                .build();
-
-            try {
-                imSendMsg.sendMsgToUser(JsonUtils.toJsonString(errorResponse), fromUserId);
-            } catch (Exception e) {
-                log.error("[filter] 发送错误响应失败", e);
-            }
-
-            return true;
+            sendErrorResponse(fromUserId, ImResponseCode.SENDER_NOT_IN_CONVERSATION);
+            return false;
         }
 
-        try {
-            // 获取并递增会话序列号
-            Long conversationSeq = conversationSeqService.getAndIncrementSeq(conversationId);
+        // 检查必要的字段
+        if (webSocketMessage.getHeader() == null || webSocketMessage.getRoute() == null || webSocketMessage.getContent() == null) {
+            throw new RuntimeException("消息头、路由信息或消息内容不能为空");
+        }
 
-            // 检查必要的字段
-            if (webSocketMessage.getHeader() == null) {
-                throw new RuntimeException("消息头不能为空");
-            }
-            if (webSocketMessage.getRoute() == null) {
-                throw new RuntimeException("路由信息不能为空");
-            }
-            if (webSocketMessage.getContent() == null) {
-                throw new RuntimeException("消息内容不能为空");
-            }
+        // 获取并递增会话序列号
+        Long conversationSeq = conversationSeqService.getAndIncrementSeq(conversationId);
 
-            // 保存消息表
-            ImMessageBo messageBo = new ImMessageBo();
+        // 保存消息表
+        ImMessageBo messageBo = new ImMessageBo();
 
-            // 设置基础信息
-            messageBo.setFkConversationId(webSocketMessage.getRoute().getConversationId());
-            messageBo.setFkFromUserId(fromUserId);
-            messageBo.setToUid(webSocketMessage.getRoute().getTo());
-            messageBo.setConversationSeq(conversationSeq);
+        // 设置基础信息
+        messageBo.setFkConversationId(webSocketMessage.getRoute().getConversationId());
+        messageBo.setFkFromUserId(fromUserId);
+        messageBo.setToUid(webSocketMessage.getRoute().getTo());
+        messageBo.setConversationSeq(conversationSeq);
 
-            // 设置消息状态和命令
-            messageBo.setMsgStatus(1L); // 初始状态
-            messageBo.setCmd(Long.valueOf(webSocketMessage.getCmd()));
-            messageBo.setPersistent(1L);
-            messageBo.setPriority(1L);
+        // 设置消息状态和命令
+        messageBo.setMsgStatus(1L); // 初始状态
+        messageBo.setCmd(Long.valueOf(webSocketMessage.getCmd()));
+        messageBo.setPersistent(1L);
+        messageBo.setPriority(1L);
 
-            // 从 Header 获取信息
-            messageBo.setLocalMsgId(webSocketMessage.getHeader().getLocalId());
+        // 从 Header 获取信息
+        messageBo.setLocalMsgId(webSocketMessage.getHeader().getLocalId());
 
-            // 从 Route 获取信息
-            messageBo.setMsgType(webSocketMessage.getRoute().getType() != null ?
-                Long.valueOf(webSocketMessage.getRoute().getType()) : null);
-            messageBo.setConversationType(webSocketMessage.getRoute().getConversationType() != null ?
-                Long.valueOf(webSocketMessage.getRoute().getConversationType()) : ConversationType.SINGLE.getCode());
+        // 从 Route 获取信息
+        messageBo.setMsgType(webSocketMessage.getRoute().getType() != null ?
+            Long.valueOf(webSocketMessage.getRoute().getType()) : null);
+        messageBo.setConversationType(webSocketMessage.getRoute().getConversationType() != null ?
+            Long.valueOf(webSocketMessage.getRoute().getConversationType()) : ConversationType.SINGLE.getCode());
 
-            // 从 Content 获取信息
-            String text = webSocketMessage.getContent().getText();
-            messageBo.setMsgText(text != null ? text : "");
+        // 从 Content 获取信息
+        String text = webSocketMessage.getContent().getText();
+        messageBo.setMsgText(text != null ? text : "");
 
-            // 处理 Content 中的 mentions
-            if (webSocketMessage.getContent().getMentions() != null) {
-                Mentions mentions = webSocketMessage.getContent().getMentions();
-                // 设置@全体成员标记
-                messageBo.setAtAll(mentions.getAll() != null && mentions.getAll() ? 1L : 0L);
-                // 设置@用户列表
-                messageBo.setAtUsers(JsonUtils.toJsonString(mentions));
-            } else {
-                messageBo.setAtUsers("[]");
-                messageBo.setAtAll(0L);
-            }
+        // 处理 Content 中的 mentions
+        if (webSocketMessage.getContent().getMentions() != null) {
+            Mentions mentions = webSocketMessage.getContent().getMentions();
+            // 设置@全体成员标记
+            messageBo.setAtAll(mentions.getAll() != null && mentions.getAll() ? 1L : 0L);
+            // 设置@用户列表
+            messageBo.setAtUsers(JsonUtils.toJsonString(mentions));
+        } else {
+            messageBo.setAtUsers("[]");
+            messageBo.setAtAll(0L);
+        }
 
-            // 处理引用消息
-            if (webSocketMessage.getContent().getQuote() != null) {
-                Quote quote = webSocketMessage.getContent().getQuote();
-                messageBo.setRefType(1L); // 引用消息
-                messageBo.setRootMsgId(0L); // 暂时设为0，需要根据实际业务查找原始消息
-                messageBo.setParentMsgId(quote.getMsgId() != null ? Long.parseLong(quote.getMsgId()) : 0L);
-            } else {
-                messageBo.setRefType(0L); // 原创消息
-                messageBo.setRootMsgId(0L);
-                messageBo.setParentMsgId(0L);
-            }
+        // 处理引用消息
+        if (webSocketMessage.getContent().getQuote() != null) {
+            Quote quote = webSocketMessage.getContent().getQuote();
+            messageBo.setRefType(1L); // 引用消息
+            messageBo.setRootMsgId(0L); // 暂时设为0，需要根据实际业务查找原始消息
+            messageBo.setParentMsgId(quote.getMsgId() != null ? Long.parseLong(quote.getMsgId()) : 0L);
+        } else {
+            messageBo.setRefType(0L); // 原创消息
+            messageBo.setRootMsgId(0L);
+            messageBo.setParentMsgId(0L);
+        }
 
-            // 处理扩展字段
-            messageBo.setExtras(webSocketMessage.getContent().getExtension() != null ?
-                webSocketMessage.getContent().getExtension() : "{}");
+        // 处理扩展字段
+        messageBo.setExtras(webSocketMessage.getContent().getExtension() != null ?
+            webSocketMessage.getContent().getExtension() : "{}");
 
-            // 处理富文本内容
-            if (webSocketMessage.getContent().getItems() != null && !webSocketMessage.getContent().getItems().isEmpty()) {
-                messageBo.setPayload(JsonUtils.toJsonString(webSocketMessage.getContent().getItems()));
-                // 检查是否有媒体类型的内容
-                for (ContentItem item : webSocketMessage.getContent().getItems()) {
-                    if (item.getUrl() != null) {
-                        messageBo.setMediaUrl(item.getUrl());
-                        break;
-                    }
+        // 处理富文本内容
+        if (webSocketMessage.getContent().getItems() != null && !webSocketMessage.getContent().getItems().isEmpty()) {
+            messageBo.setPayload(JsonUtils.toJsonString(webSocketMessage.getContent().getItems()));
+            // 检查是否有媒体类型的内容
+            for (ContentItem item : webSocketMessage.getContent().getItems()) {
+                if (item.getUrl() != null) {
+                    messageBo.setMediaUrl(item.getUrl());
+                    break;
                 }
-            } else {
-                messageBo.setPayload("[]");
-                messageBo.setMediaUrl("");
             }
+        } else {
+            messageBo.setPayload("[]");
+            messageBo.setMediaUrl("");
+        }
 
-            // 处理接收者信息
-            if (webSocketMessage.getRoute().getTarget() != null && !webSocketMessage.getRoute().getTarget().isEmpty()) {
-                messageBo.setReceiverOnly(String.join(",",
-                    webSocketMessage.getRoute().getTarget().stream()
-                        .map(String::valueOf)
-                        .toList()));
-                messageBo.setReceiverCount((long) webSocketMessage.getRoute().getTarget().size());
-            } else {
-                messageBo.setReceiverOnly("");
-                messageBo.setReceiverCount(1L);
-            }
+        // 处理接收者信息
+        if (webSocketMessage.getRoute().getTarget() != null && !webSocketMessage.getRoute().getTarget().isEmpty()) {
+            messageBo.setReceiverOnly(String.join(",",
+                webSocketMessage.getRoute().getTarget().stream()
+                    .map(String::valueOf)
+                    .toList()));
+            messageBo.setReceiverCount((long) webSocketMessage.getRoute().getTarget().size());
+        } else {
+            messageBo.setReceiverOnly("");
+            messageBo.setReceiverCount(1L);
+        }
 
-            // 设置其他默认值
-            messageBo.setRefCount(0L); // 被引用次数
-            messageBo.setDeleted(0L); // 未删除
-            messageBo.setAppId(webSocketMessage.getHeader().getPlatform() != null ?
-                webSocketMessage.getHeader().getPlatform() : "IM_APP");
-            messageBo.setNeedReceipt(0L); // 不需要回执
+        // 设置其他默认值
+        messageBo.setRefCount(0L); // 被引用次数
+        messageBo.setDeleted(0L); // 未删除
+        messageBo.setAppId(webSocketMessage.getHeader().getPlatform() != null ?
+            webSocketMessage.getHeader().getPlatform() : "IM_APP");
+        messageBo.setNeedReceipt(0L); // 不需要回执
 
-            Boolean saveResult = messageService.insertByBo(messageBo);
-            if (!saveResult) {
-                log.error("[filter] 保存消息失败 message:{}", message);
-                throw new RuntimeException("保存消息失败");
-            }
-            log.info("[filter] 保存消息成功 message:{}", message);
-            return false;
+        List<Long> receiverIds = new ArrayList<>();
+        receiverIds.add(webSocketMessage.getRoute().getTo());
+        receiverIds.add(webSocketMessage.getRoute().getFrom());
+
+        boolean store = imStore.store(messageBo, webSocketMessage, receiverIds);
+        if (!store) {
+            log.error("[filter] 保存消息失败 message:{}", webSocketMessage);
+            throw new RuntimeException("保存消息失败");
+        }
+        return true;
+    }
+
+    /**
+     * 发送错误响应
+     *
+     * @param userId       用户id
+     * @param responseCode 响应码
+     */
+    private void sendErrorResponse(Long userId, ImResponseCode responseCode) {
+        WebSocketMessage errorResponse = WebSocketMessage.builder()
+            .direction(MessageDirection.RESPONSE.getCode())
+            .code(responseCode.getCode())
+            .message(responseCode.getDescChinese())
+            .build();
+
+        try {
+            imSendMsg.sendMsgToUser(JsonUtils.toJsonString(errorResponse), userId);
         } catch (Exception e) {
-            log.error("[filter] 保存消息异常", e);
-            throw e; // 抛出异常以触发事务回滚
+            log.error("[filter] 发送错误响应失败", e);
         }
     }
 }
