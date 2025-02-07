@@ -135,4 +135,20 @@ public class ApiImConversationController extends BaseController {
         
         return R.ok(imConversationService.queryById(bo.getId()));
     }
+
+    /**
+     * 查询当前用户加入的会话列表
+     */
+    @GetMapping("/joined")
+    public TableDataInfo<ImConversationVo> queryJoinedConversations(PageQuery pageQuery) {
+        return imConversationService.queryJoinedConversations(pageQuery);
+    }
+
+    /**
+     * 分页查询当前用户加入的会话列表（通过会话成员分页）
+     */
+    @GetMapping("/joined/byMember")
+    public TableDataInfo<ImConversationVo> queryJoinedConversationsByMemberPage(PageQuery pageQuery) {
+        return imConversationService.queryJoinedConversationsByMemberPage(pageQuery);
+    }
 }
