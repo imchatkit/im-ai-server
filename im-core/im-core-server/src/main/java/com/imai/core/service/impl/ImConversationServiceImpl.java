@@ -4,15 +4,18 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.imai.core.domain.ImConversation;
+import com.imai.core.domain.ImConversationMember;
 import com.imai.core.domain.bo.ImConversationBo;
 import com.imai.core.domain.vo.ImConversationVo;
 import com.imai.core.mapper.ImConversationMapper;
+import com.imai.core.mapper.ImConversationMemberMapper;
 import com.imai.core.service.IImConversationService;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
+import org.dromara.common.satoken.utils.LoginHelper;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -30,6 +33,7 @@ import java.util.Map;
 public class ImConversationServiceImpl implements IImConversationService {
 
     private final ImConversationMapper baseMapper;
+    private final ImConversationMemberMapper memberMapper;
 
     /**
      * 查询聊天会话基础
@@ -130,5 +134,48 @@ public class ImConversationServiceImpl implements IImConversationService {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;
+    }
+
+    /**
+     * 创建陌生人会话
+     *
+     * @param bo 会话信息
+     * @param targetUserId 目标用户ID
+     * @return 是否创建成功
+     */
+    @Override
+    public Boolean createStrangerConversation(ImConversationBo bo, Long targetUserId) {
+        // 1. 创建会话
+        ImConversation conversation = MapstructUtils.convert(bo, ImConversation.class);
+        validEntityBeforeSave(conversation);
+        boolean success = baseMapper.insert(conversation) > 0;
+        if (!success) {
+            return false;
+        }
+
+        // 2. 添加当前用户为会话成员
+        ImConversationMember currentMember = new ImConversationMember();
+        currentMember.setFkConversationId(conversation.getId());
+        currentMember.setFkUserId(LoginHelper.getUserId());
+        // currentMember.setExtras("{}");
+        success = memberMapper.insert(currentMember) > 0;
+        if (!success) {
+            return false;
+        }
+
+        // 3. 添加目标用户为会话成员
+        ImConversationMember targetMember = new ImConversationMember();
+        targetMember.setFkConversationId(conversation.getId());
+        targetMember.setFkUserId(targetUserId);
+        // targetMember.setExtras("{}");
+        success = memberMapper.insert(targetMember) > 0;
+
+        // 4. 设置返回的会话ID
+        if (success) {
+            bo.setId(conversation.getId());
+            bo.setCreateTime(conversation.getCreateTime());
+        }
+
+        return success;
     }
 }

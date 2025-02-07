@@ -65,4 +65,13 @@ public interface IImConversationService {
      * @return 是否删除成功
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    /**
+     * 创建陌生人会话
+     *
+     * @param bo 会话信息
+     * @param targetUserId 目标用户ID
+     * @return 是否创建成功
+     */
+    Boolean createStrangerConversation(ImConversationBo bo, Long targetUserId);
 }

@@ -1,7 +1,9 @@
 package com.imai.handler.filter;
 
 import com.imai.core.domain.bo.ImMessageBo;
+import com.imai.core.domain.vo.ImConversationVo;
 import com.imai.core.service.IImConversationMemberService;
+import com.imai.core.service.IImConversationService;
 import com.imai.handler.ImSendMsg;
 import com.imai.handler.store.ImStoreHandler;
 import com.imai.ws.ContentItem;
@@ -35,6 +37,8 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
     private ImStoreHandler imStoreHandler;
     @Resource
     private IImConversationMemberService conversationMemberService;
+    @Resource
+    private IImConversationService imConversationService;
 
     /**
      * 过滤消息
@@ -63,7 +67,9 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
         int cmd = webSocketMessage.getCmd();
 
         // 陌生人单聊
-        if (cmd == CmdType.STRANGER_CHAT.getCode()) {
+        ImConversationVo queryByIdConversationVo = imConversationService.queryById(webSocketMessage.getRoute().getConversationId());
+
+        if (queryByIdConversationVo.getConversationType() == ConversationType.STRANGER_CHAT.getCode() && cmd == CmdType.STRANGER_CHAT.getCode()) {
             if (strangerChat(fromUserId, webSocketMessage)) {
                 return false;
             }
