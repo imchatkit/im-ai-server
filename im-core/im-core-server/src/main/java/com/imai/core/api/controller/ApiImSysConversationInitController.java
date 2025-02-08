@@ -1,6 +1,5 @@
 package com.imai.core.api.controller;
 
-import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.imai.core.domain.bo.ImSysConversationInitBo;
 import com.imai.core.domain.vo.ImSysConversationInitVo;
 import com.imai.core.service.IImSysConversationInitService;
@@ -70,7 +69,7 @@ public class ApiImSysConversationInitController extends BaseController {
      */
     @GetMapping("/{id}")
     public R<ImSysConversationInitVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long id) {
+                                              @PathVariable Long id) {
         return R.ok(imSysConversationInitService.queryById(id));
     }
 

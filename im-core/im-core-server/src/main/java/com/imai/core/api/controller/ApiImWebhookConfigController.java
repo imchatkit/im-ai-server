@@ -1,6 +1,5 @@
 package com.imai.core.api.controller;
 
-import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.imai.core.domain.bo.ImWebhookConfigBo;
 import com.imai.core.domain.vo.ImWebhookConfigVo;
 import com.imai.core.service.IImWebhookConfigService;
@@ -70,7 +69,7 @@ public class ApiImWebhookConfigController extends BaseController {
      */
     @GetMapping("/{id}")
     public R<ImWebhookConfigVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long id) {
+                                        @PathVariable Long id) {
         return R.ok(imWebhookConfigService.queryById(id));
     }
 

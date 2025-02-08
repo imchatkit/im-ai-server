@@ -38,7 +38,7 @@ public class ImFriendRequestServiceImpl implements IImFriendRequestService {
      * @return 好友申请
      */
     @Override
-    public ImFriendRequestVo queryById(Long id){
+    public ImFriendRequestVo queryById(Long id) {
         return baseMapper.selectVoById(id);
     }
 
@@ -115,7 +115,7 @@ public class ImFriendRequestServiceImpl implements IImFriendRequestService {
     /**
      * 保存前的数据校验
      */
-    private void validEntityBeforeSave(ImFriendRequest entity){
+    private void validEntityBeforeSave(ImFriendRequest entity) {
         //TODO 做一些数据校验,如唯一约束
     }
 
@@ -128,7 +128,7 @@ public class ImFriendRequestServiceImpl implements IImFriendRequestService {
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        if(isValid){
+        if (isValid) {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;

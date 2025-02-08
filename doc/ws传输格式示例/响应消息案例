@@ -1,0 +1,18 @@
+{
+    "direction": 2,
+    "cmd": 1,
+    "header": {
+        "localId": "msg_123456",
+        "timestamp": 1707301751000
+    },
+    "timestamp": 1707301751000,
+    "code": 200,
+    "message": "success",
+    "data": null,
+    "route": null,
+    "content": null,
+    "control": null,
+    "messageExtra": {
+        "messageId": 20001
+    }
+}

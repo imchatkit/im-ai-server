@@ -73,7 +73,7 @@ public class ImUserPtsController extends BaseController {
     @SaCheckPermission("imcore:userPts:query")
     @GetMapping("/{userId}")
     public R<ImUserPtsVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long userId) {
+                                  @PathVariable Long userId) {
         return R.ok(imUserPtsService.queryById(userId));
     }
 

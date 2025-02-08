@@ -1,6 +1,5 @@
 package com.imai.core.api.controller;
 
-import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.imai.core.domain.bo.ImMsgRecallBo;
 import com.imai.core.domain.vo.ImMsgRecallVo;
 import com.imai.core.service.IImMsgRecallService;
@@ -70,7 +69,7 @@ public class ApiImMsgRecallController extends BaseController {
      */
     @GetMapping("/{id}")
     public R<ImMsgRecallVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long id) {
+                                    @PathVariable Long id) {
         return R.ok(imMsgRecallService.queryById(id));
     }
 

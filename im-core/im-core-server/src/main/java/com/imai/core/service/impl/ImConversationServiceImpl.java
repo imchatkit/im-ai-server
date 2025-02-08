@@ -4,20 +4,27 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.imai.core.domain.ImConversation;
+import com.imai.core.domain.ImConversationMember;
 import com.imai.core.domain.bo.ImConversationBo;
+import com.imai.core.domain.bo.ImConversationMemberBo;
 import com.imai.core.domain.vo.ImConversationVo;
+import com.imai.core.domain.vo.ImConversationMemberVo;
 import com.imai.core.mapper.ImConversationMapper;
+import com.imai.core.mapper.ImConversationMemberMapper;
 import com.imai.core.service.IImConversationService;
+import com.imai.core.service.IImConversationMemberService;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
+import org.dromara.common.satoken.utils.LoginHelper;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 聊天会话基础Service业务层处理
@@ -30,6 +37,8 @@ import java.util.Map;
 public class ImConversationServiceImpl implements IImConversationService {
 
     private final ImConversationMapper baseMapper;
+    private final ImConversationMemberMapper memberMapper;
+    private final IImConversationMemberService conversationMemberService;
 
     /**
      * 查询聊天会话基础
@@ -38,7 +47,7 @@ public class ImConversationServiceImpl implements IImConversationService {
      * @return 聊天会话基础
      */
     @Override
-    public ImConversationVo queryById(Long id){
+    public ImConversationVo queryById(Long id) {
         return baseMapper.selectVoById(id);
     }
 
@@ -113,7 +122,7 @@ public class ImConversationServiceImpl implements IImConversationService {
     /**
      * 保存前的数据校验
      */
-    private void validEntityBeforeSave(ImConversation entity){
+    private void validEntityBeforeSave(ImConversation entity) {
         //TODO 做一些数据校验,如唯一约束
     }
 
@@ -126,9 +135,137 @@ public class ImConversationServiceImpl implements IImConversationService {
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        if(isValid){
+        if (isValid) {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;
+    }
+
+    /**
+     * 创建陌生人会话
+     *
+     * @param bo 会话信息
+     * @param targetUserId 目标用户ID
+     * @return 是否创建成功
+     */
+    @Override
+    public Boolean createStrangerConversation(ImConversationBo bo, Long targetUserId) {
+        // 1. 创建会话
+        ImConversation conversation = MapstructUtils.convert(bo, ImConversation.class);
+        validEntityBeforeSave(conversation);
+        boolean success = baseMapper.insert(conversation) > 0;
+        if (!success) {
+            return false;
+        }
+
+        // 2. 添加当前用户为会话成员
+        ImConversationMember currentMember = new ImConversationMember();
+        currentMember.setFkConversationId(conversation.getId());
+        currentMember.setFkUserId(LoginHelper.getUserId());
+        // currentMember.setExtras("{}");
+        success = memberMapper.insert(currentMember) > 0;
+        if (!success) {
+            return false;
+        }
+
+        // 3. 添加目标用户为会话成员
+        ImConversationMember targetMember = new ImConversationMember();
+        targetMember.setFkConversationId(conversation.getId());
+        targetMember.setFkUserId(targetUserId);
+        // targetMember.setExtras("{}");
+        success = memberMapper.insert(targetMember) > 0;
+
+        // 4. 设置返回的会话ID
+        if (success) {
+            bo.setId(conversation.getId());
+            bo.setCreateTime(conversation.getCreateTime());
+        }
+
+        return success;
+    }
+
+    /**
+     * 查询当前用户加入的会话列表
+     *
+     * @param pageQuery 分页参数
+     * @return 会话分页列表
+     */
+    @Override
+    public TableDataInfo<ImConversationVo> queryJoinedConversations(PageQuery pageQuery) {
+        // 1. 获取当前用户ID
+        Long currentUserId = LoginHelper.getUserId();
+
+        // 2. 构建会话成员查询条件
+        ImConversationMemberBo memberBo = new ImConversationMemberBo();
+        memberBo.setFkUserId(currentUserId);
+        memberBo.setDeleted(0L); // 未删除的会话成员
+
+        // 3. 查询当前用户的会话成员记录
+        List<ImConversationMemberVo> memberVos = conversationMemberService.queryList(memberBo);
+
+        // 4. 提取会话ID列表
+        List<Long> conversationIds = memberVos.stream()
+            .map(ImConversationMemberVo::getFkConversationId)
+            .collect(Collectors.toList());
+
+        // 5. 如果没有加入任何会话，返回空结果
+        if (conversationIds.isEmpty()) {
+            return TableDataInfo.build(new Page<>());
+        }
+
+        // 6. 构建会话查询条件
+        LambdaQueryWrapper<ImConversation> lqw = Wrappers.lambdaQuery();
+        lqw.in(ImConversation::getId, conversationIds);
+        lqw.eq(ImConversation::getDeleted, 0L); // 未删除的会话
+        lqw.orderByDesc(ImConversation::getCreateTime); // 按创建时间倒序
+
+        // 7. 查询会话详情并返回分页结果
+        Page<ImConversationVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        return TableDataInfo.build(result);
+    }
+
+    /**
+     * 分页查询当前用户加入的会话列表（通过会话成员分页）
+     *
+     * @param pageQuery 分页参数
+     * @return 会话分页列表
+     */
+    @Override
+    public TableDataInfo<ImConversationVo> queryJoinedConversationsByMemberPage(PageQuery pageQuery) {
+        // 1. 获取当前用户ID
+        Long currentUserId = LoginHelper.getUserId();
+        
+        // 2. 构建会话成员查询条件
+        ImConversationMemberBo memberBo = new ImConversationMemberBo();
+        memberBo.setFkUserId(currentUserId);
+        memberBo.setDeleted(0L); // 未删除的会话成员
+        
+        // 3. 分页查询当前用户的会话成员记录
+        TableDataInfo<ImConversationMemberVo> memberPage = conversationMemberService.queryPageList(memberBo, pageQuery);
+        
+        // 4. 如果没有数据，返回空结果
+        if (memberPage.getTotal() == 0) {
+            return TableDataInfo.build(new Page<>());
+        }
+        
+        // 5. 提取会话ID列表
+        List<Long> conversationIds = memberPage.getRows().stream()
+            .map(ImConversationMemberVo::getFkConversationId)
+            .collect(Collectors.toList());
+            
+        // 6. 构建会话查询条件
+        LambdaQueryWrapper<ImConversation> lqw = Wrappers.lambdaQuery();
+        lqw.in(ImConversation::getId, conversationIds);
+        lqw.eq(ImConversation::getDeleted, 0L); // 未删除的会话
+        lqw.orderByDesc(ImConversation::getCreateTime); // 按创建时间倒序
+        
+        // 7. 查询会话详情
+        List<ImConversationVo> conversations = baseMapper.selectVoList(lqw);
+        
+        // 8. 构建分页结果
+        Page<ImConversationVo> result = new Page<>(pageQuery.getPageNum(), pageQuery.getPageSize(), memberPage.getTotal());
+        result.setRecords(conversations);
+        
+        return TableDataInfo.build(result);
     }
 }

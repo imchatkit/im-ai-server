@@ -24,6 +24,7 @@
             <groupId>com.feiyancloud</groupId>
             <artifactId>dubbo-interface</artifactId>
             <version>${revision}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

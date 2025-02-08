@@ -6,11 +6,11 @@ import lombok.Getter;
 public enum ImResponseCode {
     SUCCESS(200, "成功", "Success"),
     BAD_REQUEST(400, "请求错误", "Bad Request"),
-    
+
     // 会话相关错误 1000-1999
     RECEIVER_NOT_IN_CONVERSATION(1001, "接收方不在会话中", "Receiver Not In Conversation"),
     SENDER_NOT_IN_CONVERSATION(1002, "发送方不在会话中", "Sender Not In Conversation"),
-    
+
     // 其他错误码...
     ;
 
@@ -23,4 +23,4 @@ public enum ImResponseCode {
         this.descChinese = descChinese;
         this.descEnglish = descEnglish;
     }
-} 
+}

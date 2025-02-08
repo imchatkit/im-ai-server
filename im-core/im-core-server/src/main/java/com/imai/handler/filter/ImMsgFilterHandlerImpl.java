@@ -1,7 +1,11 @@
 package com.imai.handler.filter;
 
+import com.imai.core.domain.bo.ImConversationMemberBo;
 import com.imai.core.domain.bo.ImMessageBo;
+import com.imai.core.domain.vo.ImConversationMemberVo;
+import com.imai.core.domain.vo.ImConversationVo;
 import com.imai.core.service.IImConversationMemberService;
+import com.imai.core.service.IImConversationService;
 import com.imai.handler.ImSendMsg;
 import com.imai.handler.store.ImStoreHandler;
 import com.imai.ws.ContentItem;
@@ -35,6 +39,8 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
     private ImStoreHandler imStoreHandler;
     @Resource
     private IImConversationMemberService conversationMemberService;
+    @Resource
+    private IImConversationService imConversationService;
 
     /**
      * 过滤消息
@@ -63,10 +69,10 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
         int cmd = webSocketMessage.getCmd();
 
         // 陌生人单聊
-        if (cmd == CmdType.STRANGER_CHAT.getCode()) {
-            if (strangerChat(fromUserId, webSocketMessage)) {
-                return false;
-            }
+        ImConversationVo queryByIdConversationVo = imConversationService.queryById(webSocketMessage.getRoute().getConversationId());
+
+        if (queryByIdConversationVo.getConversationType() == ConversationType.STRANGER_CHAT.getCode() && cmd == CmdType.STRANGER_CHAT.getCode()) {
+            return strangerChat(fromUserId, webSocketMessage, queryByIdConversationVo);
         }
 
         if (cmd == CmdType.GROUP_CHAT.getCode()) {
@@ -77,14 +83,16 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
 
         // 要先判断会话类型
 
-        try {
-            boolean result = imSendMsg.sendMsgToUser("RPC: filterRes:" + message, fromUserId);
-            log.info("[filter] end - result:{}", result);
-            return result;
-        } catch (Exception e) {
-            log.error("[filter] error", e);
-            return false;
-        }
+//        try {
+//            boolean result = imSendMsg.sendMsgToUser("RPC: filterRes:" + message, fromUserId);
+//            log.info("[filter] end - result:{}", result);
+//            return result;
+//        } catch (Exception e) {
+//            log.error("[filter] error", e);
+//            return false;
+//        }
+        return false;
+
     }
 
     /**
@@ -94,23 +102,35 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
      * @param webSocketMessage 消息
      * @return 是否过滤
      */
-    private boolean strangerChat(Long fromUserId, WebSocketMessage webSocketMessage) {
+    private boolean strangerChat(Long fromUserId, WebSocketMessage webSocketMessage, ImConversationVo imConversationVo) {
         Long conversationId = webSocketMessage.getRoute().getConversationId();
-        Long to = webSocketMessage.getRoute().getTo();
-        webSocketMessage.getRoute().setFrom(fromUserId);
+        ImConversationMemberBo imConversationMemberBo = new ImConversationMemberBo();
+        imConversationMemberBo.setFkConversationId(conversationId);
 
-        // 判断to是否在conversationId中
-        boolean isInConversation = conversationMemberService.contains(conversationId, to);
-        if (!isInConversation) {
-            sendErrorResponse(fromUserId, ImResponseCode.RECEIVER_NOT_IN_CONVERSATION);
-            return false;
+        // 查询会话成员
+        List<ImConversationMemberVo> memberVoList = conversationMemberService.queryList(imConversationMemberBo);
+        // memberVoList 转化为只要里面的userID 筛选出list
+        List<Long> toList = new ArrayList<>();
+
+        for (ImConversationMemberVo memberVo : memberVoList) {
+            toList.add(memberVo.getFkUserId());
         }
 
         // 判断from是否在conversationId中
-        boolean isFromInConversation = conversationMemberService.contains(conversationId, fromUserId);
+        boolean isFromInConversation = toList.contains(fromUserId);
         if (!isFromInConversation) {
             sendErrorResponse(fromUserId, ImResponseCode.SENDER_NOT_IN_CONVERSATION);
             return false;
+        } else {
+            toList.remove(fromUserId);
+        }
+
+        Long to;
+        if (!toList.iterator().hasNext()) {
+            sendErrorResponse(fromUserId, ImResponseCode.RECEIVER_NOT_IN_CONVERSATION);
+            return false;
+        } else {
+            to = toList.iterator().next();
         }
 
         // 检查必要的字段
@@ -123,7 +143,6 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
         // 设置基础信息
         messageBo.setFkConversationId(webSocketMessage.getRoute().getConversationId());
         messageBo.setFkFromUserId(fromUserId);
-        messageBo.setToUid(webSocketMessage.getRoute().getTo());
 
         // 设置消息状态和命令
         messageBo.setMsgStatus(1L); // 初始状态
@@ -137,8 +156,6 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
         // 从 Route 获取信息
         messageBo.setMsgType(webSocketMessage.getRoute().getType() != null ?
             Long.valueOf(webSocketMessage.getRoute().getType()) : null);
-        messageBo.setConversationType(webSocketMessage.getRoute().getConversationType() != null ?
-            Long.valueOf(webSocketMessage.getRoute().getConversationType()) : ConversationType.SINGLE.getCode());
 
         // 从 Content 获取信息
         String text = webSocketMessage.getContent().getText();
@@ -203,10 +220,11 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
         messageBo.setRefCount(0L); // 被引用次数
         messageBo.setDeleted(0L); // 未删除
         messageBo.setNeedReceipt(1L); // 需要回执
+        messageBo.setConversationType(imConversationVo.getConversationType());
 
         List<Long> receiverIds = new ArrayList<>();
-        receiverIds.add(webSocketMessage.getRoute().getTo());
-        receiverIds.add(webSocketMessage.getRoute().getFrom());
+        receiverIds.add(to);
+        receiverIds.add(fromUserId);
 
         boolean store = imStoreHandler.store(messageBo, webSocketMessage, receiverIds);
         if (!store) {
@@ -223,11 +241,11 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
      * @param responseCode 响应码
      */
     private void sendErrorResponse(Long userId, ImResponseCode responseCode) {
-        WebSocketMessage errorResponse = WebSocketMessage.builder()
-            .direction(MessageDirection.RESPONSE.getCode())
-            .code(responseCode.getCode())
-            .message(responseCode.getDescChinese())
-            .build();
+        WebSocketMessage errorResponse = new WebSocketMessage();
+        errorResponse.setDirection(MessageDirection.RESPONSE.getCode());
+        errorResponse.setCode(responseCode.getCode());
+        errorResponse.setMessage(responseCode.getDescChinese());
+
 
         try {
             imSendMsg.sendMsgToUser(JsonUtils.toJsonString(errorResponse), userId);

@@ -1,10 +1,10 @@
 package com.imai.core.api.controller;
 
-import cn.dev33.satoken.SaManager;
-import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.imai.core.domain.bo.ImConversationBo;
 import com.imai.core.domain.vo.ImConversationVo;
 import com.imai.core.service.IImConversationService;
+import com.imai.ws.enums.ConversationType;
+
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -71,7 +71,7 @@ public class ApiImConversationController extends BaseController {
      */
     @GetMapping("/{id}")
     public R<ImConversationVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long id) {
+                                       @PathVariable Long id) {
         return R.ok(imConversationService.queryById(id));
     }
 
@@ -109,5 +109,46 @@ public class ApiImConversationController extends BaseController {
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
         return toAjax(imConversationService.deleteWithValidByIds(List.of(ids), true));
+    }
+
+    /**
+     * 创建陌生人会话
+     *
+     * @param targetUserId 对方用户ID
+     * @return 会话信息
+     */
+    @Log(title = "创建陌生人会话", businessType = BusinessType.INSERT)
+    @RepeatSubmit()
+    @PostMapping("/createStranger/{targetUserId}")
+    public R<ImConversationVo> createStrangerConversation(@NotNull(message = "目标用户ID不能为空") @PathVariable Long targetUserId) {
+        ImConversationBo bo = new ImConversationBo();
+        bo.setConversationType((long) ConversationType.STRANGER_CHAT.getCode()); // 单聊类型
+        bo.setConversationStatus(1L); // 正常状态
+        bo.setDeleted(0L); // 未删除
+        // bo.setExtras("{}"); // 默认空的扩展属性
+        
+        // 调用服务创建陌生人会话
+        Boolean success = imConversationService.createStrangerConversation(bo, targetUserId);
+        if (!success) {
+            return R.fail("创建陌生人会话失败");
+        }
+        
+        return R.ok(imConversationService.queryById(bo.getId()));
+    }
+
+    /**
+     * 查询当前用户加入的会话列表
+     */
+    @GetMapping("/joined")
+    public TableDataInfo<ImConversationVo> queryJoinedConversations(PageQuery pageQuery) {
+        return imConversationService.queryJoinedConversations(pageQuery);
+    }
+
+    /**
+     * 分页查询当前用户加入的会话列表（通过会话成员分页）
+     */
+    @GetMapping("/joined/byMember")
+    public TableDataInfo<ImConversationVo> queryJoinedConversationsByMemberPage(PageQuery pageQuery) {
+        return imConversationService.queryJoinedConversationsByMemberPage(pageQuery);
     }
 }

@@ -73,7 +73,7 @@ public class ImChannelMemberController extends BaseController {
     @SaCheckPermission("imcore:channelMember:query")
     @GetMapping("/{id}")
     public R<ImChannelMemberVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long id) {
+                                        @PathVariable Long id) {
         return R.ok(imChannelMemberService.queryById(id));
     }
 

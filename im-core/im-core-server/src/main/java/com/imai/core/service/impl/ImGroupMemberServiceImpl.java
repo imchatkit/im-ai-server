@@ -38,7 +38,7 @@ public class ImGroupMemberServiceImpl implements IImGroupMemberService {
      * @return 群成员
      */
     @Override
-    public ImGroupMemberVo queryById(Long id){
+    public ImGroupMemberVo queryById(Long id) {
         return baseMapper.selectVoById(id);
     }
 
@@ -118,7 +118,7 @@ public class ImGroupMemberServiceImpl implements IImGroupMemberService {
     /**
      * 保存前的数据校验
      */
-    private void validEntityBeforeSave(ImGroupMember entity){
+    private void validEntityBeforeSave(ImGroupMember entity) {
         //TODO 做一些数据校验,如唯一约束
     }
 
@@ -131,7 +131,7 @@ public class ImGroupMemberServiceImpl implements IImGroupMemberService {
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        if(isValid){
+        if (isValid) {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;

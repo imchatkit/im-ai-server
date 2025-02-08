@@ -73,7 +73,7 @@ public class ImGroupAnnouncementController extends BaseController {
     @SaCheckPermission("imcore:groupAnnouncement:query")
     @GetMapping("/{id}")
     public R<ImGroupAnnouncementVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long id) {
+                                            @PathVariable Long id) {
         return R.ok(imGroupAnnouncementService.queryById(id));
     }
 

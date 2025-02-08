@@ -73,7 +73,7 @@ public class ImWorkspaceController extends BaseController {
     @SaCheckPermission("imcore:workspace:query")
     @GetMapping("/{id}")
     public R<ImWorkspaceVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long id) {
+                                    @PathVariable Long id) {
         return R.ok(imWorkspaceService.queryById(id));
     }
 

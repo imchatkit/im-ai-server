@@ -38,7 +38,7 @@ public class ImMsgRecallServiceImpl implements IImMsgRecallService {
      * @return 消息撤回记录
      */
     @Override
-    public ImMsgRecallVo queryById(Long id){
+    public ImMsgRecallVo queryById(Long id) {
         return baseMapper.selectVoById(id);
     }
 
@@ -112,7 +112,7 @@ public class ImMsgRecallServiceImpl implements IImMsgRecallService {
     /**
      * 保存前的数据校验
      */
-    private void validEntityBeforeSave(ImMsgRecall entity){
+    private void validEntityBeforeSave(ImMsgRecall entity) {
         //TODO 做一些数据校验,如唯一约束
     }
 
@@ -125,7 +125,7 @@ public class ImMsgRecallServiceImpl implements IImMsgRecallService {
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        if(isValid){
+        if (isValid) {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;

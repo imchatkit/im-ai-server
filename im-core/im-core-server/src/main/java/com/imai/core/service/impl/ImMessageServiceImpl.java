@@ -38,7 +38,7 @@ public class ImMessageServiceImpl implements IImMessageService {
      * @return 消息存储
      */
     @Override
-    public ImMessageVo queryById(Long id){
+    public ImMessageVo queryById(Long id) {
         return baseMapper.selectVoById(id);
     }
 
@@ -133,7 +133,7 @@ public class ImMessageServiceImpl implements IImMessageService {
     /**
      * 保存前的数据校验
      */
-    private void validEntityBeforeSave(ImMessage entity){
+    private void validEntityBeforeSave(ImMessage entity) {
         //TODO 做一些数据校验,如唯一约束
     }
 
@@ -146,7 +146,7 @@ public class ImMessageServiceImpl implements IImMessageService {
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        if(isValid){
+        if (isValid) {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;

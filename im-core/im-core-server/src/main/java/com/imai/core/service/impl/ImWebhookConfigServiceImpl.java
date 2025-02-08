@@ -38,7 +38,7 @@ public class ImWebhookConfigServiceImpl implements IImWebhookConfigService {
      * @return Webhook配置
      */
     @Override
-    public ImWebhookConfigVo queryById(Long id){
+    public ImWebhookConfigVo queryById(Long id) {
         return baseMapper.selectVoById(id);
     }
 
@@ -113,7 +113,7 @@ public class ImWebhookConfigServiceImpl implements IImWebhookConfigService {
     /**
      * 保存前的数据校验
      */
-    private void validEntityBeforeSave(ImWebhookConfig entity){
+    private void validEntityBeforeSave(ImWebhookConfig entity) {
         //TODO 做一些数据校验,如唯一约束
     }
 
@@ -126,7 +126,7 @@ public class ImWebhookConfigServiceImpl implements IImWebhookConfigService {
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        if(isValid){
+        if (isValid) {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;

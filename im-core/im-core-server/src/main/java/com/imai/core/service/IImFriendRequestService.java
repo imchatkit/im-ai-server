@@ -2,8 +2,8 @@ package com.imai.core.service;
 
 import com.imai.core.domain.bo.ImFriendRequestBo;
 import com.imai.core.domain.vo.ImFriendRequestVo;
-import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.mybatis.core.page.PageQuery;
+import org.dromara.common.mybatis.core.page.TableDataInfo;
 
 import java.util.Collection;
 import java.util.List;

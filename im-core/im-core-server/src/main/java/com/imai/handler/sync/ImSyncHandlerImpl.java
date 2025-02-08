@@ -44,7 +44,7 @@ public class ImSyncHandlerImpl implements ImSyncHandler {
         }
 
 
-        webSocketMessage.settingDirection(MessageDirection.PUSH.getCode() , ImResponseCode.SUCCESS.getCode() , ImResponseCode.SUCCESS.getDescChinese() , null);
+        webSocketMessage.settingDirection(MessageDirection.PUSH.getCode(), ImResponseCode.SUCCESS.getCode(), ImResponseCode.SUCCESS.getDescChinese(), null);
 
         // 发送ws推送消息
         for (Long receiverId : receiverIds) {

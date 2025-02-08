@@ -1,8 +1,7 @@
 package com.imai.core.api.controller;
 
-import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.imai.core.domain.bo.ImConversationMemberBo;
 import com.imai.core.domain.bo.ImConversationMemberBatchAddBo;
+import com.imai.core.domain.bo.ImConversationMemberBo;
 import com.imai.core.domain.vo.ImConversationMemberVo;
 import com.imai.core.service.IImConversationMemberService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -71,7 +70,7 @@ public class ApiImConversationMemberController extends BaseController {
      */
     @GetMapping("/{id}")
     public R<ImConversationMemberVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long id) {
+                                             @PathVariable Long id) {
         return R.ok(imConversationMemberService.queryById(id));
     }
 

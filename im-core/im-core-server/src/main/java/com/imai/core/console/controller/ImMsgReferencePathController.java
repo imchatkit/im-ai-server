@@ -73,7 +73,7 @@ public class ImMsgReferencePathController extends BaseController {
     @SaCheckPermission("imcore:msgReferencePath:query")
     @GetMapping("/{id}")
     public R<ImMsgReferencePathVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long id) {
+                                           @PathVariable Long id) {
         return R.ok(imMsgReferencePathService.queryById(id));
     }
 

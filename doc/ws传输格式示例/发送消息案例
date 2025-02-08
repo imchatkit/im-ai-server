@@ -1,0 +1,28 @@
+{
+    "direction": 1,
+    "cmd": 6,
+    "header": {
+        "localId": "msg_123456",
+        "timestamp": 1707301751000
+    },
+    "route": {
+        "type": 1,
+        "conversationId": 10001,
+        "source": "websocket"
+    },
+    "content": {
+        "text": "Hello, how are you?",
+        "items": null,
+        "mentions": null,
+        "quote": null,
+        "extension": ""
+    },
+    "control": {
+        "persistent": true,
+        "syncDevice": true,
+        "needReceipt": true,
+        "push": null,
+        "security": null,
+        "callback": null
+    }
+}

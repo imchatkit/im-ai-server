@@ -1,6 +1,5 @@
 package com.imai.core.api.controller;
 
-import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.imai.core.domain.bo.ImFriendBo;
 import com.imai.core.domain.vo.ImFriendVo;
 import com.imai.core.service.IImFriendService;
@@ -70,7 +69,7 @@ public class ApiImFriendController extends BaseController {
      */
     @GetMapping("/{id}")
     public R<ImFriendVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long id) {
+                                 @PathVariable Long id) {
         return R.ok(imFriendService.queryById(id));
     }
 

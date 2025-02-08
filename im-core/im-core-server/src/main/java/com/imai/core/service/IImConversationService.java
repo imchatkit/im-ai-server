@@ -65,4 +65,29 @@ public interface IImConversationService {
      * @return 是否删除成功
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    /**
+     * 创建陌生人会话
+     *
+     * @param bo 会话信息
+     * @param targetUserId 目标用户ID
+     * @return 是否创建成功
+     */
+    Boolean createStrangerConversation(ImConversationBo bo, Long targetUserId);
+
+    /**
+     * 查询当前用户加入的会话列表
+     *
+     * @param pageQuery 分页参数
+     * @return 会话分页列表
+     */
+    TableDataInfo<ImConversationVo> queryJoinedConversations(PageQuery pageQuery);
+
+    /**
+     * 分页查询当前用户加入的会话列表（通过会话成员分页）
+     *
+     * @param pageQuery 分页参数
+     * @return 会话分页列表
+     */
+    TableDataInfo<ImConversationVo> queryJoinedConversationsByMemberPage(PageQuery pageQuery);
 }

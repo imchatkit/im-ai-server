@@ -13,7 +13,9 @@ public enum ConversationType {
     CHANNEL(4, "频道", "Channel"),
     MILLION_GROUP(5, "万人群聊", "Mass Group Chat"),
     SYSTEM_CONVERSATION(6, "系统对话", "System Conversation"),
-    CUSTOM_CONVERSATION(7, "自定义对话", "Custom Conversation");
+    CUSTOM_CONVERSATION(7, "自定义对话", "Custom Conversation"),
+    STRANGER_CHAT(8, "陌生人单聊", "Stranger Private Message"), // 可以不是好友
+    ;
 
     private final int code;
     private final String descChinese;

@@ -1,6 +1,5 @@
 package com.imai.core.api.controller;
 
-import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.imai.core.domain.bo.ImGroupMemberBo;
 import com.imai.core.domain.vo.ImGroupMemberVo;
 import com.imai.core.service.IImGroupMemberService;

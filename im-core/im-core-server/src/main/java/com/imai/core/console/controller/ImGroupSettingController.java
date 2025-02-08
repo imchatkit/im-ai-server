@@ -73,7 +73,7 @@ public class ImGroupSettingController extends BaseController {
     @SaCheckPermission("imcore:groupSetting:query")
     @GetMapping("/{fkGroupId}")
     public R<ImGroupSettingVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long fkGroupId) {
+                                       @PathVariable Long fkGroupId) {
         return R.ok(imGroupSettingService.queryById(fkGroupId));
     }
 

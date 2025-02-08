@@ -2,7 +2,6 @@ package com.imai.core.openapi.bo;
 
 import com.imai.core.domain.ImUser;
 import com.imai.core.domain.bo.ImUserBo;
-
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
 import jakarta.validation.constraints.NotBlank;
@@ -15,7 +14,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- *  注册im_user
+ * 注册im_user
  *
  * @author wei
  * @date 2025-01-07
@@ -33,13 +32,13 @@ public class OpenApiImUseRegisterBo implements Serializable {
     /**
      * 主键id
      */
-    @NotNull(message = "主键id不能为空", groups = { EditGroup.class })
+    @NotNull(message = "主键id不能为空", groups = {EditGroup.class})
     private Long id;
 
     /**
      * 昵称
      */
-    @NotBlank(message = "不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "不能为空", groups = {AddGroup.class, EditGroup.class})
     private String nickname;
     /**
      * 设备类型
@@ -51,7 +50,7 @@ public class OpenApiImUseRegisterBo implements Serializable {
      * - im_pc_win: Windows端
      * - im_pc_mac: Mac端
      */
-    @NotBlank(message = "设备类型不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "设备类型不能为空", groups = {AddGroup.class, EditGroup.class})
     private String device;
 
     /**
