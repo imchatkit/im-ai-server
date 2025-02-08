@@ -40,17 +40,18 @@ public class ImStoreHandlerImpl implements ImStoreHandler {
      *
      * @param messageBo
      * @param webSocketMessage
-     * @param receiverIds
+     * @param receiverIds 接收方id列表
      * @return
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @Lock4j(keys = {"${webSocketMessage.route.conversationId}"}, expire = 30000L)
+//    @Lock4j(keys = {"${webSocketMessage.route.conversationId}"}, expire = 30000L)
     public boolean store(ImMessageBo messageBo, WebSocketMessage webSocketMessage, List<Long> receiverIds) {
 
         // 获取并递增会话序列号
         Long conversationSeq = conversationSeqService.getAndIncrementSeq(webSocketMessage.getRoute().getConversationId());
         messageBo.setConversationSeq(conversationSeq);
+        messageBo.setAppId("0");
 
         Boolean msgSaveResult = messageService.insertByBo(messageBo);
         if (!msgSaveResult) {

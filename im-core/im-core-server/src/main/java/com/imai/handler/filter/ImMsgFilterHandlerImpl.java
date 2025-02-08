@@ -72,9 +72,7 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
         ImConversationVo queryByIdConversationVo = imConversationService.queryById(webSocketMessage.getRoute().getConversationId());
 
         if (queryByIdConversationVo.getConversationType() == ConversationType.STRANGER_CHAT.getCode() && cmd == CmdType.STRANGER_CHAT.getCode()) {
-            if (strangerChat(fromUserId, webSocketMessage)) {
-                return false;
-            }
+            return strangerChat(fromUserId, webSocketMessage, queryByIdConversationVo);
         }
 
         if (cmd == CmdType.GROUP_CHAT.getCode()) {
@@ -85,14 +83,16 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
 
         // 要先判断会话类型
 
-        try {
-            boolean result = imSendMsg.sendMsgToUser("RPC: filterRes:" + message, fromUserId);
-            log.info("[filter] end - result:{}", result);
-            return result;
-        } catch (Exception e) {
-            log.error("[filter] error", e);
-            return false;
-        }
+//        try {
+//            boolean result = imSendMsg.sendMsgToUser("RPC: filterRes:" + message, fromUserId);
+//            log.info("[filter] end - result:{}", result);
+//            return result;
+//        } catch (Exception e) {
+//            log.error("[filter] error", e);
+//            return false;
+//        }
+        return false;
+
     }
 
     /**
@@ -102,7 +102,7 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
      * @param webSocketMessage 消息
      * @return 是否过滤
      */
-    private boolean strangerChat(Long fromUserId, WebSocketMessage webSocketMessage) {
+    private boolean strangerChat(Long fromUserId, WebSocketMessage webSocketMessage, ImConversationVo imConversationVo) {
         Long conversationId = webSocketMessage.getRoute().getConversationId();
         ImConversationMemberBo imConversationMemberBo = new ImConversationMemberBo();
         imConversationMemberBo.setFkConversationId(conversationId);
@@ -220,6 +220,7 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
         messageBo.setRefCount(0L); // 被引用次数
         messageBo.setDeleted(0L); // 未删除
         messageBo.setNeedReceipt(1L); // 需要回执
+        messageBo.setConversationType(imConversationVo.getConversationType());
 
         List<Long> receiverIds = new ArrayList<>();
         receiverIds.add(to);
@@ -240,11 +241,11 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
      * @param responseCode 响应码
      */
     private void sendErrorResponse(Long userId, ImResponseCode responseCode) {
-        WebSocketMessage errorResponse = WebSocketMessage.builder()
-            .direction(MessageDirection.RESPONSE.getCode())
-            .code(responseCode.getCode())
-            .message(responseCode.getDescChinese())
-            .build();
+        WebSocketMessage errorResponse = new WebSocketMessage();
+        errorResponse.setDirection(MessageDirection.RESPONSE.getCode());
+        errorResponse.setCode(responseCode.getCode());
+        errorResponse.setMessage(responseCode.getDescChinese());
+
 
         try {
             imSendMsg.sendMsgToUser(JsonUtils.toJsonString(errorResponse), userId);

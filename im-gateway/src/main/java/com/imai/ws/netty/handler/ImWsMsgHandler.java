@@ -58,7 +58,7 @@ public class ImWsMsgHandler extends SimpleChannelInboundHandler<TextWebSocketFra
                 // 在新线程中处理消息
             boolean result = imMsgFilterHandler.filter(messageContent, userId, channelId);
             if (result) {
-                sendMsgUtil.send("res:" + messageContent, ctx.channel());
+                log.info("消息处理成功, userId:{}, channelId:{}, msg:{}", userId, channelId, messageContent);
             } else {
                     sendMsgUtil.send("res:error:" + messageContent, ctx.channel());
                 }

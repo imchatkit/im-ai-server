@@ -3,14 +3,12 @@ package com.imai.ws;
 import java.io.Serializable;
 
 import lombok.Data;
-import lombok.Builder;
 import lombok.ToString;
 
 /**
  * 统一的WebSocket消息结构
  */
 @Data
-@Builder
 @ToString
 public class WebSocketMessage implements Serializable {
     // === 基础信息(所有消息都需要) ===

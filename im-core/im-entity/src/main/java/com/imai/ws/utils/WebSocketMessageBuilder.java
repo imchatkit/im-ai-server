@@ -17,9 +17,7 @@ public class WebSocketMessageBuilder {
         Header header = new Header();
         header.setTimestamp(System.currentTimeMillis());
 
-        return WebSocketMessage.builder()
-            .header(header)
-            .build();
+        return new WebSocketMessage();
     }
 
     /**
