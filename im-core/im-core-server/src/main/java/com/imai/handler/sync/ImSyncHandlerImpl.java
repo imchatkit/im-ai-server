@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * 消息同步处理 多端同步 用户pts同步位点
  * @author wei
  * @date 2025/1/16 10:45
  */

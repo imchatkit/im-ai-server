@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
+ * 消息存储 离线消息 已读未读 消息收件箱 会话序列号seq
  * @author wei
  * @date 2025/1/10 10:31
  */
