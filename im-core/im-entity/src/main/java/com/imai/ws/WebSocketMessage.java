@@ -1,9 +1,9 @@
 package com.imai.ws;
 
-import java.io.Serializable;
-
 import lombok.Data;
 import lombok.ToString;
+
+import java.io.Serializable;
 
 /**
  * 统一的WebSocket消息结构
@@ -22,19 +22,15 @@ public class WebSocketMessage implements Serializable {
     private Control control;        // 控制信息(direction=REQUEST时选填)
 
     // === 响应消息字段 ===
-    private Integer code;           // 响应状态码(direction=RESPONSE时必填)
-    private String message;         // 响应描述(direction=RESPONSE时必填)
-    private Object data;            // 响应数据(direction=RESPONSE时选填)
-    private Long timestamp;         // 服务器时间戳
+    private ImResponse response;
 
     // === 推送消息字段 ===
     private MessageExtra messageExtra;     // 消息扩展信息(direction=PUSH时选填)
 
-
-    public void settingDirection(Integer direction, Integer code, String message, Object data){
+    public void settingDirection(Integer direction, Integer code, String message, Object data) {
         this.direction = direction;
-        this.code = code;
-        this.message = message;
-        this.data = data;
+        this.response.setCode(code);
+        this.response.setMessage(message);
+        this.response.setData(data);
     }
 }

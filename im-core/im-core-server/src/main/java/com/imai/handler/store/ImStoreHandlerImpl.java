@@ -1,6 +1,5 @@
 package com.imai.handler.store;
 
-import com.baomidou.lock.annotation.Lock4j;
 import com.imai.core.domain.bo.ImMessageBo;
 import com.imai.core.domain.bo.ImMsgReceiverBo;
 import com.imai.core.service.IImConversationSeqService;
@@ -45,7 +44,6 @@ public class ImStoreHandlerImpl implements ImStoreHandler {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-//    @Lock4j(keys = {"${webSocketMessage.route.conversationId}"}, expire = 30000L)
     public boolean store(ImMessageBo messageBo, WebSocketMessage webSocketMessage, List<Long> receiverIds) {
 
         // 获取并递增会话序列号

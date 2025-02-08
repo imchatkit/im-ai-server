@@ -28,12 +28,12 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         try {
-            log.info("开始进行插入填充...");
+            log.debug("MP开始进行插入填充...");
             if (ObjectUtil.isNotNull(metaObject) && metaObject.getOriginalObject() instanceof BaseEntity baseEntity) {
-                log.info("获取到 BaseEntity 对象");
+                log.debug("MP获取到 BaseEntity 对象");
                 Date current = ObjectUtil.isNotNull(baseEntity.getCreateTime())
                     ? baseEntity.getCreateTime() : new Date();
-                log.info("设置的时间为: {}", current);
+                log.debug("MP设置的时间为: {}", current);
                 baseEntity.setCreateTime(current);
                 baseEntity.setUpdateTime(current);
 
@@ -55,7 +55,7 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
                 this.strictInsertFill(metaObject, "updateTime", Date.class, date);
             }
         } catch (Exception e) {
-            log.error("自动注入异常", e);
+            log.error("MP自动注入异常", e);
             throw new ServiceException("自动注入异常 => " + e.getMessage(), HttpStatus.HTTP_UNAUTHORIZED);
         }
     }
@@ -82,7 +82,7 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
                 this.strictUpdateFill(metaObject, "updateTime", Date.class, new Date());
             }
         } catch (Exception e) {
-            throw new ServiceException("自动注入异常 => " + e.getMessage(), HttpStatus.HTTP_UNAUTHORIZED);
+            throw new ServiceException("MP自动注入异常 => " + e.getMessage(), HttpStatus.HTTP_UNAUTHORIZED);
         }
     }
 
@@ -96,7 +96,7 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
         try {
             loginUser = LoginHelper.getLoginUser();
         } catch (Exception e) {
-            log.warn("自动注入警告 => 用户未登录");
+//            log.warn("MP自动注入警告 => 用户未登录");
             return null;
         }
         return loginUser;

@@ -243,9 +243,8 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
     private void sendErrorResponse(Long userId, ImResponseCode responseCode) {
         WebSocketMessage errorResponse = new WebSocketMessage();
         errorResponse.setDirection(MessageDirection.RESPONSE.getCode());
-        errorResponse.setCode(responseCode.getCode());
-        errorResponse.setMessage(responseCode.getDescChinese());
-
+        errorResponse.getResponse().setCode(responseCode.getCode());
+        errorResponse.getResponse().setMessage(responseCode.getDescChinese());
 
         try {
             imSendMsg.sendMsgToUser(JsonUtils.toJsonString(errorResponse), userId);
