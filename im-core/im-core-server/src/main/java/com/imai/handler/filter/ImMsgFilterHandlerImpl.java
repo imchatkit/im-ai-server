@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 过滤器,拦截消息,例如群聊判断用户是否在群内,
@@ -107,59 +108,73 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
         ImConversationMemberBo imConversationMemberBo = new ImConversationMemberBo();
         imConversationMemberBo.setFkConversationId(conversationId);
 
-        // 查询会话成员
-        List<ImConversationMemberVo> memberVoList = conversationMemberService.queryList(imConversationMemberBo);
-        // memberVoList 转化为只要里面的userID 筛选出list
-        List<Long> toList = new ArrayList<>();
-
-        for (ImConversationMemberVo memberVo : memberVoList) {
-            toList.add(memberVo.getFkUserId());
-        }
+        // 使用Stream API简化集合操作
+        List<Long> toList = conversationMemberService.queryList(imConversationMemberBo)
+            .stream()
+            .map(ImConversationMemberVo::getFkUserId)
+            .collect(Collectors.toList());
 
         // 判断from是否在conversationId中
-        boolean isFromInConversation = toList.contains(fromUserId);
-        if (!isFromInConversation) {
+        if (!toList.contains(fromUserId)) {
             sendErrorResponse(fromUserId, ImResponseCode.SENDER_NOT_IN_CONVERSATION);
             return false;
         } else {
             toList.remove(fromUserId);
         }
 
-        Long to;
-        if (!toList.iterator().hasNext()) {
-            sendErrorResponse(fromUserId, ImResponseCode.RECEIVER_NOT_IN_CONVERSATION);
+        // 提取获取接收者逻辑
+        Long to = getReceiverId(fromUserId, toList);
+        if (to == null) {
             return false;
-        } else {
-            to = toList.iterator().next();
         }
 
         // 检查必要的字段
         if (webSocketMessage.getHeader() == null || webSocketMessage.getRoute() == null || webSocketMessage.getContent() == null) {
             throw new RuntimeException("消息头、路由信息或消息内容不能为空");
         }
-        // 保存消息表
-        ImMessageBo messageBo = new ImMessageBo();
 
-        // 设置基础信息
+        // 保存消息表
+        ImMessageBo messageBo = buildMessageBo(fromUserId, webSocketMessage, imConversationVo);
+
+        List<Long> receiverIds = new ArrayList<>();
+        receiverIds.add(to);
+        receiverIds.add(fromUserId);
+
+        boolean store = imStoreHandler.store(messageBo, webSocketMessage, receiverIds);
+        if (!store) {
+            log.error("[filter] 保存消息失败 message:{}", webSocketMessage);
+            throw new RuntimeException("保存消息失败");
+        }
+        return true;
+    }
+
+    /**
+     * 提取获取接收者逻辑
+     */
+    private Long getReceiverId(Long fromUserId, List<Long> toList) {
+        if (!toList.iterator().hasNext()) {
+            sendErrorResponse(fromUserId, ImResponseCode.RECEIVER_NOT_IN_CONVERSATION);
+            return null;
+        }
+        return toList.iterator().next();
+    }
+
+    /**
+     * 提取构建消息对象逻辑
+     */
+    private ImMessageBo buildMessageBo(Long fromUserId, WebSocketMessage webSocketMessage, ImConversationVo imConversationVo) {
+        ImMessageBo messageBo = new ImMessageBo();
         messageBo.setFkConversationId(webSocketMessage.getRoute().getConversationId());
         messageBo.setFkFromUserId(fromUserId);
-
-        // 设置消息状态和命令
-        messageBo.setMsgStatus(1L); // 初始状态
+        messageBo.setMsgStatus(1L);
         messageBo.setCmd(Long.valueOf(webSocketMessage.getCmd()));
         messageBo.setPersistent(1L);
         messageBo.setPriority(1L);
-
-        // 从 Header 获取信息
         messageBo.setLocalMsgId(webSocketMessage.getHeader().getLocalId());
-
-        // 从 Route 获取信息
         messageBo.setMsgType(webSocketMessage.getRoute().getType() != null ?
             Long.valueOf(webSocketMessage.getRoute().getType()) : null);
-
-        // 从 Content 获取信息
-        String text = webSocketMessage.getContent().getText();
-        messageBo.setMsgText(text != null ? text : "");
+        messageBo.setMsgText(webSocketMessage.getContent().getText() != null ? webSocketMessage.getContent().getText() : "");
+        messageBo.setConversationType(imConversationVo.getConversationType());
 
         // 处理 Content 中的 mentions
         if (webSocketMessage.getContent().getMentions() != null) {
@@ -220,18 +235,7 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
         messageBo.setRefCount(0L); // 被引用次数
         messageBo.setDeleted(0L); // 未删除
         messageBo.setNeedReceipt(1L); // 需要回执
-        messageBo.setConversationType(imConversationVo.getConversationType());
-
-        List<Long> receiverIds = new ArrayList<>();
-        receiverIds.add(to);
-        receiverIds.add(fromUserId);
-
-        boolean store = imStoreHandler.store(messageBo, webSocketMessage, receiverIds);
-        if (!store) {
-            log.error("[filter] 保存消息失败 message:{}", webSocketMessage);
-            throw new RuntimeException("保存消息失败");
-        }
-        return true;
+        return messageBo;
     }
 
     /**
