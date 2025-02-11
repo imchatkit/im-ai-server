@@ -1,3 +1,11 @@
 {
-    "java.configuration.maven.globalSettings": "D:\\code\\seke\\imSettings.xml"
+    "java.configuration.maven.globalSettings": "D:\\code\\seke\\imSettings.xml",
+
+    "editor.suggest.showWords": true,
+    "editor.suggestOnTriggerCharacters": true,
+    "editor.quickSuggestions": {
+        "other": true,
+        "comments": true,
+        "strings": true
+    }
 }

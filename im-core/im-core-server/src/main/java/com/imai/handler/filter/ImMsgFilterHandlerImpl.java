@@ -28,7 +28,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 过滤器,拦截消息,例如群聊判断用户是否在群内,
+ * 过滤器,拦截消息,例如群聊判断用户是否在群内
+ * ImMsgFilterHandlerImpl 实现了 ImMsgFilterHandler 接口，用于过滤即时消息。
+ * 该类使用了 Dubbo 服务注解，表示它是一个 Dubbo 服务提供者。
  */
 @DubboService
 @Slf4j
@@ -46,52 +48,45 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
     /**
      * 过滤消息
      *
-     * @param message    消息
-     * @param fromUserId 用户id
-     * @param channelId  通道id
-     * @return 是否过滤
+     * @param message    消息内容，JSON 格式的字符串
+     * @param fromUserId 发送消息的用户 ID
+     * @param channelId  通道 ID，例如 WebSocket 连接的 ID
+     * @return 是否允许消息通过，`true` 表示允许，`false` 表示拦截
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean filter(String message, Long fromUserId, String channelId) {
         log.info("[filter] start - message:{}, userId:{}", message, fromUserId);
 
-        // 处理cmd
+        // 1. 解析消息内容
         WebSocketMessage webSocketMessage = JsonUtils.parseObject(message, WebSocketMessage.class);
         if (webSocketMessage == null) {
             log.error("[filter] message is null");
             return false;
         }
 
+        // 2. 检查消息命令类型
         if (webSocketMessage.getCmd() == null) {
             log.error("[filter] cmd is null");
             return false;
         }
         int cmd = webSocketMessage.getCmd();
 
-        // 陌生人单聊
+        // 3. 针对不同会话类型进行处理
+        // 3.1 陌生人单聊
         ImConversationVo queryByIdConversationVo = imConversationService.queryById(webSocketMessage.getRoute().getConversationId());
 
         if (queryByIdConversationVo.getConversationType() == ConversationType.STRANGER_CHAT.getCode() && cmd == CmdType.STRANGER_CHAT.getCode()) {
             return strangerChat(fromUserId, webSocketMessage, queryByIdConversationVo);
         }
 
+        // 3.2 群聊
         if (cmd == CmdType.GROUP_CHAT.getCode()) {
-            // 群聊
+            // TODO: 群聊消息过滤逻辑
+            return groupChat(fromUserId, webSocketMessage, queryByIdConversationVo);
         }
 
-        // 处理content
-
-        // 要先判断会话类型
-
-//        try {
-//            boolean result = imSendMsg.sendMsgToUser("RPC: filterRes:" + message, fromUserId);
-//            log.info("[filter] end - result:{}", result);
-//            return result;
-//        } catch (Exception e) {
-//            log.error("[filter] error", e);
-//            return false;
-//        }
+        // 4. 其他类型的消息或命令，目前直接返回 false，表示拦截
         return false;
 
     }
@@ -254,6 +249,36 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
             imSendMsg.sendMsgToUser(JsonUtils.toJsonString(errorResponse), userId);
         } catch (Exception e) {
             log.error("[filter] 发送错误响应失败", e);
+        }
+
+    }
+
+    /**
+     * 群聊
+     *
+     * @param fromUserId       用户id
+     * @param webSocketMessage 消息
+     * @return 是否过滤
+     */
+    private boolean groupChat(Long fromUserId, WebSocketMessage webSocketMessage, ImConversationVo imConversationVo) {
+
+        Long conversationId = webSocketMessage.getRoute().getConversationId();
+        ImConversationMemberBo imConversationMemberBo = new ImConversationMemberBo();
+        imConversationMemberBo.setFkConversationId(conversationId);
+
+        // 使用Stream API简化集合操作
+        List<Long> toList = conversationMemberService.queryList(imConversationMemberBo)
+            .stream()
+            .map(ImConversationMemberVo::getFkUserId)
+            .collect(Collectors.toList());
+
+        // 判断from是否在conversationId中
+        if (!toList.contains(fromUserId)) {
+            sendErrorResponse(fromUserId, ImResponseCode.SENDER_NOT_IN_CONVERSATION);
+            return false;
+        } else {
+            // 允许发送消息
+            return true;
         }
     }
 }
