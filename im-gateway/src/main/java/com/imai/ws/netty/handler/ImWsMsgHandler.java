@@ -75,29 +75,33 @@ public class ImWsMsgHandler extends SimpleChannelInboundHandler<TextWebSocketFra
      */
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) {
-        // 获取 channelId，channelId 是 Channel 的唯一标识
+        // 获取当前连接的 channelId
         String channelId = ctx.channel().id().asLongText();
-        // 获取 userId，从 ChannelUserHolder 中根据 Channel 获取 userId
+        
+        // 通过 ChannelUserHolder 获取当前连接对应的 userId
         Long userId = channelUserHolder.getUserIdByChannel(ctx.channel());
-        // 检查用户是否登录，如果 userId 为 null，表示用户未登录
+        
+        // 检查用户是否已登录
         if (userId == null) {
             log.warn("用户未登录，channelId: {}", channelId);
             sendMsgUtil.send("用户未登录", ctx.channel());
             return;
         }
 
-        // 在主线程中获取消息内容，msg.text() 方法用于获取 TextWebSocketFrame 消息的内容
+        // 在主线程中获取 WebSocket 消息内容
         String messageContent = msg.text();
 
-        // 使用线程池异步处理消息，避免阻塞 Netty 的主线程
+        // 使用线程池异步处理消息，避免阻塞 Netty 的 I/O 线程
         try {
             msgProcessExecutor.execute(() -> {
-
-                // 在新线程中处理消息
-            boolean result = imMsgFilterHandler.filter(messageContent, userId, channelId);
-            if (result) {
-                log.info("消息处理成功, userId:{}, channelId:{}, msg:{}", userId, channelId, messageContent);
-            } else {
+                // 在新线程中调用消息过滤器处理消息
+                boolean result = imMsgFilterHandler.filter(messageContent, userId, channelId);
+                
+                // 根据过滤结果进行相应处理
+                if (result) {
+                    log.info("消息处理成功, userId:{}, channelId:{}, msg:{}", userId, channelId, messageContent);
+                } else {
+                    // 如果消息被过滤，向客户端发送错误响应
                     sendMsgUtil.send("res:error:" + messageContent, ctx.channel());
                 }
             });
