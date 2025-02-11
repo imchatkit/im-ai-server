@@ -16,7 +16,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * 消息存储 离线消息 已读未读 消息收件箱 会话序列号seq
+ * 消息存储处理器实现类
+ * 主要职责：
+ * 1. 处理消息的持久化存储
+ * 2. 管理离线消息、已读未读状态
+ * 3. 维护消息收件箱
+ * 4. 管理会话序列号seq
+ *
+ * 该类通过Dubbo服务暴露，供其他模块调用
+ *
  * @author wei
  * @date 2025/1/10 10:31
  */
@@ -24,34 +32,34 @@ import java.util.List;
 @Slf4j
 public class ImStoreHandlerImpl implements ImStoreHandler {
     @Resource
-    private IImMessageService messageService;
+    private IImMessageService messageService; // 消息服务，负责消息的CRUD操作
 
     @Resource
-    private IImConversationSeqService conversationSeqService;
+    private IImConversationSeqService conversationSeqService; // 会话序列号服务，管理会话的消息顺序
 
     @Resource
-    private IImMsgReceiverService msgReceiverService;
+    private IImMsgReceiverService msgReceiverService; // 消息接收者服务，管理消息与接收者的关系
 
     @Resource
-    private ImSyncHandlerImpl imSyncHandler;
+    private ImSyncHandlerImpl imSyncHandler; // 消息同步处理器，负责消息的同步操作
 
     /**
      * 保存消息
      *
-     * @param messageBo
-     * @param webSocketMessage
-     * @param receiverIds 接收方id列表
-     * @return
+     * @param messageBo 消息业务对象
+     * @param webSocketMessage WebSocket消息对象
+     * @param receiverIds 接收方ID列表
+     * @return 消息保存是否成功
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean store(ImMessageBo messageBo, WebSocketMessage webSocketMessage, List<Long> receiverIds) {
-
         // 获取并递增会话序列号
         Long conversationSeq = conversationSeqService.getAndIncrementSeq(webSocketMessage.getRoute().getConversationId());
         messageBo.setConversationSeq(conversationSeq);
         messageBo.setAppId("0");
 
+        // 保存消息到数据库
         Boolean msgSaveResult = messageService.insertByBo(messageBo);
         if (!msgSaveResult) {
             log.error("[store] 保存消息失败 message:{}", webSocketMessage);
@@ -59,13 +67,13 @@ public class ImStoreHandlerImpl implements ImStoreHandler {
         }
         log.info("[store] 保存消息成功 message:{}", webSocketMessage);
 
+        // 设置消息额外信息
         MessageExtra messageExtra = new MessageExtra();
         messageExtra.setMessageId(messageBo.getId());
         webSocketMessage.setMessageExtra(messageExtra);
 
-
+        // 为每个接收者保存消息接收记录
         for (Long receiverId : receiverIds) {
-            // 持久化用户接收表-发送方
             ImMsgReceiverBo imMsgReceiverBo = new ImMsgReceiverBo();
             imMsgReceiverBo.setFkMsgId(messageBo.getId());
             imMsgReceiverBo.setFkReceiverId(receiverId);
@@ -76,7 +84,7 @@ public class ImStoreHandlerImpl implements ImStoreHandler {
             }
         }
 
-        // 调用消息同步
+        // 同步消息到其他系统
         if (!imSyncHandler.sync(webSocketMessage, receiverIds)) {
             log.error("[store] 消息同步失败 message:{}", webSocketMessage);
             throw new RuntimeException("消息同步失败");
@@ -84,5 +92,4 @@ public class ImStoreHandlerImpl implements ImStoreHandler {
 
         return true;
     }
-
 }
