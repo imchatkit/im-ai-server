@@ -1,7 +1,10 @@
 package com.imai.handler.sync;
 
 import com.imai.core.domain.bo.ImSyncBo;
+import com.imai.core.domain.vo.ImConversationRecentVo;
+import com.imai.core.domain.bo.ImConversationRecentBo;
 import com.imai.core.service.IImSyncService;
+import com.imai.core.service.IImConversationRecentService;
 import com.imai.handler.ImSendMsg;
 import com.imai.ws.WebSocketMessage;
 import com.imai.ws.enums.MessageDirection;
@@ -53,6 +56,12 @@ public class ImSyncHandlerImpl implements ImSyncHandler {
     private ImSendMsg imSendMsg;
 
     /**
+     * 对话列表服务，负责对话列表的持久化操作
+     */
+    @Resource
+    private IImConversationRecentService imConversationRecentService;
+
+    /**
      * 同步消息到指定用户
      * @param webSocketMessage 消息对象
      * @param receiverIds 接收消息的用户ID列表
@@ -60,9 +69,9 @@ public class ImSyncHandlerImpl implements ImSyncHandler {
      */
     @Override
     public boolean sync(WebSocketMessage webSocketMessage, List<Long> receiverIds) {
-
         long pts = 1L;
         for (Long receiverId : receiverIds) {
+            // 保存同步记录
             ImSyncBo imSyncBo = new ImSyncBo();
             imSyncBo.setFkUserId(receiverId);
             imSyncBo.setPts(pts);
@@ -76,12 +85,31 @@ public class ImSyncHandlerImpl implements ImSyncHandler {
             }
             log.info("用户{}同步消息成功", receiverId);
             webSocketMessage.getMessageExtra().setTimestamp(new Date().getTime());
+
+            // 保存到对话列表
+            ImConversationRecentBo conversationRecentBo = new ImConversationRecentBo();
+            conversationRecentBo.setFkUserId(receiverId);
+            conversationRecentBo.setFkConversationId(webSocketMessage.getRoute().getConversationId());
+            conversationRecentBo.setLastMsgId(webSocketMessage.getMessageExtra().getMessageId());
+            conversationRecentBo.setLastMsgTime(new Date());
+            // 从数据库获取当前未读消息数并加1
+            Long currentNoReadCount = imConversationRecentService.queryList(conversationRecentBo)
+                .stream()
+                .findFirst()
+                .map(ImConversationRecentVo::getNoReadCount)
+                .orElse(0L);
+            
+            // currentNoReadCount 判空 
+            if (currentNoReadCount == null) {
+                currentNoReadCount = 0L;
+            }
+            conversationRecentBo.setNoReadCount(currentNoReadCount + 1);
+            // conversationRecentBo.setConversationType(webSocketMessage.getConversationType());
+            imConversationRecentService.insertByBo(conversationRecentBo);
         }
+
         webSocketMessage.setDirection(MessageDirection.PUSH.getCode());
         webSocketMessage.getMessageExtra().setPts(pts);
-
-        // 注释掉的代码，用于设置消息方向和响应代码
-        // webSocketMessage.settingDirection(MessageDirection.PUSH.getCode(), ImResponseCode.SUCCESS.getCode(), ImResponseCode.SUCCESS.getDescChinese(), null);
 
         // 发送ws推送消息
         for (Long receiverId : receiverIds) {
