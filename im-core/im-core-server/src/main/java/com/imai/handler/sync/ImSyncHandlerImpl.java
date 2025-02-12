@@ -1,9 +1,7 @@
 package com.imai.handler.sync;
 
-import com.imai.core.domain.bo.ImSyncBo;
 import com.imai.core.domain.vo.ImConversationRecentVo;
 import com.imai.core.domain.bo.ImConversationRecentBo;
-import com.imai.core.service.IImSyncService;
 import com.imai.core.service.IImConversationRecentService;
 import com.imai.handler.ImSendMsg;
 import com.imai.ws.WebSocketMessage;
@@ -13,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.dromara.common.json.utils.JsonUtils;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.Date;
 import java.util.List;
@@ -20,14 +19,13 @@ import java.util.List;
 /**
  * 消息同步处理器实现类
  * <p>
- * 负责处理多端消息同步，维护用户pts（Push Time Sequence）同步位点。
+ * 负责处理多端消息同步，
  * 通过Dubbo服务暴露接口，与WebSocket服务协作实现实时消息推送。
  * </p>
  * <p>
  * 主要功能：
  * 1. 接收WebSocket消息和接收者列表
  * 2. 为每个接收者创建同步记录
- * 3. 更新消息的pts值
  * 4. 通过WebSocket推送消息到客户端
  * </p>
  * <p>
@@ -44,12 +42,6 @@ import java.util.List;
 public class ImSyncHandlerImpl implements ImSyncHandler {
 
     /**
-     * 消息同步服务，负责消息同步记录的持久化操作
-     */
-    @Resource
-    private IImSyncService imSyncService;
-
-    /**
      * WebSocket消息发送服务，用于将同步后的消息推送到客户端
      */
     @DubboReference
@@ -61,6 +53,9 @@ public class ImSyncHandlerImpl implements ImSyncHandler {
     @Resource
     private IImConversationRecentService imConversationRecentService;
 
+    @Resource
+    private ThreadPoolTaskExecutor msgProcessExecutor;
+
     /**
      * 同步消息到指定用户
      * @param webSocketMessage 消息对象
@@ -71,18 +66,6 @@ public class ImSyncHandlerImpl implements ImSyncHandler {
     public boolean sync(WebSocketMessage webSocketMessage, List<Long> receiverIds) {
         long pts = 1L;
         for (Long receiverId : receiverIds) {
-            // 保存同步记录
-            ImSyncBo imSyncBo = new ImSyncBo();
-            imSyncBo.setFkUserId(receiverId);
-            imSyncBo.setPts(pts);
-            imSyncBo.setFkMsgId(webSocketMessage.getMessageExtra().getMessageId());
-            imSyncBo.setDeleted(0L);
-            imSyncBo.setExtras(null);
-            Boolean b = imSyncService.insertByBo(imSyncBo);
-            if (!b) {
-                log.error("用户{}同步消息失败", receiverId);
-                throw new RuntimeException("同步消息失败");
-            }
             log.info("用户{}同步消息成功", receiverId);
             webSocketMessage.getMessageExtra().setTimestamp(new Date().getTime());
 
@@ -98,13 +81,12 @@ public class ImSyncHandlerImpl implements ImSyncHandler {
                 .findFirst()
                 .map(ImConversationRecentVo::getNoReadCount)
                 .orElse(0L);
-            
-            // currentNoReadCount 判空 
+
+            // currentNoReadCount 判空
             if (currentNoReadCount == null) {
                 currentNoReadCount = 0L;
             }
             conversationRecentBo.setNoReadCount(currentNoReadCount + 1);
-            // conversationRecentBo.setConversationType(webSocketMessage.getConversationType());
             imConversationRecentService.insertByBo(conversationRecentBo);
         }
 
@@ -112,10 +94,11 @@ public class ImSyncHandlerImpl implements ImSyncHandler {
         webSocketMessage.getMessageExtra().setPts(pts);
 
         // 发送ws推送消息
-        for (Long receiverId : receiverIds) {
-            imSendMsg.sendMsgToUser(JsonUtils.toJsonString(webSocketMessage), receiverId);
-        }
-
+        msgProcessExecutor.execute(() -> {
+            for (Long receiverId : receiverIds) {
+                imSendMsg.sendMsgToUser(JsonUtils.toJsonString(webSocketMessage), receiverId);
+            }
+        });
         return true;
     }
 }
