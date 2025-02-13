@@ -12,6 +12,7 @@ import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.dromara.common.json.utils.JsonUtils;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
@@ -37,7 +38,7 @@ import java.util.List;
  * @author wei
  * @date 2025/1/16 10:45
  */
-@DubboService
+@Service
 @Slf4j
 public class ImSyncHandlerImpl implements ImSyncHandler {
 
@@ -82,10 +83,6 @@ public class ImSyncHandlerImpl implements ImSyncHandler {
                 .map(ImConversationRecentVo::getNoReadCount)
                 .orElse(0L);
 
-            // currentNoReadCount 判空
-            if (currentNoReadCount == null) {
-                currentNoReadCount = 0L;
-            }
             conversationRecentBo.setNoReadCount(currentNoReadCount + 1);
             imConversationRecentService.insertByBo(conversationRecentBo);
         }
@@ -93,7 +90,7 @@ public class ImSyncHandlerImpl implements ImSyncHandler {
         webSocketMessage.setDirection(MessageDirection.PUSH.getCode());
         webSocketMessage.getMessageExtra().setPts(pts);
 
-        // 发送ws推送消息
+        // 异步发送ws推送消息,即使没有推送成功，也可以通过数据库拉取离线消息，因为消息已经持久化到数据库了
         msgProcessExecutor.execute(() -> {
             for (Long receiverId : receiverIds) {
                 imSendMsg.sendMsgToUser(JsonUtils.toJsonString(webSocketMessage), receiverId);

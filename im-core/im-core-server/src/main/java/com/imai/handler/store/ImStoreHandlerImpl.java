@@ -2,17 +2,22 @@ package com.imai.handler.store;
 
 import com.imai.core.domain.bo.ImMessageBo;
 import com.imai.core.domain.bo.ImMsgReceiverBo;
+import com.imai.core.domain.vo.ImConversationRecentVo;
+import com.imai.core.domain.bo.ImConversationRecentBo;
 import com.imai.core.service.IImConversationSeqService;
 import com.imai.core.service.IImMessageService;
 import com.imai.core.service.IImMsgReceiverService;
+import com.imai.core.service.IImConversationRecentService;
 import com.imai.handler.sync.ImSyncHandlerImpl;
 import com.imai.ws.MessageExtra;
 import com.imai.ws.WebSocketMessage;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,7 +33,7 @@ import java.util.List;
  * @author wei
  * @date 2025/1/10 10:31
  */
-@DubboService
+@Service
 @Slf4j
 public class ImStoreHandlerImpl implements ImStoreHandler {
     @Resource
@@ -36,6 +41,9 @@ public class ImStoreHandlerImpl implements ImStoreHandler {
 
     @Resource
     private IImMsgReceiverService msgReceiverService; // 消息接收者服务，管理消息与接收者的关系
+
+    @Resource
+    private IImConversationRecentService imConversationRecentService;
 
     @Resource
     private ImSyncHandlerImpl imSyncHandler; // 消息同步处理器，负责消息的同步操作
@@ -80,6 +88,9 @@ public class ImStoreHandlerImpl implements ImStoreHandler {
             }
         }
 
+        // 保存到对话列表
+        saveConversationRecent(webSocketMessage, receiverIds);
+
         // 同步消息到其他系统
         if (!imSyncHandler.sync(webSocketMessage, receiverIds)) {
             log.error("[store] 消息同步失败 message:{}", webSocketMessage);
@@ -87,5 +98,38 @@ public class ImStoreHandlerImpl implements ImStoreHandler {
         }
 
         return true;
+    }
+
+    /**
+     * 保存对话列表记录
+     *
+     * @param webSocketMessage WebSocket消息对象
+     * @param receiverIds 接收方ID列表
+     */
+    private void saveConversationRecent(WebSocketMessage webSocketMessage, List<Long> receiverIds) {
+        for (Long receiverId : receiverIds) {
+            log.info("用户{}同步消息成功", receiverId);
+            webSocketMessage.getMessageExtra().setTimestamp(new Date().getTime());
+
+            // 保存到对话列表
+            ImConversationRecentBo conversationRecentBo = new ImConversationRecentBo();
+            conversationRecentBo.setFkUserId(receiverId);
+            conversationRecentBo.setFkConversationId(webSocketMessage.getRoute().getConversationId());
+            conversationRecentBo.setLastMsgId(webSocketMessage.getMessageExtra().getMessageId());
+            conversationRecentBo.setLastMsgTime(new Date());
+            // 从数据库获取当前未读消息数并加1
+            Long currentNoReadCount = imConversationRecentService.queryList(conversationRecentBo)
+                .stream()
+                .findFirst()
+                .map(ImConversationRecentVo::getNoReadCount)
+                .orElse(0L);
+
+            // currentNoReadCount 判空
+            if (currentNoReadCount == null) {
+                currentNoReadCount = 0L;
+            }
+            conversationRecentBo.setNoReadCount(currentNoReadCount + 1);
+            imConversationRecentService.insertByBo(conversationRecentBo);
+        }
     }
 }
