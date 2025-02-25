@@ -17,8 +17,9 @@
   - 负责接收WebSocket消息
   - 使用线程池异步处理消息
   - 通过dubbo调用消息过滤服务
+  - 用户在客户端发送和接收JSON消息，首先通过WebSocket连接到网关模块。
 
-### 3. 消息过滤 (im-core模块)
+### 3. 消息过滤 (im-core模块的ImMsgFilterHandlerImpl)
 - 处理类: `im-core/im-core-server/src/main/java/com/imai/handler/filter/ImMsgFilterHandlerImpl.java`
   - 会话类型定义: `im-core/im-entity/src/main/java/com/imai/ws/enums/ConversationType.java`
 
@@ -39,7 +40,7 @@
     ```
 
 ### 4. 消息分发与存储
-- 处理类: `im-core/im-core-server/src/main/java/com/imai/handler/dispatcher/ImDispatcherImpl.java`
+- 处理类: `im-core/im-core-server/src/main/java/com/imai/handler/store/ImStoreHandlerImpl.java`
   - 生成消息ID和会话序列号
   - 保存到以下数据表:
     - 消息表
