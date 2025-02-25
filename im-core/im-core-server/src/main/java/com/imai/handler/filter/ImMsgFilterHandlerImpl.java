@@ -276,9 +276,17 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
         if (!toList.contains(fromUserId)) {
             sendErrorResponse(fromUserId, ImResponseCode.SENDER_NOT_IN_CONVERSATION);
             return false;
-        } else {
-            // 允许发送消息
-            return true;
         }
+
+//        ImGroupMember member = conversationMemberService.
+//        if (member.getMuteEndTime() > System.currentTimeMillis()) {
+//            throw new BusinessException("您已被禁言");
+//        }
+//        if (group.getStatus() != GroupStatus.NORMAL) {
+//            throw new BusinessException("群组已解散");
+//        }
+        // 允许发送消息
+        return true;
+
     }
 }

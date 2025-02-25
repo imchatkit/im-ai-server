@@ -4,7 +4,6 @@ import com.imai.core.domain.bo.ImMessageBo;
 import com.imai.core.domain.bo.ImMsgReceiverBo;
 import com.imai.core.domain.vo.ImConversationRecentVo;
 import com.imai.core.domain.bo.ImConversationRecentBo;
-import com.imai.core.service.IImConversationSeqService;
 import com.imai.core.service.IImMessageService;
 import com.imai.core.service.IImMsgReceiverService;
 import com.imai.core.service.IImConversationRecentService;
@@ -13,7 +12,6 @@ import com.imai.ws.MessageExtra;
 import com.imai.ws.WebSocketMessage;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

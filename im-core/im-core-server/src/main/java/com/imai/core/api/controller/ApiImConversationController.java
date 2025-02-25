@@ -122,7 +122,7 @@ public class ApiImConversationController extends BaseController {
     @PostMapping("/createStranger/{targetUserId}")
     public R<ImConversationVo> createStrangerConversation(@NotNull(message = "目标用户ID不能为空") @PathVariable Long targetUserId) {
         ImConversationBo bo = new ImConversationBo();
-        bo.setConversationType((long) ConversationType.STRANGER_CHAT.getCode()); // 单聊类型
+        bo.setConversationType((long) ConversationType.STRANGER_CHAT.getCode()); // 陌生人单聊类型
         bo.setConversationStatus(1L); // 正常状态
         bo.setDeleted(0L); // 未删除
         // bo.setExtras("{}"); // 默认空的扩展属性
