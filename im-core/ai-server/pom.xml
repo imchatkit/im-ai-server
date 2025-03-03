@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -13,12 +13,126 @@
 
     <artifactId>ai-server</artifactId>
 
-<!--    <dependencies>-->
-<!--        <dependency>-->
-<!--            <groupId>dev.langchain4j</groupId>-->
-<!--            <artifactId>langchain4j-google-gemini</artifactId>-->
-<!--            <version>0.27.0</version>-->
-<!--        </dependency>-->
-<!--    </dependencies>-->
+    <dependencies>
+
+        <!--    langchain4j-->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j</artifactId>
+            <version>1.0.0-beta1</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-open-ai</artifactId>
+            <version>1.0.0-beta1</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.feiyancloud</groupId>
+            <artifactId>dubbo-interface</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.feiyancloud</groupId>
+            <artifactId>ruoyi-common-nacos</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.feiyancloud</groupId>
+            <artifactId>im-entity</artifactId>
+            <version>${revision}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.feiyancloud</groupId>
+            <artifactId>ruoyi-common-sentinel</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.feiyancloud</groupId>
+            <artifactId>ruoyi-common-log</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.feiyancloud</groupId>
+            <artifactId>ruoyi-common-doc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.feiyancloud</groupId>
+            <artifactId>ruoyi-common-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.feiyancloud</groupId>
+            <artifactId>ruoyi-common-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.feiyancloud</groupId>
+            <artifactId>ruoyi-common-mybatis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.feiyancloud</groupId>
+            <artifactId>ruoyi-common-dubbo</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.feiyancloud</groupId>
+            <artifactId>ruoyi-common-idempotent</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.feiyancloud</groupId>
+            <artifactId>ruoyi-common-mail</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.feiyancloud</groupId>
+            <artifactId>ruoyi-common-sms</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.feiyancloud</groupId>
+            <artifactId>ruoyi-common-encrypt</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.feiyancloud</groupId>
+            <artifactId>ruoyi-common-tenant</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.feiyancloud</groupId>
+            <artifactId>ruoyi-common-elasticsearch</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.feiyancloud</groupId>
+            <artifactId>ruoyi-common-sensitive</artifactId>
+        </dependency>
+
+        <!-- 测试消息总线使用 搭配 TestBusController -->
+        <!--        <dependency>-->
+        <!--            <groupId>com.feiyancloud</groupId>-->
+        <!--            <artifactId>ruoyi-api-workflow</artifactId>-->
+        <!--        </dependency>-->
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.feiyancloud</groupId>
+            <artifactId>ruoyi-common-translation</artifactId>
+        </dependency>
+
+
+    </dependencies>
 
 </project>
