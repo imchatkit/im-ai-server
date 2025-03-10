@@ -65,4 +65,12 @@ public interface IImMessageService {
      * @return 是否删除成功
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    /**
+     * 根据 fkConversationId 查询消息列表，查询数量限制100条
+     *
+     * @param fkConversationId 会话ID
+     * @return 消息存储列表
+     */
+    List<ImMessageVo> queryListByFkConversationId(Long fkConversationId);
 }

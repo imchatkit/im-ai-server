@@ -1,10 +1,1 @@
-package com.imai.ai;
-
-import dev.langchain4j.service.MemoryId;
-import dev.langchain4j.service.TokenStream;
-import dev.langchain4j.service.UserMessage;
-
-public interface Assistant {
-    TokenStream chat(@MemoryId long memoryId, @UserMessage String userMessage);
-
-}
+package com.imai.ai;import dev.langchain4j.service.MemoryId;import dev.langchain4j.service.TokenStream;import dev.langchain4j.service.UserMessage;public interface Assistant {    TokenStream chat(@MemoryId long memoryId, @UserMessage String userMessage);}
