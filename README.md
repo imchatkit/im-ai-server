@@ -2,12 +2,11 @@
 
 IM-AI-Server 是一个开源的企业级即时通讯系统,采用分布式微服务架构设计,提供高性能、高可用的即时通讯解决方案。
 支持SDK快速集成到已有系统中,并提供完整的 IM 即时通讯能力。
-🚀 已接入DeepSeek 🚀
-
 
 - 文档：[IM AI 详细文档](https://github.com/imchatkit/im-kit-doc)
-
+#### 💻 已接入DeepSeek，基于聊天记录 提供智能回复建议。
 ![IM集成流程](/doc/img/IM_integration_process.png)
+
 
 ## 🚀 特性
 
