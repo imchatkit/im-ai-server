@@ -1,7 +1,9 @@
 package com.imai.core.api.controller;
 
+import com.imai.core.domain.bo.ImConversationBo;
 import com.imai.core.domain.bo.ImGroupBo;
 import com.imai.core.domain.bo.ImGroupConversationBo;
+import com.imai.core.domain.vo.ImConversationVo;
 import com.imai.core.domain.vo.ImGroupVo;
 import com.imai.core.service.IImConversationService;
 import com.imai.core.service.IImGroupService;
@@ -47,16 +49,16 @@ public class ApiImGroupController extends BaseController {
 
     private final IImGroupService imGroupService;
     private final IImConversationService imConversationService;
-    
+
     /**
      * 创建群组会话
      */
     @RepeatSubmit()
     @Log(title = "创建群组会话", businessType = BusinessType.INSERT)
     @PostMapping("/create")
-    public R<Void> createGroup(@RequestBody @Validated ImGroupConversationBo bo) {
+    public R<ImGroupBo> createGroup(@RequestBody @Validated ImGroupConversationBo bo) {
         Long userId = LoginHelper.getUserId();
-        return toAjax(imConversationService.createGroupConversation(bo, userId));
+        return R.ok(imConversationService.createGroupConversation(bo, userId));
     }
 
     /**

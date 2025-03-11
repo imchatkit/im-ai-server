@@ -111,7 +111,9 @@ public class ImConversationServiceImpl implements IImConversationService {
         validEntityBeforeSave(add);
         boolean flag = baseMapper.insert(add) > 0;
         if (flag) {
-            bo.setId(add.getId());
+            if (add != null) {
+                bo.setId(add.getId());
+            }
             bo.setCreateTime(add.getCreateTime());
         }
         return flag;
@@ -171,7 +173,9 @@ public class ImConversationServiceImpl implements IImConversationService {
 
         // 2. 添加当前用户为会话成员
         ImConversationMember currentMember = new ImConversationMember();
-        currentMember.setFkConversationId(conversation.getId());
+        if (conversation != null) {
+            currentMember.setFkConversationId(conversation.getId());
+        }
         currentMember.setFkUserId(LoginHelper.getUserId());
         // currentMember.setExtras("{}");
         success = memberMapper.insert(currentMember) > 0;
@@ -282,28 +286,27 @@ public class ImConversationServiceImpl implements IImConversationService {
 
     @Override
     @Transactional
-    public Boolean createGroupConversation(ImGroupConversationBo bo, Long userId) {
+    public ImGroupBo createGroupConversation(ImGroupConversationBo bo, Long userId) {
 
         // 创建会话
         ImConversationBo conversationBo = new ImConversationBo();
-        conversationBo.setConversationType(Long.valueOf(ConversationType.GROUP.getCode()));
+        conversationBo.setConversationType((long) ConversationType.GROUP.getCode());
 
         conversationBo.setExtras(bo.getExtras());
         boolean success = insertByBo(conversationBo);
         if (!success) {
-            return false;
+            return null;
         }
 
         // 创建群组
         ImGroupBo groupBo = new ImGroupBo();
+        groupBo.setId(conversationBo.getId()); // 设置群组ID与会话ID一致
         groupBo.setFkConversationId(conversationBo.getId());
         groupBo.setOwnerId(userId);
         groupBo.setGroupType(1L);
         groupBo.setName(bo.getName()==null ? "群聊":bo.getName());
         groupBo.setJoinType(Long.valueOf(bo.getJoinType()));
         groupBo.setMaxMemberCount(1000L); // 设置默认最大成员数为1000
-        // groupBo.setOrgId(0L); // 设置默认组织ID
-        // groupBo.setDeptId(0L); // 设置默认部门ID
         groupBo.setExtras(bo.getExtras());
         success = groupService.insertByBo(groupBo);
         if (!success) {
@@ -311,7 +314,13 @@ public class ImConversationServiceImpl implements IImConversationService {
         }
 
         // 添加群组成员
-        List<ImGroupMemberBo> groupMembers = bo.getMemberIds().stream().map(memberId -> {
+        // 确保创建者在成员列表中
+        List<Long> allMemberIds = bo.getMemberIds();
+        if (!allMemberIds.contains(userId)) {
+            allMemberIds.add(userId);
+        }
+
+        List<ImGroupMemberBo> groupMembers = allMemberIds.stream().map(memberId -> {
             ImGroupMemberBo memberBo = new ImGroupMemberBo();
             memberBo.setFkConversationId(conversationBo.getId());
             memberBo.setFkGroupId(groupBo.getId());
@@ -319,9 +328,9 @@ public class ImConversationServiceImpl implements IImConversationService {
             memberBo.setRole(memberId.equals(userId) ? 1L : 0); // 1: 群主, 0: 普通成员
             memberBo.setGroupMemberJoinType(1L);
             memberBo.setMemberInvitedJoinUser(userId);
-            
+
             return memberBo;
-        }).collect(Collectors.toList());
+        }).toList();
 
         for (ImGroupMemberBo memberBo : groupMembers) {
             // 先添加会话成员
@@ -335,13 +344,14 @@ public class ImConversationServiceImpl implements IImConversationService {
 
             // 设置群组成员的会话成员ID
             memberBo.setFkConversationMemberId(conversationMemberBo.getId());
+            memberBo.setId(conversationMemberBo.getId());
             success = groupMemberService.insertByBo(memberBo);
             if (!success) {
                 throw new RuntimeException("添加群组成员失败");
             }
         }
 
-        return true;
+        return groupBo;
     }
 
 }

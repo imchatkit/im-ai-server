@@ -46,12 +46,6 @@ public class ImSyncHandlerImpl implements ImSyncHandler {
     @DubboReference
     private ImSendMsg imSendMsg;
 
-    /**
-     * 对话列表服务，负责对话列表的持久化操作
-     */
-    @Resource
-    private IImConversationRecentService imConversationRecentService;
-
     @Resource
     private ThreadPoolTaskExecutor msgProcessExecutor;
 

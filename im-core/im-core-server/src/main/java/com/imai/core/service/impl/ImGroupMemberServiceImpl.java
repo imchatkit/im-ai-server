@@ -132,7 +132,7 @@ public class ImGroupMemberServiceImpl implements IImGroupMemberService {
     public List<Long> queryUserJoinedGroupIds(Long userId) {
         LambdaQueryWrapper<ImGroupMember> lqw = Wrappers.lambdaQuery();
         lqw.eq(ImGroupMember::getFkUserId, userId);
-        lqw.eq(ImGroupMember::getDeleted, false);
+//        lqw.eq(ImGroupMember::getDeleted, false);
         return baseMapper.selectList(lqw).stream()
             .map(ImGroupMember::getFkGroupId)
             .collect(Collectors.toList());
