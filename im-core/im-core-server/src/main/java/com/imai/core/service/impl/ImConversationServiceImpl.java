@@ -10,15 +10,14 @@ import com.imai.core.domain.bo.ImConversationMemberBo;
 import com.imai.core.domain.bo.ImGroupBo;
 import com.imai.core.domain.bo.ImGroupConversationBo;
 import com.imai.core.domain.bo.ImGroupMemberBo;
-import com.imai.core.domain.vo.ImConversationVo;
 import com.imai.core.domain.vo.ImConversationMemberVo;
+import com.imai.core.domain.vo.ImConversationVo;
 import com.imai.core.mapper.ImConversationMapper;
-import com.imai.core.mapper.ImConversationMemberMapper;
+import com.imai.core.service.IImConversationMemberService;
 import com.imai.core.service.IImConversationService;
 import com.imai.core.service.IImGroupMemberService;
 import com.imai.core.service.IImGroupService;
 import com.imai.ws.enums.ConversationType;
-import com.imai.core.service.IImConversationMemberService;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
@@ -44,11 +43,9 @@ import java.util.stream.Collectors;
 public class ImConversationServiceImpl implements IImConversationService {
 
     private final ImConversationMapper baseMapper;
-    private final ImConversationMemberMapper memberMapper;
     private final IImConversationMemberService conversationMemberService;
-    private final  IImGroupService groupService;
-    private final  IImGroupMemberService groupMemberService;
-
+    private final IImGroupService groupService;
+    private final IImGroupMemberService groupMemberService;
 
 
     /**
@@ -157,7 +154,7 @@ public class ImConversationServiceImpl implements IImConversationService {
     /**
      * 创建陌生人会话
      *
-     * @param bo 会话信息
+     * @param bo           会话信息
      * @param targetUserId 目标用户ID
      * @return 是否创建成功
      */
@@ -178,7 +175,7 @@ public class ImConversationServiceImpl implements IImConversationService {
         }
         currentMember.setFkUserId(LoginHelper.getUserId());
         // currentMember.setExtras("{}");
-        success = memberMapper.insert(currentMember) > 0;
+        success = conversationMemberService.insertByBo(MapstructUtils.convert(currentMember, ImConversationMemberBo.class));
         if (!success) {
             return false;
         }
@@ -188,7 +185,7 @@ public class ImConversationServiceImpl implements IImConversationService {
         targetMember.setFkConversationId(conversation.getId());
         targetMember.setFkUserId(targetUserId);
         // targetMember.setExtras("{}");
-        success = memberMapper.insert(targetMember) > 0;
+        success = conversationMemberService.insertByBo(MapstructUtils.convert(targetMember, ImConversationMemberBo.class));
 
         // 4. 设置返回的会话ID
         if (success) {
@@ -304,7 +301,7 @@ public class ImConversationServiceImpl implements IImConversationService {
         groupBo.setFkConversationId(conversationBo.getId());
         groupBo.setOwnerId(userId);
         groupBo.setGroupType(1L);
-        groupBo.setName(bo.getName()==null ? "群聊":bo.getName());
+        groupBo.setName(bo.getName() == null ? "群聊" : bo.getName());
         groupBo.setJoinType(Long.valueOf(bo.getJoinType()));
         groupBo.setMaxMemberCount(1000L); // 设置默认最大成员数为1000
         groupBo.setExtras(bo.getExtras());
