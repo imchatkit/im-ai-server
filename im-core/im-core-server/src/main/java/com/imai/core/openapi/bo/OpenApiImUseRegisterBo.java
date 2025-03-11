@@ -30,12 +30,6 @@ public class OpenApiImUseRegisterBo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 主键id
-     */
-    @NotNull(message = "主键id不能为空", groups = {EditGroup.class})
-    private Long id;
-
-    /**
      * 昵称
      */
     @NotBlank(message = "不能为空", groups = {AddGroup.class, EditGroup.class})

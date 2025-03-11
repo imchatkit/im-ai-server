@@ -1,7 +1,9 @@
 package com.imai.core.api.controller;
 
 import com.imai.core.domain.bo.ImGroupBo;
+import com.imai.core.domain.bo.ImGroupConversationBo;
 import com.imai.core.domain.vo.ImGroupVo;
+import com.imai.core.service.IImConversationService;
 import com.imai.core.service.IImGroupService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotEmpty;
@@ -16,6 +18,7 @@ import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BusinessType;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
+import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.common.web.core.BaseController;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,6 +46,18 @@ import java.util.List;
 public class ApiImGroupController extends BaseController {
 
     private final IImGroupService imGroupService;
+    private final IImConversationService imConversationService;
+    
+    /**
+     * 创建群组会话
+     */
+    @RepeatSubmit()
+    @Log(title = "创建群组会话", businessType = BusinessType.INSERT)
+    @PostMapping("/create")
+    public R<Void> createGroup(@RequestBody @Validated ImGroupConversationBo bo) {
+        Long userId = LoginHelper.getUserId();
+        return toAjax(imConversationService.createGroupConversation(bo, userId));
+    }
 
     /**
      * 查询群组列表

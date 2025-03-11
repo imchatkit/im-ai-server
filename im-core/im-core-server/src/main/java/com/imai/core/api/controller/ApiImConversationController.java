@@ -154,15 +154,4 @@ public class ApiImConversationController extends BaseController {
         return imConversationService.queryJoinedConversationsByMemberPage(pageQuery);
     }
 
-    /**
-     * 创建群组会话
-     */
-    @RepeatSubmit()
-    @Log(title = "创建群组会话", businessType = BusinessType.INSERT)
-    @PostMapping("/group")
-    public R<Void> createGroup(@RequestBody @Validated ImGroupConversationBo bo) {
-        Long userId = LoginHelper.getUserId();
-        return toAjax(imConversationService.createGroupConversation(bo, userId));
-    }
-
 }

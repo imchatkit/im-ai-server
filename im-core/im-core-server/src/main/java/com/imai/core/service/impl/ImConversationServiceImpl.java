@@ -49,7 +49,7 @@ public class ImConversationServiceImpl implements IImConversationService {
     private final  IImGroupService groupService;
     private final  IImGroupMemberService groupMemberService;
 
-    
+
 
     /**
      * 查询聊天会话基础
@@ -245,38 +245,38 @@ public class ImConversationServiceImpl implements IImConversationService {
     public TableDataInfo<ImConversationVo> queryJoinedConversationsByMemberPage(PageQuery pageQuery) {
         // 1. 获取当前用户ID
         Long currentUserId = LoginHelper.getUserId();
-        
+
         // 2. 构建会话成员查询条件
         ImConversationMemberBo memberBo = new ImConversationMemberBo();
         memberBo.setFkUserId(currentUserId);
         memberBo.setDeleted(0L); // 未删除的会话成员
-        
+
         // 3. 分页查询当前用户的会话成员记录
         TableDataInfo<ImConversationMemberVo> memberPage = conversationMemberService.queryPageList(memberBo, pageQuery);
-        
+
         // 4. 如果没有数据，返回空结果
         if (memberPage.getTotal() == 0) {
             return TableDataInfo.build(new Page<>());
         }
-        
+
         // 5. 提取会话ID列表
         List<Long> conversationIds = memberPage.getRows().stream()
             .map(ImConversationMemberVo::getFkConversationId)
             .collect(Collectors.toList());
-            
+
         // 6. 构建会话查询条件
         LambdaQueryWrapper<ImConversation> lqw = Wrappers.lambdaQuery();
         lqw.in(ImConversation::getId, conversationIds);
         lqw.eq(ImConversation::getDeleted, 0L); // 未删除的会话
         lqw.orderByDesc(ImConversation::getCreateTime); // 按创建时间倒序
-        
+
         // 7. 查询会话详情
         List<ImConversationVo> conversations = baseMapper.selectVoList(lqw);
-        
+
         // 8. 构建分页结果
         Page<ImConversationVo> result = new Page<>(pageQuery.getPageNum(), pageQuery.getPageSize(), memberPage.getTotal());
         result.setRecords(conversations);
-        
+
         return TableDataInfo.build(result);
     }
 
@@ -287,7 +287,7 @@ public class ImConversationServiceImpl implements IImConversationService {
         // 创建会话
         ImConversationBo conversationBo = new ImConversationBo();
         conversationBo.setConversationType(Long.valueOf(ConversationType.GROUP.getCode()));
-   
+
         conversationBo.setExtras(bo.getExtras());
         boolean success = insertByBo(conversationBo);
         if (!success) {
@@ -299,10 +299,13 @@ public class ImConversationServiceImpl implements IImConversationService {
         groupBo.setFkConversationId(conversationBo.getId());
         groupBo.setOwnerId(userId);
         groupBo.setGroupType(1L);
-   
+        groupBo.setName(bo.getName()==null ? "群聊":bo.getName());
         groupBo.setJoinType(Long.valueOf(bo.getJoinType()));
+        groupBo.setMaxMemberCount(1000L); // 设置默认最大成员数为1000
+        // groupBo.setOrgId(0L); // 设置默认组织ID
+        // groupBo.setDeptId(0L); // 设置默认部门ID
         groupBo.setExtras(bo.getExtras());
-                success = groupService.insertByBo(groupBo);
+        success = groupService.insertByBo(groupBo);
         if (!success) {
             throw new RuntimeException("创建群组失败");
         }
@@ -318,18 +321,20 @@ public class ImConversationServiceImpl implements IImConversationService {
         }).collect(Collectors.toList());
 
         for (ImGroupMemberBo memberBo : groupMembers) {
-            success = groupMemberService.insertByBo(memberBo);
-            if (!success) {
-                throw new RuntimeException("添加群组成员失败");
-            }
-
-            // 添加会话成员
+            // 先添加会话成员
             ImConversationMemberBo conversationMemberBo = new ImConversationMemberBo();
             conversationMemberBo.setFkConversationId(conversationBo.getId());
             conversationMemberBo.setFkUserId(memberBo.getFkUserId());
             success = conversationMemberService.insertByBo(conversationMemberBo);
             if (!success) {
                 throw new RuntimeException("添加会话成员失败");
+            }
+
+            // 设置群组成员的会话成员ID
+            memberBo.setFkConversationMemberId(conversationMemberBo.getId());
+            success = groupMemberService.insertByBo(memberBo);
+            if (!success) {
+                throw new RuntimeException("添加群组成员失败");
             }
         }
 

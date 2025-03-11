@@ -15,11 +15,10 @@ import java.util.List;
 @Data
 public class ImGroupConversationBo {
 
-    // /**
-    //  * 群组名称
-    //  */
-    // @NotNull(message = "群组名称不能为空")
-    // private String name;
+    /**
+     * 群组名称
+     */
+    private String name;
 
     /**
      * 群组成员ID列表
@@ -27,15 +26,15 @@ public class ImGroupConversationBo {
     @NotEmpty(message = "群组成员不能为空")
     private List<Long> memberIds;
 
-    // /**
-    //  * 群组公告
-    //  */
-    // private String notice;
+     /**
+      * 群组公告
+      */
+     private String notice;
 
-    // /**
-    //  * 群组类型
-    //  */
-    // private Integer groupType;
+     /**
+      * 群组类型
+      */
+     private Integer groupType;
 
     // /**
     //  * 群组最大成员数
