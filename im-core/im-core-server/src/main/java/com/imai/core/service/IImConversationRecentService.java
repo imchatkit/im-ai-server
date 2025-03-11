@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * 首页对话列Service接口
+ * 首页对话列Service接口,负责维护最近会话列表,消息未读数
  *
  * @author wei
  * @date 2025-01-07

@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 首页对话列Service业务层处理
+ * 首页对话列Service业务层处理,负责维护最近会话列表,消息未读数
  *
  * @author wei
  * @date 2025-01-07

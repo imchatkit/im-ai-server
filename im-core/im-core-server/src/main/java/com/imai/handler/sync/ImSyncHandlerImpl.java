@@ -1,7 +1,5 @@
 package com.imai.handler.sync;
 
-import com.imai.core.domain.vo.ImConversationRecentVo;
-import com.imai.core.domain.bo.ImConversationRecentBo;
 import com.imai.core.service.IImConversationRecentService;
 import com.imai.handler.ImSendMsg;
 import com.imai.ws.WebSocketMessage;
@@ -34,6 +32,7 @@ import java.util.List;
  * 2. 依赖IMSyncService进行数据持久化
  * 3. 依赖ImSendMsg进行WebSocket消息推送
  * </p>
+ *
  * @author wei
  * @date 2025/1/16 10:45
  */
@@ -58,38 +57,22 @@ public class ImSyncHandlerImpl implements ImSyncHandler {
 
     /**
      * 同步消息到指定用户
+     *
      * @param webSocketMessage 消息对象
-     * @param receiverIds 接收消息的用户ID列表
+     * @param receiverIds      接收消息的用户ID列表
      * @return 同步是否成功
      */
     @Override
     public boolean sync(WebSocketMessage webSocketMessage, List<Long> receiverIds) {
+
+
+        // 设置消息同步序号
         long pts = 1L;
-        for (Long receiverId : receiverIds) {
-            log.info("用户{}同步消息成功", receiverId);
-            webSocketMessage.getMessageExtra().setTimestamp(new Date().getTime());
-
-            // 保存到对话列表
-            ImConversationRecentBo conversationRecentBo = new ImConversationRecentBo();
-            conversationRecentBo.setFkUserId(receiverId);
-            conversationRecentBo.setFkConversationId(webSocketMessage.getRoute().getConversationId());
-            conversationRecentBo.setLastMsgId(webSocketMessage.getMessageExtra().getMessageId());
-            conversationRecentBo.setLastMsgTime(new Date());
-            // 从数据库获取当前未读消息数并加1
-            Long currentNoReadCount = imConversationRecentService.queryList(conversationRecentBo)
-                .stream()
-                .findFirst()
-                .map(ImConversationRecentVo::getNoReadCount)
-                .orElse(0L);
-
-            conversationRecentBo.setNoReadCount(currentNoReadCount + 1);
-            imConversationRecentService.insertByBo(conversationRecentBo);
-        }
-
         webSocketMessage.setDirection(MessageDirection.PUSH.getCode());
         webSocketMessage.getMessageExtra().setPts(pts);
+        webSocketMessage.getMessageExtra().setTimestamp(new Date().getTime());
 
-        // 异步发送ws推送消息,即使没有推送成功，也可以通过数据库拉取离线消息，因为消息已经持久化到数据库了
+        // 异步发送ws推送消息
         msgProcessExecutor.execute(() -> {
             for (Long receiverId : receiverIds) {
                 imSendMsg.sendMsgToUser(JsonUtils.toJsonString(webSocketMessage), receiverId);
@@ -97,4 +80,6 @@ public class ImSyncHandlerImpl implements ImSyncHandler {
         });
         return true;
     }
+
+
 }
