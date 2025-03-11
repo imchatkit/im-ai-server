@@ -3,7 +3,6 @@ package org.dromara.demo;
 import com.imai.ImCoreServerApplication;
 import com.imai.ai.config.LlmProperties;
 import com.imai.ai.service.impl.TipsServiceImpl;
-import com.imai.core.domain.vo.ImMessageVo;
 import com.imai.core.service.IImMessageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.util.List;
 
 @SpringBootTest(classes = ImCoreServerApplication.class)
 class TipsServiceImplTest {

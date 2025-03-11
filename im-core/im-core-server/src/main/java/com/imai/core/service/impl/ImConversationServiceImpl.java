@@ -7,11 +7,17 @@ import com.imai.core.domain.ImConversation;
 import com.imai.core.domain.ImConversationMember;
 import com.imai.core.domain.bo.ImConversationBo;
 import com.imai.core.domain.bo.ImConversationMemberBo;
+import com.imai.core.domain.bo.ImGroupBo;
+import com.imai.core.domain.bo.ImGroupConversationBo;
+import com.imai.core.domain.bo.ImGroupMemberBo;
 import com.imai.core.domain.vo.ImConversationVo;
 import com.imai.core.domain.vo.ImConversationMemberVo;
 import com.imai.core.mapper.ImConversationMapper;
 import com.imai.core.mapper.ImConversationMemberMapper;
 import com.imai.core.service.IImConversationService;
+import com.imai.core.service.IImGroupMemberService;
+import com.imai.core.service.IImGroupService;
+import com.imai.ws.enums.ConversationType;
 import com.imai.core.service.IImConversationMemberService;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.utils.MapstructUtils;
@@ -20,6 +26,7 @@ import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
@@ -39,6 +46,10 @@ public class ImConversationServiceImpl implements IImConversationService {
     private final ImConversationMapper baseMapper;
     private final ImConversationMemberMapper memberMapper;
     private final IImConversationMemberService conversationMemberService;
+    private final  IImGroupService groupService;
+    private final  IImGroupMemberService groupMemberService;
+
+    
 
     /**
      * 查询聊天会话基础
@@ -268,4 +279,61 @@ public class ImConversationServiceImpl implements IImConversationService {
         
         return TableDataInfo.build(result);
     }
+
+    @Override
+    @Transactional
+    public Boolean createGroupConversation(ImGroupConversationBo bo, Long userId) {
+
+        // 创建会话
+        ImConversationBo conversationBo = new ImConversationBo();
+        conversationBo.setConversationType(Long.valueOf(ConversationType.GROUP.getCode()));
+   
+        conversationBo.setExtras(bo.getExtras());
+        boolean success = insertByBo(conversationBo);
+        if (!success) {
+            return false;
+        }
+
+        // 创建群组
+        ImGroupBo groupBo = new ImGroupBo();
+        groupBo.setFkConversationId(conversationBo.getId());
+        groupBo.setOwnerId(userId);
+        groupBo.setGroupType(1L);
+   
+        groupBo.setJoinType(Long.valueOf(bo.getJoinType()));
+        groupBo.setExtras(bo.getExtras());
+                success = groupService.insertByBo(groupBo);
+        if (!success) {
+            throw new RuntimeException("创建群组失败");
+        }
+
+        // 添加群组成员
+        List<ImGroupMemberBo> groupMembers = bo.getMemberIds().stream().map(memberId -> {
+            ImGroupMemberBo memberBo = new ImGroupMemberBo();
+            memberBo.setFkConversationId(conversationBo.getId());
+            memberBo.setFkGroupId(groupBo.getId());
+            memberBo.setFkUserId(memberId);
+            memberBo.setRole(memberId.equals(userId) ? 1L : 0); // 1: 群主, 0: 普通成员
+            return memberBo;
+        }).collect(Collectors.toList());
+
+        for (ImGroupMemberBo memberBo : groupMembers) {
+            success = groupMemberService.insertByBo(memberBo);
+            if (!success) {
+                throw new RuntimeException("添加群组成员失败");
+            }
+
+            // 添加会话成员
+            ImConversationMemberBo conversationMemberBo = new ImConversationMemberBo();
+            conversationMemberBo.setFkConversationId(conversationBo.getId());
+            conversationMemberBo.setFkUserId(memberBo.getFkUserId());
+            success = conversationMemberService.insertByBo(conversationMemberBo);
+            if (!success) {
+                throw new RuntimeException("添加会话成员失败");
+            }
+        }
+
+        return true;
+    }
+
 }
