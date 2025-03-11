@@ -119,4 +119,22 @@ public class ApiImGroupController extends BaseController {
                           @PathVariable Long[] ids) {
         return toAjax(imGroupService.deleteWithValidByIds(List.of(ids), true));
     }
+
+    /**
+     * 查询我加入的群组列表
+     */
+    @GetMapping("/my/joined")
+    public R<List<ImGroupVo>> queryMyJoinedGroups() {
+        Long userId = LoginHelper.getUserId();
+        return R.ok(imGroupService.queryMyJoinedGroups(userId));
+    }
+
+    /**
+     * 查询我创建的群组列表
+     */
+    @GetMapping("/my/created")
+    public R<List<ImGroupVo>> queryMyCreatedGroups() {
+        Long userId = LoginHelper.getUserId();
+        return R.ok(imGroupService.queryMyCreatedGroups(userId));
+    }
 }

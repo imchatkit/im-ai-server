@@ -317,6 +317,9 @@ public class ImConversationServiceImpl implements IImConversationService {
             memberBo.setFkGroupId(groupBo.getId());
             memberBo.setFkUserId(memberId);
             memberBo.setRole(memberId.equals(userId) ? 1L : 0); // 1: 群主, 0: 普通成员
+            memberBo.setGroupMemberJoinType(1L);
+            memberBo.setMemberInvitedJoinUser(userId);
+            
             return memberBo;
         }).collect(Collectors.toList());
 

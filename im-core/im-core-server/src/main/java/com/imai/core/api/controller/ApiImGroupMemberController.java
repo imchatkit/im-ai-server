@@ -104,4 +104,42 @@ public class ApiImGroupMemberController extends BaseController {
                           @PathVariable Long[] ids) {
         return toAjax(imGroupMemberService.deleteWithValidByIds(List.of(ids), true));
     }
+
+    /**
+     * 查询群组所有成员
+     *
+     * @param groupId 群组ID
+     */
+    @GetMapping("/group/{groupId}/members")
+    public R<List<ImGroupMemberVo>> getGroupMembers(@NotNull(message = "群组ID不能为空")
+                                                   @PathVariable Long groupId) {
+        return R.ok(imGroupMemberService.queryMembersByGroupId(groupId));
+    }
+
+    /**
+     * 分页查询群组成员
+     *
+     * @param groupId 群组ID
+     * @param pageQuery 分页参数
+     */
+    @GetMapping("/group/{groupId}/members/page")
+    public TableDataInfo<ImGroupMemberVo> getGroupMembersPage(@NotNull(message = "群组ID不能为空")
+                                                             @PathVariable Long groupId,
+                                                             PageQuery pageQuery) {
+        return imGroupMemberService.queryMembersByGroupIdPage(groupId, pageQuery);
+    }
+
+    /**
+     * 移除群组成员
+     *
+     * @param groupId 群组ID
+     * @param userId 用户ID
+     */
+    @DeleteMapping("/group/{groupId}/member/{userId}")
+    public R<Void> removeGroupMember(@NotNull(message = "群组ID不能为空")
+                                    @PathVariable Long groupId,
+                                    @NotNull(message = "用户ID不能为空")
+                                    @PathVariable Long userId) {
+        return toAjax(imGroupMemberService.removeGroupMember(groupId, userId));
+    }
 }

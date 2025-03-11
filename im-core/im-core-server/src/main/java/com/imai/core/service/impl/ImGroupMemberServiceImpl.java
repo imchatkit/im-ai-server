@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 群成员Service业务层处理
@@ -123,6 +124,21 @@ public class ImGroupMemberServiceImpl implements IImGroupMemberService {
     }
 
     /**
+     * 查询用户加入的群组列表
+     *
+     * @param userId 用户ID
+     * @return 群组成员列表
+     */
+    public List<Long> queryUserJoinedGroupIds(Long userId) {
+        LambdaQueryWrapper<ImGroupMember> lqw = Wrappers.lambdaQuery();
+        lqw.eq(ImGroupMember::getFkUserId, userId);
+        lqw.eq(ImGroupMember::getDeleted, false);
+        return baseMapper.selectList(lqw).stream()
+            .map(ImGroupMember::getFkGroupId)
+            .collect(Collectors.toList());
+    }
+
+    /**
      * 校验并批量删除群成员信息
      *
      * @param ids     待删除的主键集合
@@ -135,5 +151,50 @@ public class ImGroupMemberServiceImpl implements IImGroupMemberService {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;
+    }
+
+    /**
+     * 根据群组ID查询所有成员
+     *
+     * @param groupId 群组ID
+     * @return 群组成员列表
+     */
+    @Override
+    public List<ImGroupMemberVo> queryMembersByGroupId(Long groupId) {
+        LambdaQueryWrapper<ImGroupMember> lqw = Wrappers.lambdaQuery();
+        lqw.eq(ImGroupMember::getFkGroupId, groupId);
+        lqw.eq(ImGroupMember::getDeleted, false);
+        return baseMapper.selectVoList(lqw);
+    }
+
+    /**
+     * 分页查询群组成员
+     *
+     * @param groupId 群组ID
+     * @param pageQuery 分页参数
+     * @return 群组成员分页列表
+     */
+    @Override
+    public TableDataInfo<ImGroupMemberVo> queryMembersByGroupIdPage(Long groupId, PageQuery pageQuery) {
+        LambdaQueryWrapper<ImGroupMember> lqw = Wrappers.lambdaQuery();
+        lqw.eq(ImGroupMember::getFkGroupId, groupId);
+        lqw.eq(ImGroupMember::getDeleted, false);
+        Page<ImGroupMemberVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        return TableDataInfo.build(result);
+    }
+
+    /**
+     * 移除群组成员
+     *
+     * @param groupId 群组ID
+     * @param userId 用户ID
+     * @return 是否移除成功
+     */
+    @Override
+    public Boolean removeGroupMember(Long groupId, Long userId) {
+        LambdaQueryWrapper<ImGroupMember> lqw = Wrappers.lambdaQuery();
+        lqw.eq(ImGroupMember::getFkGroupId, groupId);
+        lqw.eq(ImGroupMember::getFkUserId, userId);
+        return baseMapper.delete(lqw) > 0;
     }
 }

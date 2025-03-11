@@ -25,6 +25,32 @@ public interface IImGroupMemberService {
     ImGroupMemberVo queryById(Long id);
 
     /**
+     * 根据群组ID查询所有成员
+     *
+     * @param groupId 群组ID
+     * @return 群组成员列表
+     */
+    List<ImGroupMemberVo> queryMembersByGroupId(Long groupId);
+
+    /**
+     * 分页查询群组成员
+     *
+     * @param groupId 群组ID
+     * @param pageQuery 分页参数
+     * @return 群组成员分页列表
+     */
+    TableDataInfo<ImGroupMemberVo> queryMembersByGroupIdPage(Long groupId, PageQuery pageQuery);
+
+    /**
+     * 移除群组成员
+     *
+     * @param groupId 群组ID
+     * @param userId 用户ID
+     * @return 是否移除成功
+     */
+    Boolean removeGroupMember(Long groupId, Long userId);
+
+    /**
      * 分页查询群成员列表
      *
      * @param bo        查询条件
