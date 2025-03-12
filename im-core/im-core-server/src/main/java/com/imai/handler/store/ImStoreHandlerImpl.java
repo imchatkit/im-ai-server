@@ -174,6 +174,7 @@ public class ImStoreHandlerImpl implements ImStoreHandler {
      * @return 消息处理是否成功
      */
     @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean handleSystemMessage(ImMessageBo messageBo, WebSocketMessage webSocketMessage, List<Long> receiverIds) {
         log.info("handleSystemMessage:{}", webSocketMessage);
         return store(messageBo, webSocketMessage, receiverIds);

@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -103,5 +104,19 @@ public class ApiImMsgReadController extends BaseController {
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
         return toAjax(imMsgReadService.deleteWithValidByIds(List.of(ids), true));
+    }
+
+    /**
+     * 更新消息已读状态
+     *
+     * @param userId 用户ID
+     */
+    @Log(title = "消息已读记录", businessType = BusinessType.UPDATE)
+    @RepeatSubmit()
+    @PostMapping("/updateMessageRead")
+    public R<Void> updateMessageRead(@NotNull(message = "消息ID不能为空") @RequestParam Long msgId,
+                                   @NotNull(message = "会话ID不能为空") @RequestParam Long conversationId,
+                                   @NotNull(message = "接收者ID不能为空") @RequestParam Long receiverId) {
+        return toAjax(imMsgReadService.updateMessageRead(msgId, conversationId, receiverId));
     }
 }

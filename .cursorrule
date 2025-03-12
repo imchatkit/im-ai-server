@@ -50,20 +50,10 @@ im-ai-server\im-core\im-core-server\src\main\java\com\imai\core\admin\controller
 - 在线状态同步
 - 多端消息同步
 - 历史消息漫游
-- 消息提醒与免打扰
 
 ### 群组管理
 - 群创建/解散
 - 成员管理
 - 群公告
 - 群权限控制
-- 群消息免打扰
 
-### 消息类型
-- 文本消息
-- 图片消息
-- 语音消息
-- 视频消息
-- 文件消息
-- 位置消息
-- 自定义消息

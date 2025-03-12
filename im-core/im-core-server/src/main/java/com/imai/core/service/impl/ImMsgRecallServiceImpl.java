@@ -4,10 +4,20 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.imai.core.domain.ImMsgRecall;
+import com.imai.core.domain.bo.ImMessageBo;
 import com.imai.core.domain.bo.ImMsgRecallBo;
+import com.imai.core.domain.vo.ImConversationMemberVo;
+import com.imai.core.domain.vo.ImMessageVo;
 import com.imai.core.domain.vo.ImMsgRecallVo;
 import com.imai.core.mapper.ImMsgRecallMapper;
+import com.imai.core.service.IImConversationMemberService;
+import com.imai.core.service.IImMessageService;
 import com.imai.core.service.IImMsgRecallService;
+import com.imai.handler.store.ImStoreHandler;
+import com.imai.ws.WebSocketMessage;
+import com.imai.ws.enums.CmdType;
+import com.imai.ws.enums.MessageDirection;
+import com.imai.ws.enums.MsgType;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
@@ -16,8 +26,10 @@ import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 消息撤回记录Service业务层处理
@@ -30,6 +42,69 @@ import java.util.Map;
 public class ImMsgRecallServiceImpl implements IImMsgRecallService {
 
     private final ImMsgRecallMapper baseMapper;
+    private final IImMessageService messageService;
+    private final ImStoreHandler imStoreHandler;
+    private final IImConversationMemberService conversationMemberService;
+
+    /**
+     * 撤回消息
+     *
+     * @param msgId  消息ID
+     * @param userId 撤回用户ID
+     * @return 是否撤回成功
+     */
+    @Override
+    public Boolean recallMessage(Long msgId, Long userId) {
+        // 1. 查询消息
+        ImMessageVo message = messageService.queryById(msgId);
+        if (message == null) {
+            return false;
+        }
+
+        // 2. 验证权限（只能撤回自己发送的消息）
+        if (!userId.equals(message.getFkFromUserId())) {
+            return false;
+        }
+
+        // 3. 创建撤回记录
+        ImMsgRecallBo recallBo = new ImMsgRecallBo();
+        recallBo.setFkMsgId(msgId);
+        recallBo.setFkUserId(userId);
+        recallBo.setRecallTime(new Date());
+        if (!insertByBo(recallBo)) {
+            return false;
+        }
+
+        // 4. 更新消息状态
+        ImMessageBo messageBo = new ImMessageBo();
+        messageBo.setId(msgId);
+        messageBo.setMsgStatus(2L); // 设置消息状态为已撤回
+        if (!messageService.updateByBo(messageBo)) {
+            return false;
+        }
+
+        // 5. 创建撤回系统消息
+        ImMessageBo systemMessage = new ImMessageBo();
+        systemMessage.setFkFromUserId(userId);
+        systemMessage.setMsgType((long) MsgType.MSG_RECALL.getCode());
+        systemMessage.setFkConversationId(message.getFkConversationId());
+
+        // 6. 构建撤回通知
+        WebSocketMessage recallNotification = new WebSocketMessage();
+        recallNotification.setCmd(CmdType.MSG_RECALL.getCode());
+        recallNotification.setDirection(MessageDirection.PUSH.getCode());
+        recallNotification.getMessageExtra().setMessageId(msgId);
+        recallNotification.getMessageExtra().setTimestamp(new Date().getTime());
+
+        // 7. 获取会话所有成员
+        List<ImConversationMemberVo> members = conversationMemberService.queryListByConversationIdForApi(message.getFkConversationId());
+        List<Long> memberIds = members.stream()
+            .map(ImConversationMemberVo::getFkUserId)
+            .collect(Collectors.toList());
+
+        // 8. 通过store机制处理撤回消息，发送给所有会话成员
+        return imStoreHandler.handleSystemMessage(systemMessage, recallNotification, memberIds);
+    }
 
     /**
      * 查询消息撤回记录

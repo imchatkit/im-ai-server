@@ -16,6 +16,7 @@ import java.util.List;
  */
 public interface IImMsgReadService {
 
+    Boolean updateMessageRead(Long msgId, Long conversationId, Long receiverId);
     /**
      * 查询消息已读记录
      *
