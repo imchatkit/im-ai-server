@@ -1,14 +1,19 @@
 package com.imai.ws;
 
-import java.io.Serializable;
-
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+import lombok.Builder;
 /**
  * 消息扩展信息
  */
 @Data
-public class MessageExtra implements Serializable   {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class MessageExtra implements Serializable {
     private Boolean mentioned;          // 是否被@提及
     private Boolean mentionedAll;       // 是否@所有人
     private String senderNickname;      // 发送者昵称

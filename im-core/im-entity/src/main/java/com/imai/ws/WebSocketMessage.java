@@ -1,6 +1,9 @@
 package com.imai.ws;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.io.Serializable;
@@ -10,6 +13,9 @@ import java.io.Serializable;
  */
 @Data
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class WebSocketMessage implements Serializable {
     // === 基础信息(所有消息都需要) ===
     private Integer direction;      // 消息流向(1:请求/2:响应/3:推送) MessageDirection
@@ -27,10 +33,4 @@ public class WebSocketMessage implements Serializable {
     // === 推送消息字段 ===
     private MessageExtra messageExtra;     // 消息扩展信息(direction=PUSH时选填)
 
-    public void settingDirection(Integer direction, Integer code, String message, Object data) {
-        this.direction = direction;
-        this.response.setCode(code);
-        this.response.setMessage(message);
-        this.response.setData(data);
-    }
 }

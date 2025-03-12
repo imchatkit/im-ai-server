@@ -4,10 +4,19 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.imai.core.domain.ImMsgRead;
+import com.imai.core.domain.bo.ImMessageBo;
 import com.imai.core.domain.bo.ImMsgReadBo;
 import com.imai.core.domain.vo.ImMsgReadVo;
 import com.imai.core.mapper.ImMsgReadMapper;
 import com.imai.core.service.IImMsgReadService;
+import com.imai.core.service.IImConversationRecentService;
+import com.imai.ws.Header;
+import com.imai.ws.Route;
+import com.imai.ws.WebSocketMessage;
+import com.imai.ws.enums.CmdType;
+import com.imai.ws.enums.MessageDirection;
+import com.imai.ws.enums.MsgType;
+
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
@@ -18,8 +27,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Date;
 
 /**
  * 消息已读记录Service业务层处理
@@ -32,6 +43,72 @@ import java.util.Map;
 public class ImMsgReadServiceImpl implements IImMsgReadService {
 
     private final ImMsgReadMapper baseMapper;
+    private final IImConversationRecentService conversationRecentService;
+    private final com.imai.handler.store.ImStoreHandlerImpl imStoreHandler;
+
+    /**
+     * 更新消息已读状态
+     *
+     * @param msgId 消息ID
+     * @param conversationId 会话ID
+     * @param receiverId 接收者ID
+     * @return 是否更新成功
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean updateMessageRead(Long msgId, Long conversationId, Long receiverId) {
+        // 1. 更新消息已读状态
+        LambdaQueryWrapper<ImMsgRead> wrapper = Wrappers.lambdaQuery();
+        wrapper.eq(ImMsgRead::getFkMsgId, msgId)
+            .eq(ImMsgRead::getFkConversationId, conversationId)
+            .eq(ImMsgRead::getFkReceiverUserId, receiverId)
+            .eq(ImMsgRead::getReadMsgStatus, 0L);
+
+        ImMsgRead update = new ImMsgRead();
+        update.setReadMsgStatus(1L);
+        update.setReadTime(new Date());
+        boolean result = baseMapper.update(update, wrapper) > 0;
+
+        if (result) {
+            // 2. 更新会话未读消息计数
+            conversationRecentService.updateConversationRead(conversationId, receiverId);
+
+            // 3. 发送WebSocket消息通知
+            ImMsgRead msgRead = baseMapper.selectOne(wrapper);
+            if (msgRead != null) {
+                // 构建已读回执消息
+                WebSocketMessage readNotification = WebSocketMessage.builder()
+                    .direction(MessageDirection.PUSH.getCode())
+                    .cmd(CmdType.MSG_READ.getCode())
+                    .header(Header.builder()
+                        .localId(String.valueOf(msgId))
+                        .timestamp(System.currentTimeMillis())
+                        .build())
+                    .route(Route.builder()
+                        .type(MsgType.MSG_READ.getCode())
+                        .conversationId(conversationId)
+                        .target(Collections.singletonList(msgRead.getFkFromUserId()))
+                        .source("server")
+                        .build())
+                    .build();
+                
+                // 创建系统消息并通过handleSystemMessage下发
+                ImMessageBo systemMessage = new ImMessageBo();
+                systemMessage.setFkFromUserId(receiverId);
+                systemMessage.setMsgType((long)MsgType.MSG_READ.getCode());
+                
+                List<Long> targetUsers = new ArrayList<>();
+                targetUsers.add(msgRead.getFkFromUserId());
+                targetUsers.add(msgRead.getFkFromUserId());
+                
+                // 通知消息发送方和用户其他在线终端
+                imStoreHandler.handleSystemMessage(systemMessage, readNotification, targetUsers);
+            }
+
+        }
+
+        return result;
+    }
 
     /**
      * 查询消息已读记录
@@ -140,10 +217,10 @@ public class ImMsgReadServiceImpl implements IImMsgReadService {
     /**
      * 批量创建消息已读记录
      *
-     * @param msgId          消息ID
+     * @param msgId 消息ID
      * @param conversationId 会话ID
-     * @param fromUserId     发送者ID
-     * @param receiverIds    接收者ID列表
+     * @param fromUserId 发送者ID
+     * @param receiverIds 接收者ID列表
      * @return 是否创建成功
      */
     @Override
@@ -163,6 +240,10 @@ public class ImMsgReadServiceImpl implements IImMsgReadService {
             msgRead.setReadMsgStatus(0L); // 0表示未读
             msgRead.setReceiverMsgStatus(0L); // 0表示未接收
             readList.add(msgRead);
+
+            // 更新Redis缓存中的未读消息计数
+            // String unreadKey = "msg:unread:" + conversationId + ":" + receiverId;
+            // RedisUtils.incr(unreadKey);
         }
 
         return baseMapper.insertBatch(readList);
