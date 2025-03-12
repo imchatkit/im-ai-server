@@ -1,15 +1,21 @@
 #  IM-AI
 
-IM-AI-Server 是一个开源的企业级即时通讯系统,采用分布式微服务架构设计,提供高性能、高可用的即时通讯解决方案。
-支持SDK快速集成到已有系统中,并提供完整的 IM 即时通讯能力。
+**IM-AI-Server** 是一款基于 **Spring Cloud 分布式微服务架构** 的开源企业级 IM 即时通讯系统，提供 **全场景即时通讯解决方案**。
+
+▸ 支持通过 **iOS/Android/Web 全平台原生 SDK 及 API** 快速集成 IM 能力到现有系统  
+▸ **独立可部署**的完整 IM 聊天系统，提供 **全终端客户端版本**  
+▸ 助力构建具备 **高并发、高可用** 特性的智能 AI 通信平台
+
+深度整合 **DeepSeek 智能对话引擎**，实现三大核心模块：  
+`即时通讯` → `消息中台` → `智能 AI 对话`
 
 - 文档：[IM AI 详细文档](https://github.com/imchatkit/im-kit-doc)
-#### 💻 已接入DeepSeek，基于聊天记录 提供智能回复建议。
+
 ![IM集成流程](/doc/img/IM_integration_process.png)
 
 
 ## 🚀 特性
-
+- 💻 已接入DeepSeek，基于聊天记录 提供智能回复建议。
 - 快速集成：提供多端 SDK，5分钟即可完成接入
 - 功能完整：支持单聊、群聊、聊天室等核心功能
 - 易扩展：基于 Java 技术栈，无缝对接 Spring Cloud 生态
@@ -20,10 +26,20 @@ IM-AI-Server 是一个开源的企业级即时通讯系统,采用分布式微服
 ## 💻 支持的终端
 
 - Web/H5
-- iOS/Android
+- iOS/Android  
 - Windows/macOS
 - Linux
 - Server API 服务端api
+
+### 相关项目
+
+- [im-ai-server](https://github.com/imchatkit/im-ai-server) - 服务端(JAVA) 基于Java开发的企业级即时通讯系统，提供完整的IM能力和AI智能对话功能。集成DeepSeek模型，支持iOS、Android、Web等多端SDK快速接入。
+
+- [im-console-web](https://github.com/imchatkit/im-console-web) - 运营后台管理系统 (Vue)
+
+- [im-ai-vue](https://github.com/imchatkit/im-ai-vue) - IM-AI的前端客户端项目 (Vue + Electron)
+
+- [im-kit-doc](https://github.com/imchatkit/im-kit-doc) - IM系统架构设计文档项目，基于Spring Cloud分布式微服务架构，采用Netty实现高性能、高可用的即时通讯解决方案。
 
 ## 📱 核心功能
 
