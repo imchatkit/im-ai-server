@@ -1,8 +1,10 @@
 package com.imai.ws.netty.user;
 
+import com.imai.handler.IImUserOnlineService;
 import com.imai.ws.netty.config.ImChannelAttributes;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -20,6 +22,9 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class ChannelUserHolder {
+
+    @DubboReference
+    private IImUserOnlineService imUserOnlineService;
 
     /**
      * 用户ID -> 该用户的所有channelId集合
@@ -73,12 +78,68 @@ public class ChannelUserHolder {
             channel.attr(ImChannelAttributes.USER_ID).set(userId);
             channel.attr(ImChannelAttributes.DEVICE_TYPE).set(deviceType);
 
+            // 更新Redis中的用户在线状态
+            imUserOnlineService.online(userId, deviceType, channelId);
+
             log.info("[channel_add] Channel added successfully - userId:{}, channelId:{}, deviceType:{}",
                 userId, channelId, deviceType);
             return true;
         } catch (Exception e) {
-            log.error("[channel_add_error] Failed to add channel - userId:{}, error:{}", 
+            log.error("[channel_add_error] Failed to add channel - userId:{}, error:{}",
                 userId, e.getMessage(), e);
+            return false;
+        }
+    }
+
+    /**
+     * 移除Channel连接
+     *
+     * @param channel Channel对象
+     * @return 是否移除成功
+     */
+    public boolean removeChannel(Channel channel) {
+        try {
+            Assert.notNull(channel, "Channel cannot be null");
+            String channelId = channel.id().asLongText();
+            Assert.hasText(channelId, "ChannelId cannot be empty");
+
+            // 获取用户ID和设备类型
+            Long userId = channel.attr(ImChannelAttributes.USER_ID).get();
+            String deviceType = channel.attr(ImChannelAttributes.DEVICE_TYPE).get();
+            if (userId == null) {
+                log.warn("[channel_remove_warn] UserId not found for channel:{}", channelId);
+                return false;
+            }
+
+            // 移除Channel映射
+            Channel removedChannel = channelMap.remove(channelId);
+            if (removedChannel == null) {
+                log.warn("[channel_remove_warn] Channel not found in channelMap:{}", channelId);
+                return false;
+            }
+
+            // 移除用户Channel映射
+            Set<String> userChannels = userChannelsMap.get(userId);
+            if (userChannels != null) {
+                userChannels.remove(channelId);
+                // 如果用户没有其他Channel，则移除用户映射
+                if (userChannels.isEmpty()) {
+                    userChannelsMap.remove(userId);
+                }
+
+                // 更新Redis中的用户在线状态
+                imUserOnlineService.offline(userId, deviceType, channelId);
+
+                log.info("[channel_remove] Channel removed successfully - userId:{}, channelId:{}",
+                    userId, channelId);
+                return true;
+            }
+
+            log.warn("[channel_remove_warn] User channels not found - userId:{}, channelId:{}",
+                userId, channelId);
+            return false;
+        } catch (Exception e) {
+            log.error("[channel_remove_error] Failed to remove channel - error:{}", e.getMessage(), e);
             return false;
         }
     }
@@ -140,54 +201,6 @@ public class ChannelUserHolder {
     }
 
     /**
-     * 移除Channel连接
-     *
-     * @param channel Channel对象
-     * @return 是否移除成功
-     */
-    public boolean removeChannel(Channel channel) {
-        try {
-            Assert.notNull(channel, "Channel cannot be null");
-            String channelId = channel.id().asLongText();
-            Assert.hasText(channelId, "ChannelId cannot be empty");
-
-            // 获取用户ID
-            Long userId = channel.attr(ImChannelAttributes.USER_ID).get();
-            if (userId == null) {
-                log.warn("[channel_remove_warn] UserId not found for channel:{}", channelId);
-                return false;
-            }
-
-            // 移除Channel映射
-            Channel removedChannel = channelMap.remove(channelId);
-            if (removedChannel == null) {
-                log.warn("[channel_remove_warn] Channel not found in channelMap:{}", channelId);
-                return false;
-            }
-
-            // 移除用户Channel映射
-            Set<String> userChannels = userChannelsMap.get(userId);
-            if (userChannels != null) {
-                userChannels.remove(channelId);
-                // 如果用户没有其他Channel，则移除用户映射
-                if (userChannels.isEmpty()) {
-                    userChannelsMap.remove(userId);
-                }
-                log.info("[channel_remove] Channel removed successfully - userId:{}, channelId:{}", 
-                    userId, channelId);
-                return true;
-            }
-
-            log.warn("[channel_remove_warn] User channels not found - userId:{}, channelId:{}", 
-                userId, channelId);
-            return false;
-        } catch (Exception e) {
-            log.error("[channel_remove_error] Failed to remove channel - error:{}", e.getMessage(), e);
-            return false;
-        }
-    }
-
-    /**
      * 获取当前在线用户数
      *
      * @return 在线用户数
@@ -227,7 +240,7 @@ public class ChannelUserHolder {
     public boolean isUserOnlineOnDevice(Long userId, String deviceType) {
         Assert.notNull(userId, "UserId cannot be null");
         Assert.hasText(deviceType, "DeviceType cannot be empty");
-        
+
         return getUserChannelsByDevice(userId, deviceType).stream()
             .anyMatch(Channel::isActive);
     }
