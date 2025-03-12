@@ -65,4 +65,15 @@ public interface IImMsgReadService {
      * @return 是否删除成功
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    /**
+     * 批量创建消息已读记录
+     *
+     * @param msgId          消息ID
+     * @param conversationId 会话ID
+     * @param fromUserId     发送者ID
+     * @param receiverIds    接收者ID列表
+     * @return 是否创建成功
+     */
+    Boolean batchCreateMsgRead(Long msgId, Long conversationId, Long fromUserId, Collection<Long> receiverIds);
 }

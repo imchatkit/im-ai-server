@@ -6,6 +6,7 @@ import com.imai.core.domain.bo.ImMsgReceiverBo;
 import com.imai.core.domain.vo.ImConversationRecentVo;
 import com.imai.core.service.IImConversationRecentService;
 import com.imai.core.service.IImMessageService;
+import com.imai.core.service.IImMsgReadService;
 import com.imai.core.service.IImMsgReceiverService;
 import com.imai.handler.sync.ImSyncHandlerImpl;
 import com.imai.ws.MessageExtra;
@@ -44,6 +45,9 @@ public class ImStoreHandlerImpl implements ImStoreHandler {
     private IImConversationRecentService imConversationRecentService; // 负责维护最近会话列表,消息未读数
 
     @Resource
+    private IImMsgReadService imMsgReadService; // 消息已读状态服务
+
+    @Resource
     private ImSyncHandlerImpl imSyncHandler; // 消息同步处理器，负责消息的同步操作
 
     /**
@@ -74,11 +78,17 @@ public class ImStoreHandlerImpl implements ImStoreHandler {
             messageExtra.setMessageId(messageBo.getId());
             webSocketMessage.setMessageExtra(messageExtra);
 
-            // 批量保存消息接收记录
+            // 批量保存消息接收箱记录
             saveMessageReceivers(messageBo.getId(), receiverIds);
 
             // 批量更新会话列表
             saveConversationRecent(webSocketMessage, receiverIds);
+
+            // 创建消息已读记录
+            if (!imMsgReadService.batchCreateMsgRead(messageBo.getId(), webSocketMessage.getRoute().getConversationId(), messageBo.getFkFromUserId(), receiverIds)) {
+                log.error("[store] 批量创建消息已读记录失败");
+                throw new RuntimeException("批量创建消息已读记录失败");
+            }
 
             // 同步消息到其他系统
             if (!imSyncHandler.sync(webSocketMessage, receiverIds)) {
@@ -119,17 +129,17 @@ public class ImStoreHandlerImpl implements ImStoreHandler {
                 ImConversationRecentBo queryBo = new ImConversationRecentBo();
                 queryBo.setFkUserId(receiverId);
                 queryBo.setFkConversationId(webSocketMessage.getRoute().getConversationId());
-                
+
                 // 查询是否存在记录
                 List<ImConversationRecentVo> existingRecords = imConversationRecentService.queryList(queryBo);
                 ImConversationRecentBo conversationRecentBo = new ImConversationRecentBo();
-                
+
                 // 设置基本信息
                 conversationRecentBo.setFkUserId(receiverId);
                 conversationRecentBo.setFkConversationId(webSocketMessage.getRoute().getConversationId());
                 conversationRecentBo.setLastMsgId(webSocketMessage.getMessageExtra().getMessageId());
                 conversationRecentBo.setLastMsgTime(new Date());
-                
+
                 if (!existingRecords.isEmpty()) {
                     // 记录已存在，更新现有记录
                     ImConversationRecentVo existingRecord = existingRecords.get(0);
@@ -157,15 +167,15 @@ public class ImStoreHandlerImpl implements ImStoreHandler {
 
     /**
      * 处理系统消息（跳过常规过滤）
-     * 
-     * @param messageBo 消息业务对象
+     *
+     * @param messageBo        消息业务对象
      * @param webSocketMessage WebSocket消息对象
-     * @param receiverIds 接收方ID列表
+     * @param receiverIds      接收方ID列表
      * @return 消息处理是否成功
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean handleSystemMessage(ImMessageBo messageBo, WebSocketMessage webSocketMessage, List<Long> receiverIds) {
-        log.info("handleSystemMessage:{}",webSocketMessage);
+        log.info("handleSystemMessage:{}", webSocketMessage);
         return store(messageBo, webSocketMessage, receiverIds);
     }
 }

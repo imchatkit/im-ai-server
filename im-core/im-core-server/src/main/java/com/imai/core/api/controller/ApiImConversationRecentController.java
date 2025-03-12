@@ -55,7 +55,7 @@ public class ApiImConversationRecentController extends BaseController {
     /**
      * 导出首页对话列列表
      */
-    @Log(title = "首页对话列", businessType = BusinessType.EXPORT)
+    @Log(title = "首页对话列表", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(ImConversationRecentBo bo, HttpServletResponse response) {
         List<ImConversationRecentVo> list = imConversationRecentService.queryList(bo);
