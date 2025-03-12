@@ -19,3 +19,51 @@ im-ai-server\im-core\im-core-server\src\main\java\com\imai\core\openapi\OpenApiI
 3.这个是admin用的接口
 im-ai-server\im-core\im-core-server\src\main\java\com\imai\core\admin\controller\AdminImConversationMemberController.java
 该包下的类,新增的接口调用service方法应该在方法后面添加"forAdmin"
+
+
+## 🚀 特性
+
+- 快速集成：提供多端 SDK，5分钟即可完成接入
+- 功能完整：支持单聊、群聊、聊天室等核心功能
+- 易扩展：基于 Java 技术栈，无缝对接 Spring Cloud 生态
+- AI 赋能：集成智能对话、内容审核等 AI 能力
+- 安全可靠：支持加密、敏感内容过滤
+- 运营管理：提供完整的管理控制台
+
+## 💻 支持的终端
+
+- Web/H5
+- iOS/Android
+- Windows/macOS
+- Linux
+- Server API 服务端api
+
+# 功能规划代办清单
+
+
+## 📱 核心功能
+
+### 即时通讯
+- 单聊/群聊/聊天室
+- 消息已读回执
+- 消息撤回/转发
+- 在线状态同步
+- 多端消息同步
+- 历史消息漫游
+- 消息提醒与免打扰
+
+### 群组管理
+- 群创建/解散
+- 成员管理
+- 群公告
+- 群权限控制
+- 群消息免打扰
+
+### 消息类型
+- 文本消息
+- 图片消息
+- 语音消息
+- 视频消息
+- 文件消息
+- 位置消息
+- 自定义消息
