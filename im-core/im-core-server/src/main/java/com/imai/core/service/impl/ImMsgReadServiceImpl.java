@@ -39,15 +39,17 @@ import java.util.Map;
  * @author wei
  * @date 2025-01-07
  */
-@RequiredArgsConstructor
 @Service
 public class ImMsgReadServiceImpl implements IImMsgReadService {
 
-    private final ImMsgReadMapper baseMapper;
+    @jakarta.annotation.Resource
+    private ImMsgReadMapper baseMapper;
     @Lazy
-    private final IImConversationRecentService conversationRecentService;
+    @jakarta.annotation.Resource
+    private IImConversationRecentService conversationRecentService;
     @Lazy
-    private final ImStoreHandler imStoreHandler;
+    @jakarta.annotation.Resource
+    private ImStoreHandler imStoreHandler;
 
     /**
      * 更新消息已读状态

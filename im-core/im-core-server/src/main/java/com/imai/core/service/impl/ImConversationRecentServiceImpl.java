@@ -11,6 +11,8 @@ import com.imai.core.domain.vo.ImMsgReadVo;
 import com.imai.core.mapper.ImConversationRecentMapper;
 import com.imai.core.service.IImConversationRecentService;
 import com.imai.core.service.IImMsgReadService;
+
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.mybatis.core.page.PageQuery;
@@ -31,13 +33,14 @@ import java.util.Map;
  * @author wei
  * @date 2025-01-07
  */
-@RequiredArgsConstructor
 @Service
 public class ImConversationRecentServiceImpl implements IImConversationRecentService {
     @Lazy
-    private final ImConversationRecentMapper baseMapper;
+    @Resource
+    private ImConversationRecentMapper baseMapper;
     @Lazy
-    private final IImMsgReadService imMsgReadService;
+    @Resource
+    private IImMsgReadService imMsgReadService;
 
     /**
      * 更新会话已读状态
