@@ -1,6 +1,5 @@
 package com.imai.ai;
 
-
 import com.imai.ai.config.LlmProperties;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.UserMessage;
@@ -41,28 +40,28 @@ public class ReplyAiMemoryChain {
     public static void chat(String userMsg, Long userId, SseEmitter emitter, LlmProperties llmProperties) {
 
         ChatMemory chatMemory = MessageWindowChatMemory.builder()
-            .maxMessages(50)
-            .id(userId.toString())
-            .chatMemoryStore(memoryStore)
-            .build();
+                .maxMessages(50)
+                .id(userId.toString())
+                .chatMemoryStore(memoryStore)
+                .build();
 
         // 创建流式聊天模型
         OpenAiStreamingChatModel chatModel = OpenAiStreamingChatModel.builder()
-            .apiKey(llmProperties.getKey())
-            .modelName(llmProperties.getModelName())
-            .baseUrl(llmProperties.getBaseUrl())
-            .maxTokens(2000)
-            .strictJsonSchema(true)
-            .temperature(0.45)
-            .build();
+                .apiKey(llmProperties.getKey())
+                .modelName(llmProperties.getModelName())
+                .baseUrl(llmProperties.getBaseUrl())
+                .maxTokens(2000)
+                .strictJsonSchema(true)
+                .temperature(0.45)
+                .build();
 
         Assistant assistant = AiServices.builder(Assistant.class)
-            .streamingChatLanguageModel(chatModel)
-            .chatMemoryProvider(memoryId -> {
-                // 直接使用为该用户创建的chatMemory
-                return chatMemory;
-            })
-            .build();
+                .streamingChatLanguageModel(chatModel)
+                .chatMemoryProvider(memoryId -> {
+                    // 直接使用为该用户创建的chatMemory
+                    return chatMemory;
+                })
+                .build();
 
         TokenStream tokenStream = assistant.chat(userId, userMsg);
 
@@ -71,8 +70,8 @@ public class ReplyAiMemoryChain {
             System.out.print(partialResponse);
             try {
                 emitter.send(SseEmitter.event()
-                    .name("message")
-                    .data(partialResponse));
+                        .name("message")
+                        .data(partialResponse));
             } catch (IOException e) {
                 log.error("发送SSE消息失败", e);
             }
@@ -111,37 +110,37 @@ public class ReplyAiMemoryChain {
 
         // 创建一个持久化的 ChatMemory 只用于保存对话
         ChatMemory persistentChatMemory = MessageWindowChatMemory.builder()
-            .maxMessages(50)
-            .id(userId.toString())
-            .chatMemoryStore(memoryStore)
-            .build();
+                .maxMessages(50)
+                .id(userId.toString())
+                .chatMemoryStore(memoryStore)
+                .build();
 
         // 提示语
         String template = "# 系统配置: " +
-        "- 你的任务:这是个企业级办公类型即时通讯的项目,你根据聊天双方的上下文,生成3条智能回复建议" +
-        "- 规则:回复格式必须为纯json" +
-        "- 响应示例:" +
-        "[\"是的，可以。\",\"非常好！\"]" +
-        "- sender中{{MyUserId}}是我发送的消息,你需要回复对方的消息"+
-       " - 聊天上下文:{{msgJson}}";
+                "- 你的任务:这是个企业级办公类型即时通讯的项目,你根据聊天双方的上下文,生成3条智能回复建议" +
+                "- 规则:回复格式必须为纯json" +
+                "- 响应示例:" +
+                "[\"是的，可以。\",\"非常好！\"]" +
+                "- sender中{{MyUserId}}是我发送的消息,你需要回复对方的消息" +
+                " - 聊天上下文:{{msgJson}}";
 
         // 提示词模板stache语法，变量用
         PromptTemplate promptTemplate = PromptTemplate.from(template);
         Map<String, Object> variables = new HashMap<>();
-        variables.put("msgJson", msgJson); 
-        variables.put("MyUserId", userId); 
+        variables.put("msgJson", msgJson);
+        variables.put("MyUserId", userId);
 
         Prompt prompt = promptTemplate.apply(variables);
 
         // 创建流式聊天模型
         OpenAiStreamingChatModel chatModel = OpenAiStreamingChatModel.builder()
-            .apiKey(llmProperties.getKey())
-            .modelName(llmProperties.getModelName())
-            .baseUrl(llmProperties.getBaseUrl())
-            .maxTokens(2000)
-            .strictJsonSchema(true)
-            .temperature(0.5)
-            .build();
+                .apiKey(llmProperties.getKey())
+                .modelName(llmProperties.getModelName())
+                .baseUrl(llmProperties.getBaseUrl())
+                .maxTokens(2000)
+                .strictJsonSchema(true)
+                .temperature(0.5)
+                .build();
 
         // 发送完整对话历史获取回复
         log.info("---获取AI回复:prompt:\n{}", prompt.text());
@@ -156,8 +155,8 @@ public class ReplyAiMemoryChain {
                 try {
                     responseBuilder.append(partialResponse);
                     emitter.send(SseEmitter.event()
-                        .name("message")
-                        .data(partialResponse));
+                            .name("message")
+                            .data(partialResponse));
                     System.out.print(partialResponse);
                 } catch (IOException e) {
                     log.error("发送SSE消息失败", e);

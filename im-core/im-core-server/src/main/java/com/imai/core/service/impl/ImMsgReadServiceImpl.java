@@ -22,6 +22,7 @@ import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +44,7 @@ import java.util.Map;
 public class ImMsgReadServiceImpl implements IImMsgReadService {
 
     private final ImMsgReadMapper baseMapper;
+    @Lazy
     private final IImConversationRecentService conversationRecentService;
     private final ImStoreHandler imStoreHandler;
 
