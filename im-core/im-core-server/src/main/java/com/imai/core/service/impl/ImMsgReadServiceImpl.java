@@ -14,7 +14,9 @@ import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -133,5 +135,36 @@ public class ImMsgReadServiceImpl implements IImMsgReadService {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;
+    }
+
+    /**
+     * 批量创建消息已读记录
+     *
+     * @param msgId          消息ID
+     * @param conversationId 会话ID
+     * @param fromUserId     发送者ID
+     * @param receiverIds    接收者ID列表
+     * @return 是否创建成功
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean batchCreateMsgRead(Long msgId, Long conversationId, Long fromUserId, Collection<Long> receiverIds) {
+        if (receiverIds == null || receiverIds.isEmpty()) {
+            return true;
+        }
+
+        List<ImMsgRead> readList = new ArrayList<>();
+        for (Long receiverId : receiverIds) {
+            ImMsgRead msgRead = new ImMsgRead();
+            msgRead.setFkMsgId(msgId);
+            msgRead.setFkConversationId(conversationId);
+            msgRead.setFkFromUserId(fromUserId);
+            msgRead.setFkReceiverUserId(receiverId);
+            msgRead.setReadMsgStatus(0L); // 0表示未读
+            msgRead.setReceiverMsgStatus(0L); // 0表示未接收
+            readList.add(msgRead);
+        }
+
+        return baseMapper.insertBatch(readList);
     }
 }

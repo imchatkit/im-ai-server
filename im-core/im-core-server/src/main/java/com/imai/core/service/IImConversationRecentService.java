@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * 首页对话列Service接口
+ * 首页对话列Service接口,负责维护最近会话列表,消息未读数
  *
  * @author wei
  * @date 2025-01-07
@@ -65,4 +65,13 @@ public interface IImConversationRecentService {
      * @return 是否删除成功
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    /**
+     * 更新会话已读状态
+     *
+     * @param conversationId 会话ID
+     * @param userId         用户ID
+     * @return 是否更新成功
+     */
+    Boolean updateConversationRead(Long conversationId, Long userId);
 }

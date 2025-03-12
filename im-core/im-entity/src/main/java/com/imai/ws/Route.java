@@ -17,5 +17,5 @@ public class Route implements Serializable {
 //    private Long from;            // 发送者ID(可为空)
 //    private Long to;              // 接收者ID,群聊可为空
     private List<Long> target;    // 目标用户列表,群聊仅某些用户查看消息
-    private String source;          // 消息来源(serverApi/websocket)
+    private String source;          // 消息来源(server/serverApi/websocket)
 }

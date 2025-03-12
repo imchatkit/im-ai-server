@@ -65,4 +65,20 @@ public interface IImGroupService {
      * @return 是否删除成功
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    /**
+     * 查询我加入的群组列表
+     *
+     * @param userId 用户ID
+     * @return 群组列表
+     */
+    List<ImGroupVo> queryMyJoinedGroups(Long userId);
+
+    /**
+     * 查询我创建的群组列表
+     *
+     * @param userId 用户ID
+     * @return 群组列表
+     */
+    List<ImGroupVo> queryMyCreatedGroups(Long userId);
 }

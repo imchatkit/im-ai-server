@@ -72,23 +72,42 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
         }
         int cmd = webSocketMessage.getCmd();
 
-        // 3. 针对不同会话类型进行处理
-        // 3.1 陌生人单聊
-        ImConversationVo queryByIdConversationVo = imConversationService.queryById(webSocketMessage.getRoute().getConversationId());
-
-        if (queryByIdConversationVo.getConversationType() == ConversationType.STRANGER_CHAT.getCode() && cmd == CmdType.STRANGER_CHAT.getCode()) {
-            return strangerChat(fromUserId, webSocketMessage, queryByIdConversationVo);
+        // 检查会话ID是否存在
+        if (webSocketMessage.getRoute() == null || webSocketMessage.getRoute().getConversationId() == null) {
+            log.error("[filter] conversationId is null");
+            return false;
         }
 
-        // 3.2 群聊
-        if (cmd == CmdType.GROUP_CHAT.getCode()) {
-            // TODO: 群聊消息过滤逻辑
-            return groupChat(fromUserId, webSocketMessage, queryByIdConversationVo);
+        // 3. 获取会话信息
+        ImConversationVo conversationVo = imConversationService.queryById(webSocketMessage.getRoute().getConversationId());
+        if (conversationVo == null) {
+            log.error("[filter] conversation not found, conversationId:{}", webSocketMessage.getRoute().getConversationId());
+            return false;
         }
 
-        // 4. 其他类型的消息或命令，目前直接返回 false，表示拦截
+        // 4. 针对不同会话类型进行处理
+        // 4.1 陌生人单聊
+        if (conversationVo.getConversationType() == ConversationType.STRANGER_CHAT.getCode() && cmd == CmdType.STRANGER_CHAT.getCode()) {
+            log.info("[filter] 处理陌生人单聊消息, conversationId:{}, fromUserId:{}", conversationVo.getId(), fromUserId);
+            return strangerChat(fromUserId, webSocketMessage, conversationVo);
+        }
+
+        // 4.2 群聊
+        if (conversationVo.getConversationType() == ConversationType.GROUP.getCode() && cmd == CmdType.GROUP_CHAT.getCode()) {
+            log.info("[filter] 处理群聊消息, conversationId:{}, fromUserId:{}", conversationVo.getId(), fromUserId);
+            return groupChat(fromUserId, webSocketMessage, conversationVo);
+        }
+
+        // 4.3 单聊
+        if (conversationVo.getConversationType() == ConversationType.SINGLE.getCode() && cmd == CmdType.SINGLE_CHAT.getCode()) {
+            log.info("[filter] 处理单聊消息, conversationId:{}, fromUserId:{}", conversationVo.getId(), fromUserId);
+            // 单聊处理逻辑可以复用陌生人单聊的逻辑，区别在于可能需要检查好友关系
+            return strangerChat(fromUserId, webSocketMessage, conversationVo);
+        }
+
+        // 5. 其他类型的消息或命令，记录日志并拦截
+        log.warn("[filter] 不支持的消息类型, cmd:{}, conversationType:{}", cmd, conversationVo.getConversationType());
         return false;
-
     }
 
     /**
@@ -258,10 +277,10 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
      *
      * @param fromUserId       用户id
      * @param webSocketMessage 消息
+     * @param imConversationVo 会话信息
      * @return 是否过滤
      */
     private boolean groupChat(Long fromUserId, WebSocketMessage webSocketMessage, ImConversationVo imConversationVo) {
-
         Long conversationId = webSocketMessage.getRoute().getConversationId();
         ImConversationMemberBo imConversationMemberBo = new ImConversationMemberBo();
         imConversationMemberBo.setFkConversationId(conversationId);
@@ -278,15 +297,47 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
             return false;
         }
 
-//        ImGroupMember member = conversationMemberService.
-//        if (member.getMuteEndTime() > System.currentTimeMillis()) {
-//            throw new BusinessException("您已被禁言");
-//        }
-//        if (group.getStatus() != GroupStatus.NORMAL) {
-//            throw new BusinessException("群组已解散");
-//        }
-        // 允许发送消息
-        return true;
+        // 获取发送者的会话成员信息
+        ImConversationMemberBo senderMemberBo = new ImConversationMemberBo();
+        senderMemberBo.setFkConversationId(conversationId);
+        senderMemberBo.setFkUserId(fromUserId);
+        List<ImConversationMemberVo> senderMemberList = conversationMemberService.queryList(senderMemberBo);
 
+        if (!senderMemberList.isEmpty()) {
+            ImConversationMemberVo senderMember = senderMemberList.get(0);
+            // 检查用户是否被禁言
+            if (senderMember.getMuteEndTime() != null && senderMember.getMuteEndTime().getTime() > System.currentTimeMillis()) {
+                sendErrorResponse(fromUserId, ImResponseCode.USER_MUTED);
+                return false;
+            }
+        }
+
+        // 检查群组状态
+        if (imConversationVo.getConversationStatus() != null && imConversationVo.getConversationStatus() != 1) {
+            sendErrorResponse(fromUserId, ImResponseCode.GROUP_DISSOLVED);
+            return false;
+        }
+
+        // 检查必要的字段
+        if (webSocketMessage.getHeader() == null || webSocketMessage.getRoute() == null || webSocketMessage.getContent() == null) {
+            throw new RuntimeException("消息头、路由信息或消息内容不能为空");
+        }
+
+        // 保存消息表
+        ImMessageBo messageBo = buildMessageBo(fromUserId, webSocketMessage, imConversationVo);
+
+        // 处理消息存储和分发
+        try {
+            // 群聊消息需要发送给所有群成员（包括发送者自己）
+            boolean store = imStoreHandler.store(messageBo, webSocketMessage, toList);
+            if (!store) {
+                log.error("[filter] 保存消息失败 message:{}", webSocketMessage);
+                throw new RuntimeException("保存消息失败");
+            }
+            return true;
+        } catch (Exception e) {
+            log.error("[filter] 群聊消息处理失败", e);
+            throw e;
+        }
     }
 }

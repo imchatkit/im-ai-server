@@ -1,6 +1,8 @@
 package com.imai.core.service;
 
 import com.imai.core.domain.bo.ImConversationBo;
+import com.imai.core.domain.bo.ImGroupBo;
+import com.imai.core.domain.bo.ImGroupConversationBo;
 import com.imai.core.domain.vo.ImConversationVo;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
@@ -69,7 +71,7 @@ public interface IImConversationService {
     /**
      * 创建陌生人会话
      *
-     * @param bo 会话信息
+     * @param bo           会话信息
      * @param targetUserId 目标用户ID
      * @return 是否创建成功
      */
@@ -90,4 +92,14 @@ public interface IImConversationService {
      * @return 会话分页列表
      */
     TableDataInfo<ImConversationVo> queryJoinedConversationsByMemberPage(PageQuery pageQuery);
+
+    /**
+     * 创建群组会话
+     *
+     * @param bo 群组会话信息
+     * @param userId 用户ID
+     * @return 会话详情
+     */
+    ImGroupBo createGroupConversation(ImGroupConversationBo bo, Long userId);
+
 }

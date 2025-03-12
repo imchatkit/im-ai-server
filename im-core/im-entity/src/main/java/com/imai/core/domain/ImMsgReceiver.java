@@ -10,7 +10,8 @@ import java.io.Serial;
 
 /**
  * 消息接收对象 im_msg_receiver
- *
+ * 主要是维护多个接收方,可能某个接收方自己单方面删除了这条消息
+ * 
  * @author wei
  * @date 2025-01-07
  */
@@ -47,6 +48,5 @@ public class ImMsgReceiver extends BaseEntity {
      * 可选 自定义属性，供开发者扩展使用
      */
     private String extras;
-
 
 }

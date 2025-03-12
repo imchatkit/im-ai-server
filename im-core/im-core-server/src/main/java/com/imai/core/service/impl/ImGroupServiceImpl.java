@@ -8,6 +8,9 @@ import com.imai.core.domain.bo.ImGroupBo;
 import com.imai.core.domain.vo.ImGroupVo;
 import com.imai.core.mapper.ImGroupMapper;
 import com.imai.core.service.IImGroupService;
+import com.imai.ws.WebSocketMessage;
+import com.imai.ws.enums.MsgType;
+
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
@@ -30,6 +33,8 @@ import java.util.Map;
 public class ImGroupServiceImpl implements IImGroupService {
 
     private final ImGroupMapper baseMapper;
+
+    private final ImGroupMemberServiceImpl groupMemberService;
 
     /**
      * 查询群组
@@ -118,7 +123,7 @@ public class ImGroupServiceImpl implements IImGroupService {
      * 保存前的数据校验
      */
     private void validEntityBeforeSave(ImGroup entity) {
-        //TODO 做一些数据校验,如唯一约束
+        // TODO 做一些数据校验,如唯一约束
     }
 
     /**
@@ -131,8 +136,39 @@ public class ImGroupServiceImpl implements IImGroupService {
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
         if (isValid) {
-            //TODO 做一些业务上的校验,判断是否需要校验
+            // TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;
     }
+
+    /**
+     * 查询我加入的群组列表
+     *
+     * @param userId 用户ID
+     * @return 群组列表
+     */
+    @Override
+    public List<ImGroupVo> queryMyJoinedGroups(Long userId) {
+        List<Long> groupIds = groupMemberService.queryUserJoinedGroupIds(userId);
+        if (groupIds.isEmpty()) {
+            return List.of();
+        }
+        LambdaQueryWrapper<ImGroup> lqw = Wrappers.lambdaQuery();
+        lqw.in(ImGroup::getId, groupIds);
+        return baseMapper.selectVoList(lqw);
+    }
+
+    /**
+     * 查询我创建的群组列表
+     *
+     * @param userId 用户ID
+     * @return 群组列表
+     */
+    @Override
+    public List<ImGroupVo> queryMyCreatedGroups(Long userId) {
+        LambdaQueryWrapper<ImGroup> lqw = Wrappers.lambdaQuery();
+        lqw.eq(ImGroup::getOwnerId, userId);
+        return baseMapper.selectVoList(lqw);
+    }
+
 }

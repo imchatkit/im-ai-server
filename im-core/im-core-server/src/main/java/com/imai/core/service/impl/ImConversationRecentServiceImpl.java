@@ -5,21 +5,26 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.imai.core.domain.ImConversationRecent;
 import com.imai.core.domain.bo.ImConversationRecentBo;
+import com.imai.core.domain.bo.ImMsgReadBo;
 import com.imai.core.domain.vo.ImConversationRecentVo;
+import com.imai.core.domain.vo.ImMsgReadVo;
 import com.imai.core.mapper.ImConversationRecentMapper;
 import com.imai.core.service.IImConversationRecentService;
+import com.imai.core.service.IImMsgReadService;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 /**
- * 首页对话列Service业务层处理
+ * 首页对话列Service业务层处理,负责维护最近会话列表,消息未读数
  *
  * @author wei
  * @date 2025-01-07
@@ -29,6 +34,46 @@ import java.util.Map;
 public class ImConversationRecentServiceImpl implements IImConversationRecentService {
 
     private final ImConversationRecentMapper baseMapper;
+    private final IImMsgReadService imMsgReadService;
+
+    /**
+     * 更新会话已读状态
+     *
+     * @param conversationId 会话ID
+     * @param userId         用户ID
+     * @return 是否更新成功
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean updateConversationRead(Long conversationId, Long userId) {
+        // 1. 更新会话的未读消息数为0
+        LambdaQueryWrapper<ImConversationRecent> wrapper = Wrappers.lambdaQuery();
+        wrapper.eq(ImConversationRecent::getFkConversationId, conversationId)
+            .eq(ImConversationRecent::getFkUserId, userId);
+
+        ImConversationRecent update = new ImConversationRecent();
+        update.setNoReadCount(0L);
+        boolean updateResult = baseMapper.update(update, wrapper) > 0;
+
+        // 2. 更新消息已读状态
+        ImMsgReadBo readBo = new ImMsgReadBo();
+        readBo.setFkConversationId(conversationId);
+        readBo.setFkReceiverUserId(userId);
+        readBo.setReadMsgStatus(0L);
+        List<ImMsgReadVo> unreadList = imMsgReadService.queryList(readBo);
+
+        if (!unreadList.isEmpty()) {
+            for (ImMsgReadVo vo : unreadList) {
+                ImMsgReadBo updateBo = new ImMsgReadBo();
+                updateBo.setId(vo.getId());
+                updateBo.setReadMsgStatus(1L);
+                updateBo.setReadTime(new Date());
+                imMsgReadService.updateByBo(updateBo);
+            }
+        }
+
+        return updateResult;
+    }
 
     /**
      * 查询首页对话列

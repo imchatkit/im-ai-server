@@ -39,6 +39,7 @@ public enum MsgType {
     FRIEND_NOTIFY(42, "好友通知", "Friend Notification"),
     SYSTEM_NOTIFY(43, "系统通知", "System Notification"),
     CUSTOM_NOTIFY(44, "自定义通知", "Custom Notification"),
+    GROUP_CREATED(44, "群聊创建成功", "GROUP_CREATED succeed"),
     
     // === 状态消息 ===
     TYPING(51, "正在输入", "Typing"),

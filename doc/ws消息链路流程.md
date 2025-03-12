@@ -6,6 +6,10 @@
 - **会话序列号(ConversationSeq)**: 基于会话维度的自增序号,从0开始
 - **用户同步位点(PTS)**: 每个用户独立的消息接收位点,从0开始自增
 
+# 核心枚举类
+im-core\im-entity\src\main\java\com\imai\ws\enums\CmdType.java
+im-core\im-entity\src\main\java\com\imai\ws\enums\MsgType.java
+
 ## 消息处理流程
 
 ### 1. 连接建立
@@ -27,17 +31,19 @@
   - 单聊好友类型需要判断双方好友关系等
   - 群聊会话类型需验证用户是否在群内等
   - 验证失败通过WebSocket返回错误码
-
-    ConversationType:
-    ```
-        SINGLE(1, "单聊"),
-        GROUP(2, "群聊"),
-        CHATROOM(3, "聊天室"),
-        CHANNEL(4, "频道"),
-        MILLION_GROUP(5, "万人群聊"),
-        SYSTEM_CONVERSATION(6, "系统对话"),
-        CUSTOM_CONVERSATION(7, "自定义对话");
-    ```
+  ```java
+    public enum ConversationType {
+        SINGLE(1, "单聊", "Private Chat"),
+        GROUP(2, "群聊", "Group Chat"),
+        CHATROOM(3, "聊天室", "Chatroom"),
+        CHANNEL(4, "频道", "Channel"),
+        MILLION_GROUP(5, "万人群聊", "Mass Group Chat"),
+        SYSTEM_CONVERSATION(6, "系统对话", "System Conversation"),
+        CUSTOM_CONVERSATION(7, "自定义对话", "Custom Conversation"),
+        STRANGER_CHAT(8, "陌生人单聊", "Stranger Private Message"), // 可以不是好友
+       
+        }
+  ```
 
 ### 4. 消息分发与存储
 - 处理类: `im-core/im-core-server/src/main/java/com/imai/handler/store/ImStoreHandlerImpl.java`

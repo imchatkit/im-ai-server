@@ -1,24 +1,23 @@
 package com.imai.core.api.controller;
 
 import com.imai.core.domain.bo.ImGroupBo;
+import com.imai.core.domain.bo.ImGroupConversationBo;
 import com.imai.core.domain.vo.ImGroupVo;
+import com.imai.core.service.IImConversationService;
 import com.imai.core.service.IImGroupService;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.domain.R;
 import org.dromara.common.core.validate.AddGroup;
 import org.dromara.common.core.validate.EditGroup;
-import org.dromara.common.excel.utils.ExcelUtil;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BusinessType;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
+import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.common.web.core.BaseController;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,6 +42,18 @@ import java.util.List;
 public class ApiImGroupController extends BaseController {
 
     private final IImGroupService imGroupService;
+    private final IImConversationService imConversationService;
+
+    /**
+     * 创建群组会话
+     */
+    @RepeatSubmit()
+    @Log(title = "创建群组会话", businessType = BusinessType.INSERT)
+    @PostMapping("/create")
+    public R<ImGroupBo> createGroup(@RequestBody @Validated ImGroupConversationBo bo) {
+        Long userId = LoginHelper.getUserId();
+        return R.ok(imConversationService.createGroupConversation(bo, userId));
+    }
 
     /**
      * 查询群组列表
@@ -53,23 +64,12 @@ public class ApiImGroupController extends BaseController {
     }
 
     /**
-     * 导出群组列表
-     */
-    @Log(title = "群组", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    public void export(ImGroupBo bo, HttpServletResponse response) {
-        List<ImGroupVo> list = imGroupService.queryList(bo);
-        ExcelUtil.exportExcel(list, "群组", ImGroupVo.class, response);
-    }
-
-    /**
      * 获取群组详细信息
      *
      * @param id 主键
      */
     @GetMapping("/{id}")
-    public R<ImGroupVo> getInfo(@NotNull(message = "主键不能为空")
-                                @PathVariable Long id) {
+    public R<ImGroupVo> getInfo(@NotNull(message = "主键不能为空") @PathVariable Long id) {
         return R.ok(imGroupService.queryById(id));
     }
 
@@ -94,14 +94,20 @@ public class ApiImGroupController extends BaseController {
     }
 
     /**
-     * 删除群组
-     *
-     * @param ids 主键串
+     * 查询我加入的群组列表
      */
-    @Log(title = "群组", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{ids}")
-    public R<Void> remove(@NotEmpty(message = "主键不能为空")
-                          @PathVariable Long[] ids) {
-        return toAjax(imGroupService.deleteWithValidByIds(List.of(ids), true));
+    @GetMapping("/my/joined")
+    public R<List<ImGroupVo>> queryMyJoinedGroups() {
+        Long userId = LoginHelper.getUserId();
+        return R.ok(imGroupService.queryMyJoinedGroups(userId));
+    }
+
+    /**
+     * 查询我创建的群组列表
+     */
+    @GetMapping("/my/created")
+    public R<List<ImGroupVo>> queryMyCreatedGroups() {
+        Long userId = LoginHelper.getUserId();
+        return R.ok(imGroupService.queryMyCreatedGroups(userId));
     }
 }
