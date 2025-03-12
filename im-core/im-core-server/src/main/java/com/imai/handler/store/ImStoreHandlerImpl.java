@@ -115,21 +115,38 @@ public class ImStoreHandlerImpl implements ImStoreHandler {
     private void saveConversationRecent(WebSocketMessage webSocketMessage, List<Long> receiverIds) {
         for (Long receiverId : receiverIds) {
             try {
+                // 创建查询条件对象
+                ImConversationRecentBo queryBo = new ImConversationRecentBo();
+                queryBo.setFkUserId(receiverId);
+                queryBo.setFkConversationId(webSocketMessage.getRoute().getConversationId());
+                
+                // 查询是否存在记录
+                List<ImConversationRecentVo> existingRecords = imConversationRecentService.queryList(queryBo);
                 ImConversationRecentBo conversationRecentBo = new ImConversationRecentBo();
+                
+                // 设置基本信息
                 conversationRecentBo.setFkUserId(receiverId);
                 conversationRecentBo.setFkConversationId(webSocketMessage.getRoute().getConversationId());
                 conversationRecentBo.setLastMsgId(webSocketMessage.getMessageExtra().getMessageId());
                 conversationRecentBo.setLastMsgTime(new Date());
-
-                // 从数据库获取当前未读消息数并加1
-                Long currentNoReadCount = imConversationRecentService.queryList(conversationRecentBo)
-                        .stream()
-                        .findFirst()
-                        .map(ImConversationRecentVo::getNoReadCount)
-                        .orElse(0L);
-
-                conversationRecentBo.setNoReadCount(currentNoReadCount + 1);
-                imConversationRecentService.insertByBo(conversationRecentBo);
+                
+                if (!existingRecords.isEmpty()) {
+                    // 记录已存在，更新现有记录
+                    ImConversationRecentVo existingRecord = existingRecords.get(0);
+                    conversationRecentBo.setId(existingRecord.getId());
+                    conversationRecentBo.setNoReadCount(existingRecord.getNoReadCount() + 1);
+                    if (!imConversationRecentService.updateByBo(conversationRecentBo)) {
+                        log.error("[store] 更新会话列表失败 receiverId:{}", receiverId);
+                        throw new RuntimeException("更新会话列表失败");
+                    }
+                } else {
+                    // 记录不存在，创建新记录
+                    conversationRecentBo.setNoReadCount(1L);
+                    if (!imConversationRecentService.insertByBo(conversationRecentBo)) {
+                        log.error("[store] 创建会话列表失败 receiverId:{}", receiverId);
+                        throw new RuntimeException("创建会话列表失败");
+                    }
+                }
             } catch (Exception e) {
                 log.error("[store] 更新会话列表失败 receiverId:{}", receiverId, e);
                 throw new RuntimeException("更新会话列表失败");

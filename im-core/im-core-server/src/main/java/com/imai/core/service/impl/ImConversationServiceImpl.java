@@ -403,9 +403,9 @@ public class ImConversationServiceImpl implements IImConversationService {
 
             // 设置路由信息
             Route route = new Route();
-            route.setType(MsgType.SYSTEM_NOTIFY.getCode()); // 系统通知类型
+            route.setType(MsgType.GROUP_CREATED.getCode()); // 系统通知类型
             route.setConversationId(conversationBo.getId());
-            route.setTarget(allMemberIds); // 所有群成员
+            // route.setTarget(allMemberIds); // 所有群成员
             route.setSource("server"); // 服务端消息
             webSocketMessage.setRoute(route);
 
