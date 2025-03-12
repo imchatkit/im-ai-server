@@ -10,6 +10,7 @@ import com.imai.core.domain.bo.ImConversationMemberBo;
 import com.imai.core.domain.bo.ImGroupBo;
 import com.imai.core.domain.bo.ImGroupConversationBo;
 import com.imai.core.domain.bo.ImGroupMemberBo;
+import com.imai.core.domain.bo.ImMessageBo;
 import com.imai.core.domain.vo.ImConversationMemberVo;
 import com.imai.core.domain.vo.ImConversationVo;
 import com.imai.core.mapper.ImConversationMapper;
@@ -17,8 +18,16 @@ import com.imai.core.service.IImConversationMemberService;
 import com.imai.core.service.IImConversationService;
 import com.imai.core.service.IImGroupMemberService;
 import com.imai.core.service.IImGroupService;
+import com.imai.ws.Content;
+import com.imai.ws.MessageExtra;
+import com.imai.ws.Route;
+import com.imai.ws.WebSocketMessage;
+import com.imai.ws.enums.CmdType;
 import com.imai.ws.enums.ConversationType;
+import com.imai.ws.enums.MessageDirection;
+import com.imai.ws.enums.MsgType;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.page.PageQuery;
@@ -40,12 +49,14 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class ImConversationServiceImpl implements IImConversationService {
 
     private final ImConversationMapper baseMapper;
     private final IImConversationMemberService conversationMemberService;
     private final IImGroupService groupService;
     private final IImGroupMemberService groupMemberService;
+    private final com.imai.handler.store.ImStoreHandlerImpl imStoreHandler;
 
 
     /**
@@ -348,7 +359,68 @@ public class ImConversationServiceImpl implements IImConversationService {
             }
         }
 
+        //创建成功发送系统消息
+        sendNotations(userId, conversationBo, groupBo, allMemberIds);
+
         return groupBo;
+    }
+
+    private void sendNotations(Long userId, ImConversationBo conversationBo, ImGroupBo groupBo, List<Long> allMemberIds) {
+        // 发送群创建成功的系统消息
+        try {
+            // 构造系统消息
+            ImMessageBo systemMessageBo = new ImMessageBo();
+            systemMessageBo.setFkConversationId(conversationBo.getId());
+            systemMessageBo.setFkFromUserId(userId); // 创建者ID作为消息发送者
+            systemMessageBo.setConversationSeq(1L); // 第一条消息
+            systemMessageBo.setLocalMsgId("system_" + System.currentTimeMillis());
+            systemMessageBo.setMsgType((long) MsgType.GROUP_CREATED.getCode()); // 群组创建通知
+            systemMessageBo.setMsgText( MsgType.GROUP_CREATED.getDescChinese());
+            // systemMessageBo.setPayload("{}");
+            // systemMessageBo.setMediaUrl("");
+            // systemMessageBo.setAtUsers("");
+            systemMessageBo.setMsgStatus(1L); // 正常状态
+            systemMessageBo.setReceiverOnly("");
+            systemMessageBo.setReceiverCount((long) allMemberIds.size());
+            systemMessageBo.setRefCount(0L);
+            systemMessageBo.setRefType(0L); // 原创消息
+            systemMessageBo.setRootMsgId(0L);
+            systemMessageBo.setParentMsgId(0L);
+            systemMessageBo.setDeleted(0L);
+            systemMessageBo.setAtAll(0L);
+            // systemMessageBo.setExtras(String.format("{\"groupName\":\"%s\",\"creatorId\":%d}", groupBo.getName(), userId));
+            systemMessageBo.setConversationType((long) ConversationType.GROUP.getCode());
+            systemMessageBo.setToUid(0L); // 群聊不需要指定接收者ID
+            systemMessageBo.setCmd((long) CmdType.GROUP_CREATE.getCode()); // 群创建命令
+            systemMessageBo.setPersistent(1L); // 持久化消息
+            systemMessageBo.setPriority(1L); // 普通优先级
+            systemMessageBo.setNeedReceipt(0L); // 不需要回执
+
+            // 构造WebSocket消息
+            WebSocketMessage webSocketMessage = new WebSocketMessage();
+            webSocketMessage.setDirection(MessageDirection.PUSH.getCode()); // 推送消息
+            webSocketMessage.setCmd(CmdType.GROUP_CREATE.getCode()); // 群创建命令
+
+            // 设置路由信息
+            Route route = new Route();
+            route.setType(MsgType.SYSTEM_NOTIFY.getCode()); // 系统通知类型
+            route.setConversationId(conversationBo.getId());
+            route.setTarget(allMemberIds); // 所有群成员
+            route.setSource("server"); // 服务端消息
+            webSocketMessage.setRoute(route);
+
+            // 设置消息内容
+            Content content = new Content();
+            content.setText(MsgType.GROUP_CREATED.getDescChinese());
+            // content.setExtension(String.format("{\"groupName\":\"%s\",\"creatorId\":%d}", groupBo.getName(), userId));
+            webSocketMessage.setContent(content);
+
+            // 发送系统消息
+            imStoreHandler.handleSystemMessage(systemMessageBo, webSocketMessage, allMemberIds);
+        } catch (Exception e) {
+            // 系统消息发送失败不影响群创建结果
+            log.error("发送群创建系统消息失败", e);
+        }
     }
 
 }

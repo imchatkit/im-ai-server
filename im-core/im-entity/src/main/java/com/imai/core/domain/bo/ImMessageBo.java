@@ -185,7 +185,7 @@ public class ImMessageBo extends BaseEntity {
     private Long priority;
 
     /**
-     * 是否需要回执
+     * 是否需要回执 1需要 0不需要
      */
     @NotNull(message = "是否需要回执不能为空", groups = {AddGroup.class, EditGroup.class})
     private Long needReceipt;

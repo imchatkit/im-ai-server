@@ -123,10 +123,10 @@ public class ImStoreHandlerImpl implements ImStoreHandler {
 
                 // 从数据库获取当前未读消息数并加1
                 Long currentNoReadCount = imConversationRecentService.queryList(conversationRecentBo)
-                    .stream()
-                    .findFirst()
-                    .map(ImConversationRecentVo::getNoReadCount)
-                    .orElse(0L);
+                        .stream()
+                        .findFirst()
+                        .map(ImConversationRecentVo::getNoReadCount)
+                        .orElse(0L);
 
                 conversationRecentBo.setNoReadCount(currentNoReadCount + 1);
                 imConversationRecentService.insertByBo(conversationRecentBo);
@@ -135,5 +135,20 @@ public class ImStoreHandlerImpl implements ImStoreHandler {
                 throw new RuntimeException("更新会话列表失败");
             }
         }
+    }
+
+
+    /**
+     * 处理系统消息（跳过常规过滤）
+     * 
+     * @param messageBo 消息业务对象
+     * @param webSocketMessage WebSocket消息对象
+     * @param receiverIds 接收方ID列表
+     * @return 消息处理是否成功
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public boolean handleSystemMessage(ImMessageBo messageBo, WebSocketMessage webSocketMessage, List<Long> receiverIds) {
+        log.info("handleSystemMessage:{}",webSocketMessage);
+        return store(messageBo, webSocketMessage, receiverIds);
     }
 }
