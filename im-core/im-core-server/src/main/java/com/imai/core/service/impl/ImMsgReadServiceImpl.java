@@ -46,6 +46,7 @@ public class ImMsgReadServiceImpl implements IImMsgReadService {
     private final ImMsgReadMapper baseMapper;
     @Lazy
     private final IImConversationRecentService conversationRecentService;
+    @Lazy
     private final ImStoreHandler imStoreHandler;
 
     /**

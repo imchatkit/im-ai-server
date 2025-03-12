@@ -15,8 +15,10 @@ import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.Collection;
 import java.util.Date;
@@ -32,15 +34,16 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Service
 public class ImConversationRecentServiceImpl implements IImConversationRecentService {
-
+    @Lazy
     private final ImConversationRecentMapper baseMapper;
+    @Lazy
     private final IImMsgReadService imMsgReadService;
 
     /**
      * 更新会话已读状态
      *
      * @param conversationId 会话ID
-     * @param userId         用户ID
+     * @param userId 用户ID
      * @return 是否更新成功
      */
     @Override
@@ -49,7 +52,7 @@ public class ImConversationRecentServiceImpl implements IImConversationRecentSer
         // 1. 更新会话的未读消息数为0
         LambdaQueryWrapper<ImConversationRecent> wrapper = Wrappers.lambdaQuery();
         wrapper.eq(ImConversationRecent::getFkConversationId, conversationId)
-            .eq(ImConversationRecent::getFkUserId, userId);
+               .eq(ImConversationRecent::getFkUserId, userId);
 
         ImConversationRecent update = new ImConversationRecent();
         update.setNoReadCount(0L);
