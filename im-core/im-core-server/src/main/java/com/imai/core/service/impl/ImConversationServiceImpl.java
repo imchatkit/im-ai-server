@@ -18,8 +18,8 @@ import com.imai.core.service.IImConversationMemberService;
 import com.imai.core.service.IImConversationService;
 import com.imai.core.service.IImGroupMemberService;
 import com.imai.core.service.IImGroupService;
+import com.imai.handler.store.ImStoreHandler;
 import com.imai.ws.Content;
-import com.imai.ws.MessageExtra;
 import com.imai.ws.Route;
 import com.imai.ws.WebSocketMessage;
 import com.imai.ws.enums.CmdType;
@@ -56,7 +56,7 @@ public class ImConversationServiceImpl implements IImConversationService {
     private final IImConversationMemberService conversationMemberService;
     private final IImGroupService groupService;
     private final IImGroupMemberService groupMemberService;
-    private final com.imai.handler.store.ImStoreHandlerImpl imStoreHandler;
+    private final ImStoreHandler imStoreHandler;
 
 
     /**
@@ -375,7 +375,7 @@ public class ImConversationServiceImpl implements IImConversationService {
             systemMessageBo.setConversationSeq(1L); // 第一条消息
             systemMessageBo.setLocalMsgId("system_" + System.currentTimeMillis());
             systemMessageBo.setMsgType((long) MsgType.GROUP_CREATED.getCode()); // 群组创建通知
-            systemMessageBo.setMsgText( MsgType.GROUP_CREATED.getDescChinese());
+            systemMessageBo.setMsgText(MsgType.GROUP_CREATED.getDescChinese());
             // systemMessageBo.setPayload("{}");
             // systemMessageBo.setMediaUrl("");
             // systemMessageBo.setAtUsers("");

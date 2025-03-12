@@ -17,6 +17,15 @@ import java.util.List;
 public interface IImMsgRecallService {
 
     /**
+     * 撤回消息
+     *
+     * @param msgId  消息ID
+     * @param userId 撤回用户ID
+     * @return 是否撤回成功
+     */
+    Boolean recallMessage(Long msgId, Long userId);
+
+    /**
      * 查询消息撤回记录
      *
      * @param id 主键

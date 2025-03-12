@@ -41,6 +41,7 @@ public enum MsgType {
     CUSTOM_NOTIFY(44, "自定义通知", "Custom Notification"),
     GROUP_CREATED(44, "群聊创建成功", "GROUP_CREATED succeed"),
     MSG_READ(45, "消息已读", "MSG_READ"),
+    MSG_RECALL(46, "撤回消息", "Message Recall"),
 
     // === 状态消息 ===
     TYPING(51, "正在输入", "Typing"),

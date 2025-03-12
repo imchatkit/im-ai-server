@@ -8,15 +8,15 @@ import com.imai.core.domain.bo.ImMessageBo;
 import com.imai.core.domain.bo.ImMsgReadBo;
 import com.imai.core.domain.vo.ImMsgReadVo;
 import com.imai.core.mapper.ImMsgReadMapper;
-import com.imai.core.service.IImMsgReadService;
 import com.imai.core.service.IImConversationRecentService;
+import com.imai.core.service.IImMsgReadService;
+import com.imai.handler.store.ImStoreHandler;
 import com.imai.ws.Header;
 import com.imai.ws.Route;
 import com.imai.ws.WebSocketMessage;
 import com.imai.ws.enums.CmdType;
 import com.imai.ws.enums.MessageDirection;
 import com.imai.ws.enums.MsgType;
-
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
@@ -28,9 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Date;
 
 /**
  * 消息已读记录Service业务层处理
@@ -44,14 +44,14 @@ public class ImMsgReadServiceImpl implements IImMsgReadService {
 
     private final ImMsgReadMapper baseMapper;
     private final IImConversationRecentService conversationRecentService;
-    private final com.imai.handler.store.ImStoreHandlerImpl imStoreHandler;
+    private final ImStoreHandler imStoreHandler;
 
     /**
      * 更新消息已读状态
      *
-     * @param msgId 消息ID
+     * @param msgId          消息ID
      * @param conversationId 会话ID
-     * @param receiverId 接收者ID
+     * @param receiverId     接收者ID
      * @return 是否更新成功
      */
     @Override
@@ -91,16 +91,16 @@ public class ImMsgReadServiceImpl implements IImMsgReadService {
                         .source("server")
                         .build())
                     .build();
-                
+
                 // 创建系统消息并通过handleSystemMessage下发
                 ImMessageBo systemMessage = new ImMessageBo();
                 systemMessage.setFkFromUserId(receiverId);
-                systemMessage.setMsgType((long)MsgType.MSG_READ.getCode());
-                
+                systemMessage.setMsgType((long) MsgType.MSG_READ.getCode());
+
                 List<Long> targetUsers = new ArrayList<>();
                 targetUsers.add(msgRead.getFkFromUserId());
                 targetUsers.add(msgRead.getFkFromUserId());
-                
+
                 // 通知消息发送方和用户其他在线终端
                 imStoreHandler.handleSystemMessage(systemMessage, readNotification, targetUsers);
             }
@@ -217,10 +217,10 @@ public class ImMsgReadServiceImpl implements IImMsgReadService {
     /**
      * 批量创建消息已读记录
      *
-     * @param msgId 消息ID
+     * @param msgId          消息ID
      * @param conversationId 会话ID
-     * @param fromUserId 发送者ID
-     * @param receiverIds 接收者ID列表
+     * @param fromUserId     发送者ID
+     * @param receiverIds    接收者ID列表
      * @return 是否创建成功
      */
     @Override
