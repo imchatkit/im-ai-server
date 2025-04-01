@@ -9,6 +9,7 @@ import com.imai.core.service.IImConversationService;
 import com.imai.handler.ImSendMsg;
 import com.imai.handler.store.ImStoreHandler;
 import com.imai.ws.ContentItem;
+import com.imai.ws.ImResponse;
 import com.imai.ws.Mentions;
 import com.imai.ws.Quote;
 import com.imai.ws.WebSocketMessage;
@@ -268,15 +269,17 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
     private void sendErrorResponse(Long userId, ImResponseCode responseCode) {
         WebSocketMessage errorResponse = new WebSocketMessage();
         errorResponse.setDirection(MessageDirection.RESPONSE.getCode());
-        errorResponse.getResponse().setCode(responseCode.getCode());
-        errorResponse.getResponse().setMessage(responseCode.getDescChinese());
+        // 初始化response对象
+        ImResponse response = new ImResponse();
+        response.setCode(responseCode.getCode());
+        response.setMessage(responseCode.getDescChinese());
+        errorResponse.setResponse(response);
 
         try {
             imSendMsg.sendMsgToUser(JsonUtils.toJsonString(errorResponse), userId);
         } catch (Exception e) {
             log.error("[filter] 发送错误响应失败", e);
         }
-
     }
 
     /**
