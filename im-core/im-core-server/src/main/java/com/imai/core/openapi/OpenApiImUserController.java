@@ -1,5 +1,6 @@
 package com.imai.core.openapi;
 
+import com.imai.core.openapi.bo.OpenApiImUseLoginBo;
 import com.imai.core.openapi.bo.OpenApiImUseRegisterBo;
 import com.imai.core.openapi.vo.OpenApiImUserVo;
 import com.imai.core.service.IImUserService;
@@ -40,6 +41,16 @@ public class OpenApiImUserController extends BaseController {
     @Log(title = "IM客户端注册", businessType = BusinessType.INSERT)
     public R<OpenApiImUserVo> register(@RequestHeader("X-App-Key") String appKey, @RequestBody @Validated OpenApiImUseRegisterBo bo) {
         return R.ok(imUserService.register(bo));
+    }
+
+    /**
+     * IM客户端登录
+     */
+    @PostMapping("/login")
+    @RepeatSubmit
+    @Log(title = "IM客户端userId登录", businessType = BusinessType.INSERT)
+    public R<OpenApiImUserVo> login(@RequestHeader("X-App-Key") String appKey, @RequestBody @Validated OpenApiImUseLoginBo bo) {
+        return R.ok(imUserService.login(bo));
     }
 
     // /**

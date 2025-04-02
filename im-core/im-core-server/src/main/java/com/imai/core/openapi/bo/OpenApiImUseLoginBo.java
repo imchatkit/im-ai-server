@@ -23,21 +23,28 @@ import java.io.Serializable;
     @AutoMapper(target = ImUser.class, reverseConvertGenerate = false),
     @AutoMapper(target = ImUserBo.class, reverseConvertGenerate = false)
 })
-public class OpenApiImUseRegisterBo implements Serializable {
+public class OpenApiImUseLoginBo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * 昵称
+     * 设备类型
+     * 参考 {@link org.dromara.common.core.enums.DeviceType}
+     * 可选值:
+     * - im_app_ios: iOS端
+     * - im_app_android: Android端
+     * - im_web: Web端
+     * - im_pc_win: Windows端
+     * - im_pc_mac: Mac端
      */
-    @NotBlank(message = "不能为空", groups = {AddGroup.class, EditGroup.class})
-    private String nickname;
-
+    @NotBlank(message = "设备类型不能为空", groups = {AddGroup.class, EditGroup.class})
+    private String device;
 
     /**
-     * 可选	自定义属性，供开发者扩展使用
+     * 用户id
      */
-    private String attributes;
+    @NotBlank(message = "不能为空", groups = {AddGroup.class, EditGroup.class})
+    private String userId;
 
 }
