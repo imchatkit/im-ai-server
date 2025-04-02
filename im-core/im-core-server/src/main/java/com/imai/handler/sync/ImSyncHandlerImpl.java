@@ -1,9 +1,8 @@
 package com.imai.handler.sync;
 
-import com.imai.core.service.IImConversationRecentService;
 import com.imai.handler.ImSendMsg;
 import com.imai.ws.WebSocketMessage;
-import com.imai.ws.enums.MessageDirection;
+import com.imai.ws.enums.MessageDirectionEnum;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -62,7 +61,7 @@ public class ImSyncHandlerImpl implements ImSyncHandler {
 
         // 设置消息同步序号
         long pts = 1L;
-        webSocketMessage.setDirection(MessageDirection.PUSH.getCode());
+        webSocketMessage.setDirection(MessageDirectionEnum.PUSH.getCode());
         webSocketMessage.getMessageExtra().setPts(pts);
         webSocketMessage.getMessageExtra().setTimestamp(new Date().getTime());
 

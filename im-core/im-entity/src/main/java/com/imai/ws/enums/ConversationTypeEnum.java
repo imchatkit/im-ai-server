@@ -6,7 +6,7 @@ import lombok.Getter;
  * 会话类型枚举
  */
 @Getter
-public enum ConversationType {
+public enum ConversationTypeEnum {
     SINGLE(1, "单聊", "Private Chat"),
     GROUP(2, "群聊", "Group Chat"),
     CHATROOM(3, "聊天室", "Chatroom"),
@@ -21,9 +21,9 @@ public enum ConversationType {
     private final String descChinese;
     private final String descEnglish;
 
-    ConversationType(int code, String descChinese, String descEnglish) {
+    ConversationTypeEnum(int code, String descChinese, String descEnglish) {
         this.code = code;
         this.descChinese = descChinese;
         this.descEnglish = descEnglish;
     }
-} 
+}

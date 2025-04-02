@@ -1,9 +1,5 @@
 package com.imai.ws.utils;
 
-import com.imai.ws.WebSocketMessage;
-import com.imai.ws.enums.ImResponseCode;
-import com.imai.ws.enums.MessageDirection;
-
 /**
  * WebSocket响应工具类
  */

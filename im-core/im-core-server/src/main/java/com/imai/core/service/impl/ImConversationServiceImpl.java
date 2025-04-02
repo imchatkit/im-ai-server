@@ -22,10 +22,10 @@ import com.imai.handler.store.ImStoreHandler;
 import com.imai.ws.Content;
 import com.imai.ws.Route;
 import com.imai.ws.WebSocketMessage;
-import com.imai.ws.enums.RequestCmdType;
-import com.imai.ws.enums.ConversationType;
-import com.imai.ws.enums.MessageDirection;
-import com.imai.ws.enums.MsgType;
+import com.imai.ws.enums.RequestCmdEnum;
+import com.imai.ws.enums.ConversationTypeEnum;
+import com.imai.ws.enums.MessageDirectionEnum;
+import com.imai.ws.enums.MsgTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.common.core.utils.MapstructUtils;
@@ -298,7 +298,7 @@ public class ImConversationServiceImpl implements IImConversationService {
 
         // 创建会话
         ImConversationBo conversationBo = new ImConversationBo();
-        conversationBo.setConversationType((long) ConversationType.GROUP.getCode());
+        conversationBo.setConversationType((long) ConversationTypeEnum.GROUP.getCode());
 
         conversationBo.setExtras(bo.getExtras());
         boolean success = insertByBo(conversationBo);
@@ -374,8 +374,8 @@ public class ImConversationServiceImpl implements IImConversationService {
             systemMessageBo.setFkFromUserId(userId); // 创建者ID作为消息发送者
             systemMessageBo.setConversationSeq(1L); // 第一条消息
             systemMessageBo.setLocalMsgId("system_" + System.currentTimeMillis());
-            systemMessageBo.setMsgType((long) MsgType.GROUP_CREATED.getCode()); // 群组创建通知
-            systemMessageBo.setMsgText(MsgType.GROUP_CREATED.getDescChinese());
+            systemMessageBo.setMsgType((long) MsgTypeEnum.GROUP_CREATED.getCode()); // 群组创建通知
+            systemMessageBo.setMsgText(MsgTypeEnum.GROUP_CREATED.getDescChinese());
             // systemMessageBo.setPayload("{}");
             // systemMessageBo.setMediaUrl("");
             // systemMessageBo.setAtUsers("");
@@ -389,21 +389,21 @@ public class ImConversationServiceImpl implements IImConversationService {
             systemMessageBo.setDeleted(0L);
             systemMessageBo.setAtAll(0L);
             // systemMessageBo.setExtras(String.format("{\"groupName\":\"%s\",\"creatorId\":%d}", groupBo.getName(), userId));
-            systemMessageBo.setConversationType((long) ConversationType.GROUP.getCode());
+            systemMessageBo.setConversationType((long) ConversationTypeEnum.GROUP.getCode());
             systemMessageBo.setToUid(0L); // 群聊不需要指定接收者ID
-            systemMessageBo.setCmd((long) RequestCmdType.NOTIFY.getCode()); // 群创建命令
+            systemMessageBo.setCmd((long) RequestCmdEnum.NOTIFY.getCode()); // 群创建命令
             systemMessageBo.setPersistent(1L); // 持久化消息
             systemMessageBo.setPriority(1L); // 普通优先级
             systemMessageBo.setNeedReceipt(0L); // 不需要回执
 
             // 构造WebSocket消息
             WebSocketMessage webSocketMessage = new WebSocketMessage();
-            webSocketMessage.setDirection(MessageDirection.PUSH.getCode()); // 推送消息
-            webSocketMessage.setCmd(RequestCmdType.NOTIFY.getCode()); // 群创建命令
+            webSocketMessage.setDirection(MessageDirectionEnum.PUSH.getCode()); // 推送消息
+            webSocketMessage.setCmd(RequestCmdEnum.NOTIFY.getCode()); // 群创建命令
 
             // 设置路由信息
             Route route = new Route();
-            route.setType(MsgType.GROUP_CREATED.getCode()); // 系统通知类型
+            route.setType(MsgTypeEnum.GROUP_CREATED.getCode()); // 系统通知类型
             route.setConversationId(conversationBo.getId());
             // route.setTarget(allMemberIds); // 所有群成员
             route.setSource("server"); // 服务端消息
@@ -411,7 +411,7 @@ public class ImConversationServiceImpl implements IImConversationService {
 
             // 设置消息内容
             Content content = new Content();
-            content.setText(MsgType.GROUP_CREATED.getDescChinese());
+            content.setText(MsgTypeEnum.GROUP_CREATED.getDescChinese());
             // content.setExtension(String.format("{\"groupName\":\"%s\",\"creatorId\":%d}", groupBo.getName(), userId));
             webSocketMessage.setContent(content);
 
