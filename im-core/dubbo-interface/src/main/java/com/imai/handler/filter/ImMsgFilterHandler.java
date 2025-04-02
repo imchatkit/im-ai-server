@@ -12,8 +12,10 @@ public interface ImMsgFilterHandler {
     /**
      * 消息过滤器
      *
-     * @param message
-     * @return
+     * @param message 消息内容
+     * @param userId 用户ID
+     * @param channelId 通道ID
+     * @return 过滤结果
      */
-    boolean filter(String message, Long userId, String channelId);
+    FilterResult filter(String message, Long userId, String channelId);
 }

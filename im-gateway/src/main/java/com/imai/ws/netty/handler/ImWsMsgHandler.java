@@ -2,6 +2,7 @@ package com.imai.ws.netty.handler;
 
 
 import com.imai.handler.filter.ImMsgFilterHandler;
+import com.imai.handler.filter.FilterResult;
 import com.imai.ws.netty.user.ChannelUserHolder;
 import com.imai.ws.netty.user.SendMsgUtil;
 import io.netty.channel.ChannelHandler;
@@ -77,10 +78,10 @@ public class ImWsMsgHandler extends SimpleChannelInboundHandler<TextWebSocketFra
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) {
         // 获取当前连接的 channelId
         String channelId = ctx.channel().id().asLongText();
-        
+
         // 通过 ChannelUserHolder 获取当前连接对应的 userId
         Long userId = channelUserHolder.getUserIdByChannel(ctx.channel());
-        
+
         // 检查用户是否已登录
         if (userId == null) {
             log.warn("用户未登录，channelId: {}", channelId);
@@ -95,14 +96,15 @@ public class ImWsMsgHandler extends SimpleChannelInboundHandler<TextWebSocketFra
         try {
             msgProcessExecutor.execute(() -> {
                 // 在新线程中调用消息过滤器处理消息
-                boolean result = imMsgFilterHandler.filter(messageContent, userId, channelId);
-                
+                FilterResult result = imMsgFilterHandler.filter(messageContent, userId, channelId);
+
                 // 根据过滤结果进行相应处理
-                if (result) {
+                if (result.isSuccess()) {
                     log.info("消息处理成功, userId:{}, channelId:{}, msg:{}", userId, channelId, messageContent);
                 } else {
                     // 如果消息被过滤，向客户端发送错误响应
-                    sendMsgUtil.send("res:error:" + messageContent, ctx.channel());
+//                    String errorMsg = String.format("res:error:%d:%s", result.getErrorCode(), result.getErrorMessage());
+//                    sendMsgUtil.send(errorMsg, ctx.channel());
                 }
             });
         } catch (Exception e) {

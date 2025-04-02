@@ -13,6 +13,8 @@ import com.imai.ws.MessageExtra;
 import com.imai.ws.WebSocketMessage;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,18 +38,23 @@ import java.util.List;
 @Slf4j
 public class ImStoreHandlerImpl implements ImStoreHandler {
     @Resource
+    @Lazy
     private IImMessageService messageService; // 消息服务，负责消息的CRUD操作
 
     @Resource
+    @Lazy
     private IImMsgReceiverService msgReceiverService; // 消息接收者服务，管理消息与接收者的关系
 
     @Resource
+    @Lazy
     private IImConversationRecentService imConversationRecentService; // 负责维护最近会话列表,消息未读数
 
     @Resource
+    @Lazy
     private IImMsgReadService imMsgReadService; // 消息已读状态服务
 
     @Resource
+    @Lazy
     private ImSyncHandlerImpl imSyncHandler; // 消息同步处理器，负责消息的同步操作
 
     /**

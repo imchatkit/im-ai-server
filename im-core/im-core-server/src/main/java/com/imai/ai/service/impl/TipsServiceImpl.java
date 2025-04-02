@@ -30,6 +30,13 @@ public class TipsServiceImpl implements TipsService {
     @Autowired
     private LlmProperties llmProperties;
 
+    /**
+     * 获取提示词
+     * 
+     * @param conversationId 会话id
+     * @param emitter        SSE
+     * @param userId         用户id
+     */
     @Override
     public void getTips(Long conversationId, SseEmitter emitter, Long userId) {
         try {

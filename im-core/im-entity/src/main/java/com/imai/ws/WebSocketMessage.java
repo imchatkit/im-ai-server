@@ -19,7 +19,7 @@ import java.io.Serializable;
 public class WebSocketMessage implements Serializable {
     // === 基础信息(所有消息都需要) ===
     private Integer direction;      // 消息流向(1:请求/2:响应/3:推送) MessageDirection
-    private Integer cmd;            // 命令类型 CmdType
+    private Integer cmd;            // 请求命令类型  see {  RequestCmdType }
     private Header header;          // 消息头
 
     // === 请求消息字段 ===
@@ -28,7 +28,7 @@ public class WebSocketMessage implements Serializable {
     private Control control;        // 控制信息(direction=REQUEST时选填)
 
     // === 响应消息字段 ===
-    private ImResponse response;
+    private ImResponse response;   // direction=RESPONSE时不为空, 请求时为空
 
     // === 推送消息字段 ===
     private MessageExtra messageExtra;     // 消息扩展信息(direction=PUSH时选填)

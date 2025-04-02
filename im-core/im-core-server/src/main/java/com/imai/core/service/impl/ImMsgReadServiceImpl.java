@@ -14,14 +14,14 @@ import com.imai.handler.store.ImStoreHandler;
 import com.imai.ws.Header;
 import com.imai.ws.Route;
 import com.imai.ws.WebSocketMessage;
-import com.imai.ws.enums.CmdType;
+import com.imai.ws.enums.RequestCmdType;
 import com.imai.ws.enums.MessageDirection;
 import com.imai.ws.enums.MsgType;
-import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,13 +38,17 @@ import java.util.Map;
  * @author wei
  * @date 2025-01-07
  */
-@RequiredArgsConstructor
 @Service
 public class ImMsgReadServiceImpl implements IImMsgReadService {
 
-    private final ImMsgReadMapper baseMapper;
-    private final IImConversationRecentService conversationRecentService;
-    private final ImStoreHandler imStoreHandler;
+    @jakarta.annotation.Resource
+    private ImMsgReadMapper baseMapper;
+    @Lazy
+    @jakarta.annotation.Resource
+    private IImConversationRecentService conversationRecentService;
+    @Lazy
+    @jakarta.annotation.Resource
+    private ImStoreHandler imStoreHandler;
 
     /**
      * 更新消息已读状态
@@ -79,7 +83,7 @@ public class ImMsgReadServiceImpl implements IImMsgReadService {
                 // 构建已读回执消息
                 WebSocketMessage readNotification = WebSocketMessage.builder()
                     .direction(MessageDirection.PUSH.getCode())
-                    .cmd(CmdType.MSG_READ.getCode())
+                    .cmd(RequestCmdType.NOTIFY.getCode())
                     .header(Header.builder()
                         .localId(String.valueOf(msgId))
                         .timestamp(System.currentTimeMillis())
