@@ -13,10 +13,10 @@ import com.imai.ws.ImResponse;
 import com.imai.ws.Mentions;
 import com.imai.ws.Quote;
 import com.imai.ws.WebSocketMessage;
-import com.imai.ws.enums.CmdType;
 import com.imai.ws.enums.ConversationTypeEnum;
 import com.imai.ws.enums.ImResponseCodeEnum;
 import com.imai.ws.enums.MessageDirectionEnum;
+import com.imai.ws.enums.RequestCmdEnum;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -92,19 +92,19 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
 
         // 4. 针对不同会话类型进行处理
         // 4.1 陌生人单聊
-        if (conversationVo.getConversationType() == ConversationTypeEnum.STRANGER_CHAT.getCode() && cmd == CmdType.STRANGER_CHAT.getCode()) {
+        if (conversationVo.getConversationType() == ConversationTypeEnum.STRANGER_CHAT.getCode() && cmd == RequestCmdEnum.STRANGER_CHAT.getCode()) {
             log.info("[filter] 处理陌生人单聊消息, conversationId:{}, fromUserId:{}", conversationVo.getId(), fromUserId);
             return strangerChat(fromUserId, webSocketMessage, conversationVo);
         }
 
         // 4.2 群聊
-        if (conversationVo.getConversationType() == ConversationTypeEnum.GROUP.getCode() && cmd == CmdType.GROUP_CHAT.getCode()) {
+        if (conversationVo.getConversationType() == ConversationTypeEnum.GROUP.getCode() && cmd == RequestCmdEnum.GROUP_CHAT.getCode()) {
             log.info("[filter] 处理群聊消息, conversationId:{}, fromUserId:{}", conversationVo.getId(), fromUserId);
             return groupChat(fromUserId, webSocketMessage, conversationVo);
         }
 
         // 4.3 单聊
-        if (conversationVo.getConversationType() == ConversationTypeEnum.SINGLE.getCode() && cmd == CmdType.SINGLE_CHAT.getCode()) {
+        if (conversationVo.getConversationType() == ConversationTypeEnum.SINGLE.getCode() && cmd == RequestCmdEnum.SINGLE_CHAT.getCode()) {
             log.info("[filter] 处理单聊消息, conversationId:{}, fromUserId:{}", conversationVo.getId(), fromUserId);
             return strangerChat(fromUserId, webSocketMessage, conversationVo);
         }
