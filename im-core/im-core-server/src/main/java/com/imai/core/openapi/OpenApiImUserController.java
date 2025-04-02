@@ -33,13 +33,13 @@ public class OpenApiImUserController extends BaseController {
     private final IImUserService imUserService;
 
     /**
-     * IM客户端用户登录
+     * IM客户端注册
      */
-    @PostMapping("/login")
+    @PostMapping("/register")
     @RepeatSubmit
-    @Log(title = "IM客户端用户登录", businessType = BusinessType.INSERT)
-    public R<OpenApiImUserVo> login(@RequestHeader("X-App-Key") String appKey, @RequestBody @Validated OpenApiImUseRegisterBo bo) {
-        return R.ok(imUserService.login(bo));
+    @Log(title = "IM客户端注册", businessType = BusinessType.INSERT)
+    public R<OpenApiImUserVo> register(@RequestHeader("X-App-Key") String appKey, @RequestBody @Validated OpenApiImUseRegisterBo bo) {
+        return R.ok(imUserService.register(bo));
     }
 
     // /**

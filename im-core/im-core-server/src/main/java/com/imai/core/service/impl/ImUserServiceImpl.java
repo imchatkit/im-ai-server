@@ -159,7 +159,7 @@ public class ImUserServiceImpl implements IImUserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public OpenApiImUserVo login(OpenApiImUseRegisterBo bo) {
+    public OpenApiImUserVo register(OpenApiImUseRegisterBo bo) {
         // 将注册BO转换为用户BO
         ImUserBo userBo = MapstructUtils.convert(bo, ImUserBo.class);
 

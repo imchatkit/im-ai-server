@@ -74,5 +74,5 @@ public interface IImUserService {
      * @param bo 注册信息
      * @return 注册用户信息
      */
-    OpenApiImUserVo login(OpenApiImUseRegisterBo bo);
+    OpenApiImUserVo register(OpenApiImUseRegisterBo bo);
 }
