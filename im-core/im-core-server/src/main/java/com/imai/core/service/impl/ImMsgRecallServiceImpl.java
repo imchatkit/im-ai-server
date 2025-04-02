@@ -15,7 +15,7 @@ import com.imai.core.service.IImMessageService;
 import com.imai.core.service.IImMsgRecallService;
 import com.imai.handler.store.ImStoreHandler;
 import com.imai.ws.WebSocketMessage;
-import com.imai.ws.enums.CmdType;
+import com.imai.ws.enums.RequestCmdType;
 import com.imai.ws.enums.MessageDirection;
 import com.imai.ws.enums.MsgType;
 import lombok.RequiredArgsConstructor;
@@ -91,7 +91,7 @@ public class ImMsgRecallServiceImpl implements IImMsgRecallService {
 
         // 6. 构建撤回通知
         WebSocketMessage recallNotification = new WebSocketMessage();
-        recallNotification.setCmd(CmdType.MSG_RECALL.getCode());
+        recallNotification.setCmd(RequestCmdType.NOTIFY.getCode());
         recallNotification.setDirection(MessageDirection.PUSH.getCode());
         recallNotification.getMessageExtra().setMessageId(msgId);
         recallNotification.getMessageExtra().setTimestamp(new Date().getTime());

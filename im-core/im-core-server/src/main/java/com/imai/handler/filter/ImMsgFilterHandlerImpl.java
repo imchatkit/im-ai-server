@@ -13,7 +13,7 @@ import com.imai.ws.ImResponse;
 import com.imai.ws.Mentions;
 import com.imai.ws.Quote;
 import com.imai.ws.WebSocketMessage;
-import com.imai.ws.enums.CmdType;
+import com.imai.ws.enums.RequestCmdType;
 import com.imai.ws.enums.ConversationType;
 import com.imai.ws.enums.ImResponseCode;
 import com.imai.ws.enums.MessageDirection;
@@ -92,19 +92,19 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
 
         // 4. 针对不同会话类型进行处理
         // 4.1 陌生人单聊
-        if (conversationVo.getConversationType() == ConversationType.STRANGER_CHAT.getCode() && cmd == CmdType.STRANGER_CHAT.getCode()) {
+        if (conversationVo.getConversationType() == ConversationType.STRANGER_CHAT.getCode() && cmd == RequestCmdType.STRANGER_CHAT.getCode()) {
             log.info("[filter] 处理陌生人单聊消息, conversationId:{}, fromUserId:{}", conversationVo.getId(), fromUserId);
             return strangerChat(fromUserId, webSocketMessage, conversationVo);
         }
 
         // 4.2 群聊
-        if (conversationVo.getConversationType() == ConversationType.GROUP.getCode() && cmd == CmdType.GROUP_CHAT.getCode()) {
+        if (conversationVo.getConversationType() == ConversationType.GROUP.getCode() && cmd == RequestCmdType.GROUP_CHAT.getCode()) {
             log.info("[filter] 处理群聊消息, conversationId:{}, fromUserId:{}", conversationVo.getId(), fromUserId);
             return groupChat(fromUserId, webSocketMessage, conversationVo);
         }
 
         // 4.3 单聊
-        if (conversationVo.getConversationType() == ConversationType.SINGLE.getCode() && cmd == CmdType.SINGLE_CHAT.getCode()) {
+        if (conversationVo.getConversationType() == ConversationType.SINGLE.getCode() && cmd == RequestCmdType.SINGLE_CHAT.getCode()) {
             log.info("[filter] 处理单聊消息, conversationId:{}, fromUserId:{}", conversationVo.getId(), fromUserId);
             return strangerChat(fromUserId, webSocketMessage, conversationVo);
         }

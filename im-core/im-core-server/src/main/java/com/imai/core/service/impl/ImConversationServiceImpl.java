@@ -22,7 +22,7 @@ import com.imai.handler.store.ImStoreHandler;
 import com.imai.ws.Content;
 import com.imai.ws.Route;
 import com.imai.ws.WebSocketMessage;
-import com.imai.ws.enums.CmdType;
+import com.imai.ws.enums.RequestCmdType;
 import com.imai.ws.enums.ConversationType;
 import com.imai.ws.enums.MessageDirection;
 import com.imai.ws.enums.MsgType;
@@ -391,7 +391,7 @@ public class ImConversationServiceImpl implements IImConversationService {
             // systemMessageBo.setExtras(String.format("{\"groupName\":\"%s\",\"creatorId\":%d}", groupBo.getName(), userId));
             systemMessageBo.setConversationType((long) ConversationType.GROUP.getCode());
             systemMessageBo.setToUid(0L); // 群聊不需要指定接收者ID
-            systemMessageBo.setCmd((long) CmdType.GROUP_CREATE.getCode()); // 群创建命令
+            systemMessageBo.setCmd((long) RequestCmdType.NOTIFY.getCode()); // 群创建命令
             systemMessageBo.setPersistent(1L); // 持久化消息
             systemMessageBo.setPriority(1L); // 普通优先级
             systemMessageBo.setNeedReceipt(0L); // 不需要回执
@@ -399,7 +399,7 @@ public class ImConversationServiceImpl implements IImConversationService {
             // 构造WebSocket消息
             WebSocketMessage webSocketMessage = new WebSocketMessage();
             webSocketMessage.setDirection(MessageDirection.PUSH.getCode()); // 推送消息
-            webSocketMessage.setCmd(CmdType.GROUP_CREATE.getCode()); // 群创建命令
+            webSocketMessage.setCmd(RequestCmdType.NOTIFY.getCode()); // 群创建命令
 
             // 设置路由信息
             Route route = new Route();

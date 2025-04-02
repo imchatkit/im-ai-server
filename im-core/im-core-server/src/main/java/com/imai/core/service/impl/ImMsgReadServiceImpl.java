@@ -14,10 +14,9 @@ import com.imai.handler.store.ImStoreHandler;
 import com.imai.ws.Header;
 import com.imai.ws.Route;
 import com.imai.ws.WebSocketMessage;
-import com.imai.ws.enums.CmdType;
+import com.imai.ws.enums.RequestCmdType;
 import com.imai.ws.enums.MessageDirection;
 import com.imai.ws.enums.MsgType;
-import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.page.PageQuery;
@@ -84,7 +83,7 @@ public class ImMsgReadServiceImpl implements IImMsgReadService {
                 // 构建已读回执消息
                 WebSocketMessage readNotification = WebSocketMessage.builder()
                     .direction(MessageDirection.PUSH.getCode())
-                    .cmd(CmdType.MSG_READ.getCode())
+                    .cmd(RequestCmdType.NOTIFY.getCode())
                     .header(Header.builder()
                         .localId(String.valueOf(msgId))
                         .timestamp(System.currentTimeMillis())
