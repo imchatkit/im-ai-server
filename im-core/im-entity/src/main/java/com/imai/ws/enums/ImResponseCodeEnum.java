@@ -3,7 +3,7 @@ package com.imai.ws.enums;
 import lombok.Getter;
 
 @Getter
-public enum ImResponseCode {
+public enum ImResponseCodeEnum {
     SUCCESS(200, "成功", "Success"),
     BAD_REQUEST(400, "请求错误", "Bad Request"),
     INTERNAL_ERROR(500, "服务器内部错误", "Internal Server Error"),
@@ -33,7 +33,7 @@ public enum ImResponseCode {
     private final String descChinese;
     private final String descEnglish;
 
-    ImResponseCode(int code, String descChinese, String descEnglish) {
+    ImResponseCodeEnum(int code, String descChinese, String descEnglish) {
         this.code = code;
         this.descChinese = descChinese;
         this.descEnglish = descEnglish;

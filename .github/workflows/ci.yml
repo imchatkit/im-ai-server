@@ -1,0 +1,123 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+env:
+  DOCKER_REGISTRY: ccr.ccs.tencentyun.com
+  DOCKER_NAMESPACE: your-namespace
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+          
+      - name: Build with Maven
+        run: mvn clean package -DskipTests -Pprod
+        
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: jar-files
+          path: "**/target/*.jar"
+          retention-days: 7
+
+  docker-build:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: jar-files
+          path: .
+          
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        
+      - name: Login to Tencent Cloud Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+          
+      - name: Build and push im-gateway
+        uses: docker/build-push-action@v4
+        with:
+          context: ./im-gateway
+          push: true
+          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/im-gateway:${{ github.sha }}
+          
+      - name: Build and push ruoyi-auth
+        uses: docker/build-push-action@v4
+        with:
+          context: ./framework/ruoyi-auth
+          push: true
+          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-auth:${{ github.sha }}
+          
+      - name: Build and push ruoyi-system
+        uses: docker/build-push-action@v4
+        with:
+          context: ./framework/ruoyi-modules/ruoyi-system
+          push: true
+          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-system:${{ github.sha }}
+          
+      - name: Build and push ruoyi-gen
+        uses: docker/build-push-action@v4
+        with:
+          context: ./framework/ruoyi-modules/ruoyi-gen
+          push: true
+          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-gen:${{ github.sha }}
+          
+      - name: Build and push ruoyi-job
+        uses: docker/build-push-action@v4
+        with:
+          context: ./framework/ruoyi-modules/ruoyi-job
+          push: true
+          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-job:${{ github.sha }}
+          
+      - name: Build and push ruoyi-resource
+        uses: docker/build-push-action@v4
+        with:
+          context: ./framework/ruoyi-modules/ruoyi-resource
+          push: true
+          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-resource:${{ github.sha }}
+          
+      - name: Build and push im-core-server
+        uses: docker/build-push-action@v4
+        with:
+          context: ./im-core/im-core-server
+          push: true
+          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/im-core-server:${{ github.sha }}
+          
+
+  deploy:
+    needs: docker-build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    steps:
+      - name: Deploy to production
+        run: echo "Deployment steps would go here"
+      - name: Manual approval
+        uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ github.token }}
+          approvers: your-github-username
+          minimum-approvals: 1
+          exclude-authors: github-actions[bot] 

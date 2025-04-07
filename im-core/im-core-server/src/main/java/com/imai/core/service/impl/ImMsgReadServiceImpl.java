@@ -14,9 +14,9 @@ import com.imai.handler.store.ImStoreHandler;
 import com.imai.ws.Header;
 import com.imai.ws.Route;
 import com.imai.ws.WebSocketMessage;
-import com.imai.ws.enums.RequestCmdType;
-import com.imai.ws.enums.MessageDirection;
-import com.imai.ws.enums.MsgType;
+import com.imai.ws.enums.RequestCmdEnum;
+import com.imai.ws.enums.MessageDirectionEnum;
+import com.imai.ws.enums.MsgTypeEnum;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.page.PageQuery;
@@ -82,14 +82,14 @@ public class ImMsgReadServiceImpl implements IImMsgReadService {
             if (msgRead != null) {
                 // 构建已读回执消息
                 WebSocketMessage readNotification = WebSocketMessage.builder()
-                    .direction(MessageDirection.PUSH.getCode())
-                    .cmd(RequestCmdType.NOTIFY.getCode())
+                    .direction(MessageDirectionEnum.PUSH.getCode())
+                    .cmd(RequestCmdEnum.NOTIFY.getCode())
                     .header(Header.builder()
                         .localId(String.valueOf(msgId))
                         .timestamp(System.currentTimeMillis())
                         .build())
                     .route(Route.builder()
-                        .type(MsgType.MSG_READ.getCode())
+                        .type(MsgTypeEnum.MSG_READ.getCode())
                         .conversationId(conversationId)
                         .target(Collections.singletonList(msgRead.getFkFromUserId()))
                         .source("server")
@@ -99,7 +99,7 @@ public class ImMsgReadServiceImpl implements IImMsgReadService {
                 // 创建系统消息并通过handleSystemMessage下发
                 ImMessageBo systemMessage = new ImMessageBo();
                 systemMessage.setFkFromUserId(receiverId);
-                systemMessage.setMsgType((long) MsgType.MSG_READ.getCode());
+                systemMessage.setMsgType((long) MsgTypeEnum.MSG_READ.getCode());
 
                 List<Long> targetUsers = new ArrayList<>();
                 targetUsers.add(msgRead.getFkFromUserId());

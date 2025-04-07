@@ -6,7 +6,7 @@ import lombok.Getter;
  * 请求命令类型枚举
  */
 @Getter
-public enum RequestCmdType {
+public enum RequestCmdEnum {
     // === 消息命令 ===
     SINGLE_CHAT(1, "好友单聊消息", "Friend Private Message"), // 必须要是好友
     GROUP_CHAT(2, "群聊消息", "Group Message"),
@@ -87,7 +87,7 @@ public enum RequestCmdType {
     private final String descChinese;
     private final String descEnglish;
 
-    RequestCmdType(int code, String descChinese, String descEnglish) {
+    RequestCmdEnum(int code, String descChinese, String descEnglish) {
         this.code = code;
         this.descChinese = descChinese;
         this.descEnglish = descEnglish;

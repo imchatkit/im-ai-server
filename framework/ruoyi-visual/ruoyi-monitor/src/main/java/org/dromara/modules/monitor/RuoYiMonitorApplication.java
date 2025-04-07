@@ -12,6 +12,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class RuoYiMonitorApplication {
     public static void main(String[] args) {
         SpringApplication.run(RuoYiMonitorApplication.class, args);
-        System.out.println("(♥◠‿◠)ﾉﾞ  监控中心启动成功   ლ(´ڡ`ლ)ﾞ  ");
+        System.out.println("监控中心启动成功");
     }
 }

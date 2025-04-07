@@ -15,9 +15,9 @@ import com.imai.core.service.IImMessageService;
 import com.imai.core.service.IImMsgRecallService;
 import com.imai.handler.store.ImStoreHandler;
 import com.imai.ws.WebSocketMessage;
-import com.imai.ws.enums.RequestCmdType;
-import com.imai.ws.enums.MessageDirection;
-import com.imai.ws.enums.MsgType;
+import com.imai.ws.enums.RequestCmdEnum;
+import com.imai.ws.enums.MessageDirectionEnum;
+import com.imai.ws.enums.MsgTypeEnum;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
@@ -86,13 +86,13 @@ public class ImMsgRecallServiceImpl implements IImMsgRecallService {
         // 5. 创建撤回系统消息
         ImMessageBo systemMessage = new ImMessageBo();
         systemMessage.setFkFromUserId(userId);
-        systemMessage.setMsgType((long) MsgType.MSG_RECALL.getCode());
+        systemMessage.setMsgType((long) MsgTypeEnum.MSG_RECALL.getCode());
         systemMessage.setFkConversationId(message.getFkConversationId());
 
         // 6. 构建撤回通知
         WebSocketMessage recallNotification = new WebSocketMessage();
-        recallNotification.setCmd(RequestCmdType.NOTIFY.getCode());
-        recallNotification.setDirection(MessageDirection.PUSH.getCode());
+        recallNotification.setCmd(RequestCmdEnum.NOTIFY.getCode());
+        recallNotification.setDirection(MessageDirectionEnum.PUSH.getCode());
         recallNotification.getMessageExtra().setMessageId(msgId);
         recallNotification.getMessageExtra().setTimestamp(new Date().getTime());
 

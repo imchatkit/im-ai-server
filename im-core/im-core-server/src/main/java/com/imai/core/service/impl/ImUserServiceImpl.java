@@ -9,6 +9,7 @@ import com.imai.core.domain.ImUser;
 import com.imai.core.domain.bo.ImUserBo;
 import com.imai.core.domain.vo.ImUserVo;
 import com.imai.core.mapper.ImUserMapper;
+import com.imai.core.openapi.bo.OpenApiImUseLoginBo;
 import com.imai.core.openapi.bo.OpenApiImUseRegisterBo;
 import com.imai.core.openapi.vo.OpenApiImUserVo;
 import com.imai.core.service.IImUserService;
@@ -133,7 +134,7 @@ public class ImUserServiceImpl implements IImUserService {
      * 保存前的数据校验
      */
     private void validEntityBeforeSave(ImUser entity) {
-        //TODO 做一些数据校验,如唯一约束
+        // TODO 做一些数据校验,如唯一约束
     }
 
     /**
@@ -146,7 +147,7 @@ public class ImUserServiceImpl implements IImUserService {
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
         if (isValid) {
-            //TODO 做一些业务上的校验,判断是否需要校验
+            // TODO 做一些业务上的校验,判断是否需要校验
         }
         return imUserMapper.deleteByIds(ids) > 0;
     }
@@ -159,7 +160,7 @@ public class ImUserServiceImpl implements IImUserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public OpenApiImUserVo login(OpenApiImUseRegisterBo bo) {
+    public OpenApiImUserVo register(OpenApiImUseRegisterBo bo) {
         // 将注册BO转换为用户BO
         ImUserBo userBo = MapstructUtils.convert(bo, ImUserBo.class);
 
@@ -181,33 +182,59 @@ public class ImUserServiceImpl implements IImUserService {
             userId = userBo.getId();
         }
 
-        // 创建IM用户token
-        LoginUser imUser = new LoginUser();
-        imUser.setUserId(userId);
-        imUser.setUserType(UserType.IM_USER.getUserType()); // 设置为IM用户类型
-        imUser.setUsername(userBo.getNickname());
-        imUser.setNickname(userBo.getNickname());
-
-        // 生成token
-        SaLoginModel model = new SaLoginModel();
-        // 验证设备类型是否有效
-        try {
-            DeviceType deviceType = DeviceType.getDeviceType(bo.getDevice());  // 验证设备类型是否存在于枚举中
-            if (deviceType == null) {
-                throw new RuntimeException("无效的设备类型: " + bo.getDevice());
-            }
-
-            model.setDevice(deviceType.getDevice());     // 设置设备类型
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("无效的设备类型: " + bo.getDevice());
-        }
-        model.setTimeout(30 * 24 * 60 * 60L); // IM token可以设置更长时间
-        LoginHelper.login(imUser, model);
-
         ImUserVo imUserVo = queryById(userId);
 
         OpenApiImUserVo openApiImUserVo = new OpenApiImUserVo();
         openApiImUserVo.setImUserVo(imUserVo);
+
+        // 返回用户信息
+        return openApiImUserVo;
+    }
+
+    @Override
+    public OpenApiImUserVo login(OpenApiImUseLoginBo bo) {
+        // 检查用户是否已注册
+        LambdaQueryWrapper<ImUser> lqw = Wrappers.lambdaQuery();
+        lqw.eq(ImUser::getId, bo.getUserId());
+        ImUser existUser = imUserMapper.selectOne(lqw);
+
+        if (existUser == null) {
+            throw new RuntimeException("用户不存在");
+        }
+
+        // 创建IM用户token
+        LoginUser imUser = new LoginUser();
+        imUser.setUserId(existUser.getId());
+        imUser.setUserType(UserType.IM_USER.getUserType()); // 设置为IM用户类型
+        imUser.setUsername(existUser.getNickname());
+        imUser.setNickname(existUser.getNickname());
+
+        // 生成token
+        SaLoginModel model = new SaLoginModel();
+
+        // 验证设备类型是否有效
+        try {
+            DeviceType deviceType = DeviceType.getDeviceType(bo.getDevice()); // 验证设备类型是否存在于枚举中
+            if (deviceType == null) {
+                throw new RuntimeException("无效的设备类型: " + bo.getDevice());
+            }
+
+            model.setDevice(deviceType.getDevice()); // 设置设备类型
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("无效的设备类型: " + bo.getDevice());
+        }
+
+        model.setTimeout(30 * 24 * 60 * 60L); // IM token可以设置更长时间
+        LoginHelper.login(imUser, model);
+
+        OpenApiImUserVo openApiImUserVo = new OpenApiImUserVo();
+        // 检查转换器是否存在
+        try {
+            ImUserVo imUserVo = MapstructUtils.convert(existUser, ImUserVo.class);
+            openApiImUserVo.setImUserVo(imUserVo);
+        } catch (Exception e) {
+            throw new RuntimeException("转换失败: " + e.getMessage(), e);
+        }
         openApiImUserVo.setToken("Bearer " + StpUtil.getTokenValue());
 
         // 返回用户信息

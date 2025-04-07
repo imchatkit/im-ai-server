@@ -6,7 +6,7 @@ import lombok.Getter;
  * 消息类型枚举
  */
 @Getter
-public enum MsgType {
+public enum MsgTypeEnum {
     // === 基础消息 ===
     TEXT(1, "文本消息", "Text Message"),
     IMAGE(2, "图片消息", "Image Message"),
@@ -64,7 +64,7 @@ public enum MsgType {
     private final String descChinese;
     private final String descEnglish;
 
-    MsgType(int code, String descChinese, String descEnglish) {
+    MsgTypeEnum(int code, String descChinese, String descEnglish) {
         this.code = code;
         this.descChinese = descChinese;
         this.descEnglish = descEnglish;

@@ -20,6 +20,6 @@ public class ImGatewayApplication {
         SpringApplication application = new SpringApplication(ImGatewayApplication.class);
         application.setApplicationStartup(new BufferingApplicationStartup(2048));
         application.run(args);
-        System.out.println("(♥◠‿◠)ﾉﾞ  im网关启动成功   ლ(´ڡ`ლ)ﾞ  ");
+        System.out.println("im网关启动成功");
     }
 }

@@ -1,0 +1,130 @@
+stages:
+  - build
+  - docker-build
+  - docker-push
+  - deploy
+
+variables:
+  DOCKER_REGISTRY: ccr.ccs.tencentyun.com  # 腾讯云容器镜像仓库地址
+  DOCKER_NAMESPACE: your-namespace  # 替换为你的命名空间
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+
+# 缓存Maven依赖
+cache:
+  paths:
+    - .m2/repository/
+    - target/
+
+# 构建阶段
+build:
+  stage: build
+  image: maven:3.8.6-openjdk-17
+  script:
+    - mvn clean package -DskipTests -Pprod
+  artifacts:
+    paths:
+      - "**/target/*.jar"
+    expire_in: 1 week
+
+# 构建Docker镜像
+docker-build:
+  stage: docker-build
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  variables:
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: "/certs"
+    DOCKER_TLS_VERIFY: 1
+    DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
+  script:
+    # 登录腾讯云容器镜像仓库
+    - echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USERNAME" --password-stdin $DOCKER_REGISTRY
+    
+    # 构建网关服务镜像
+    - cd im-gateway
+    - docker build -t $DOCKER_REGISTRY/$DOCKER_NAMESPACE/im-gateway:$CI_COMMIT_SHORT_SHA .
+    - cd ..
+    
+    # 构建认证服务镜像
+    - cd framework/ruoyi-auth
+    - docker build -t $DOCKER_REGISTRY/$DOCKER_NAMESPACE/ruoyi-auth:$CI_COMMIT_SHORT_SHA .
+    - cd ../..
+    
+    # 构建系统服务镜像
+    - cd framework/ruoyi-modules/ruoyi-system
+    - docker build -t $DOCKER_REGISTRY/$DOCKER_NAMESPACE/ruoyi-system:$CI_COMMIT_SHORT_SHA .
+    - cd ../../..
+    
+    # 构建代码生成服务镜像
+    - cd framework/ruoyi-modules/ruoyi-gen
+    - docker build -t $DOCKER_REGISTRY/$DOCKER_NAMESPACE/ruoyi-gen:$CI_COMMIT_SHORT_SHA .
+    - cd ../../..
+    
+    # 构建定时任务服务镜像
+    - cd framework/ruoyi-modules/ruoyi-job
+    - docker build -t $DOCKER_REGISTRY/$DOCKER_NAMESPACE/ruoyi-job:$CI_COMMIT_SHORT_SHA .
+    - cd ../../..
+    
+    # 构建资源服务镜像
+    - cd framework/ruoyi-modules/ruoyi-resource
+    - docker build -t $DOCKER_REGISTRY/$DOCKER_NAMESPACE/ruoyi-resource:$CI_COMMIT_SHORT_SHA .
+    - cd ../../..
+    
+    # 构建工作流服务镜像
+    - cd framework/ruoyi-modules/ruoyi-workflow
+    - docker build -t $DOCKER_REGISTRY/$DOCKER_NAMESPACE/ruoyi-workflow:$CI_COMMIT_SHORT_SHA .
+    - cd ../../..
+    
+    # 构建AI服务镜像
+    - cd im-core/ai-server
+    - docker build -t $DOCKER_REGISTRY/$DOCKER_NAMESPACE/ai-server:$CI_COMMIT_SHORT_SHA .
+    - cd ../..
+    
+    # 构建核心服务镜像
+    - cd im-core/im-core-server
+    - docker build -t $DOCKER_REGISTRY/$DOCKER_NAMESPACE/im-core-server:$CI_COMMIT_SHORT_SHA .
+    - cd ../..
+    
+    # 构建开放API服务镜像
+    - cd im-core/rest-open-api-server
+    - docker build -t $DOCKER_REGISTRY/$DOCKER_NAMESPACE/rest-open-api-server:$CI_COMMIT_SHORT_SHA .
+    - cd ../..
+
+# 推送Docker镜像
+docker-push:
+  stage: docker-push
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  variables:
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: "/certs"
+    DOCKER_TLS_VERIFY: 1
+    DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
+  script:
+    # 登录腾讯云容器镜像仓库
+    - echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USERNAME" --password-stdin $DOCKER_REGISTRY
+    
+    # 推送所有服务镜像
+    - docker push $DOCKER_REGISTRY/$DOCKER_NAMESPACE/im-gateway:$CI_COMMIT_SHORT_SHA
+    - docker push $DOCKER_REGISTRY/$DOCKER_NAMESPACE/ruoyi-auth:$CI_COMMIT_SHORT_SHA
+    - docker push $DOCKER_REGISTRY/$DOCKER_NAMESPACE/ruoyi-system:$CI_COMMIT_SHORT_SHA
+    - docker push $DOCKER_REGISTRY/$DOCKER_NAMESPACE/ruoyi-gen:$CI_COMMIT_SHORT_SHA
+    - docker push $DOCKER_REGISTRY/$DOCKER_NAMESPACE/ruoyi-job:$CI_COMMIT_SHORT_SHA
+    - docker push $DOCKER_REGISTRY/$DOCKER_NAMESPACE/ruoyi-resource:$CI_COMMIT_SHORT_SHA
+    - docker push $DOCKER_REGISTRY/$DOCKER_NAMESPACE/ruoyi-workflow:$CI_COMMIT_SHORT_SHA
+    - docker push $DOCKER_REGISTRY/$DOCKER_NAMESPACE/ai-server:$CI_COMMIT_SHORT_SHA
+    - docker push $DOCKER_REGISTRY/$DOCKER_NAMESPACE/im-core-server:$CI_COMMIT_SHORT_SHA
+    - docker push $DOCKER_REGISTRY/$DOCKER_NAMESPACE/rest-open-api-server:$CI_COMMIT_SHORT_SHA
+
+# 部署阶段（可选）
+deploy:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - echo "Deployment steps would go here"
+  when: manual  # 手动触发部署
+  only:
+    - master    # 只在master分支上运行 

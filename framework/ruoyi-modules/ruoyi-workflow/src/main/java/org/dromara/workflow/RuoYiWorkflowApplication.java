@@ -17,6 +17,6 @@ public class RuoYiWorkflowApplication {
         SpringApplication application = new SpringApplication(RuoYiWorkflowApplication.class);
         application.setApplicationStartup(new BufferingApplicationStartup(2048));
         application.run(args);
-        System.out.println("(♥◠‿◠)ﾉﾞ  工作流模块启动成功   ლ(´ڡ`ლ)ﾞ  ");
+        System.out.println("工作流模块启动成功");
     }
 }

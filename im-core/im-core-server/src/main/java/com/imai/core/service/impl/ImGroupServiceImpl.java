@@ -8,8 +8,6 @@ import com.imai.core.domain.bo.ImGroupBo;
 import com.imai.core.domain.vo.ImGroupVo;
 import com.imai.core.mapper.ImGroupMapper;
 import com.imai.core.service.IImGroupService;
-import com.imai.ws.WebSocketMessage;
-import com.imai.ws.enums.MsgType;
 
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.utils.MapstructUtils;

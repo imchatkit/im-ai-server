@@ -15,6 +15,6 @@ public class RuoYiDemoApplication {
         SpringApplication application = new SpringApplication(RuoYiDemoApplication.class);
         application.setApplicationStartup(new BufferingApplicationStartup(2048));
         application.run(args);
-        System.out.println("(♥◠‿◠)ﾉﾞ  演示模块启动成功   ლ(´ڡ`ლ)ﾞ  ");
+        System.out.println("演示模块启动成功");
     }
 }

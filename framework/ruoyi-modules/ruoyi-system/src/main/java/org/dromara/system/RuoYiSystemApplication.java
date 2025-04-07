@@ -17,6 +17,6 @@ public class RuoYiSystemApplication {
         SpringApplication application = new SpringApplication(RuoYiSystemApplication.class);
         application.setApplicationStartup(new BufferingApplicationStartup(2048));
         application.run(args);
-        System.out.println("(♥◠‿◠)ﾉﾞ  系统模块启动成功   ლ(´ڡ`ლ)ﾞ  ");
+        System.out.println("系统模块启动成功");
     }
 }

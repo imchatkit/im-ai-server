@@ -13,10 +13,10 @@ import com.imai.ws.ImResponse;
 import com.imai.ws.Mentions;
 import com.imai.ws.Quote;
 import com.imai.ws.WebSocketMessage;
-import com.imai.ws.enums.RequestCmdType;
-import com.imai.ws.enums.ConversationType;
-import com.imai.ws.enums.ImResponseCode;
-import com.imai.ws.enums.MessageDirection;
+import com.imai.ws.enums.ConversationTypeEnum;
+import com.imai.ws.enums.ImResponseCodeEnum;
+import com.imai.ws.enums.MessageDirectionEnum;
+import com.imai.ws.enums.RequestCmdEnum;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -63,56 +63,56 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
         WebSocketMessage webSocketMessage = JsonUtils.parseObject(message, WebSocketMessage.class);
         if (webSocketMessage == null) {
             log.error("[filter] message is null");
-            sendErrorResponse(fromUserId, ImResponseCode.MESSAGE_FORMAT_ERROR);
-            return FilterResult.error(ImResponseCode.MESSAGE_FORMAT_ERROR.getDescChinese(), ImResponseCode.MESSAGE_FORMAT_ERROR.getCode());
+            sendErrorResponse(fromUserId, ImResponseCodeEnum.MESSAGE_FORMAT_ERROR);
+            return FilterResult.error(ImResponseCodeEnum.MESSAGE_FORMAT_ERROR.getDescChinese(), ImResponseCodeEnum.MESSAGE_FORMAT_ERROR.getCode());
         }
 
         // 2. 检查消息命令类型
         if (webSocketMessage.getCmd() == null) {
             log.error("[filter] cmd is null");
-            sendErrorResponse(fromUserId, ImResponseCode.MESSAGE_INCOMPLETE);
-            return FilterResult.error(ImResponseCode.MESSAGE_INCOMPLETE.getDescChinese(), ImResponseCode.MESSAGE_INCOMPLETE.getCode());
+            sendErrorResponse(fromUserId, ImResponseCodeEnum.MESSAGE_INCOMPLETE);
+            return FilterResult.error(ImResponseCodeEnum.MESSAGE_INCOMPLETE.getDescChinese(), ImResponseCodeEnum.MESSAGE_INCOMPLETE.getCode());
         }
         int cmd = webSocketMessage.getCmd();
 
         // 检查会话ID是否存在
         if (webSocketMessage.getRoute() == null || webSocketMessage.getRoute().getConversationId() == null) {
             log.error("[filter] conversationId is null");
-            sendErrorResponse(fromUserId, ImResponseCode.MESSAGE_INCOMPLETE);
-            return FilterResult.error(ImResponseCode.MESSAGE_INCOMPLETE.getDescChinese(), ImResponseCode.MESSAGE_INCOMPLETE.getCode());
+            sendErrorResponse(fromUserId, ImResponseCodeEnum.MESSAGE_INCOMPLETE);
+            return FilterResult.error(ImResponseCodeEnum.MESSAGE_INCOMPLETE.getDescChinese(), ImResponseCodeEnum.MESSAGE_INCOMPLETE.getCode());
         }
 
         // 3. 获取会话信息
         ImConversationVo conversationVo = imConversationService.queryById(webSocketMessage.getRoute().getConversationId());
         if (conversationVo == null) {
             log.error("[filter] conversation not found, conversationId:{}", webSocketMessage.getRoute().getConversationId());
-            sendErrorResponse(fromUserId, ImResponseCode.NOT_CONVERSATION);
-            return FilterResult.error(ImResponseCode.NOT_CONVERSATION.getDescChinese(), ImResponseCode.NOT_CONVERSATION.getCode());
+            sendErrorResponse(fromUserId, ImResponseCodeEnum.NOT_CONVERSATION);
+            return FilterResult.error(ImResponseCodeEnum.NOT_CONVERSATION.getDescChinese(), ImResponseCodeEnum.NOT_CONVERSATION.getCode());
         }
 
         // 4. 针对不同会话类型进行处理
         // 4.1 陌生人单聊
-        if (conversationVo.getConversationType() == ConversationType.STRANGER_CHAT.getCode() && cmd == RequestCmdType.STRANGER_CHAT.getCode()) {
+        if (conversationVo.getConversationType() == ConversationTypeEnum.STRANGER_CHAT.getCode() && cmd == RequestCmdEnum.STRANGER_CHAT.getCode()) {
             log.info("[filter] 处理陌生人单聊消息, conversationId:{}, fromUserId:{}", conversationVo.getId(), fromUserId);
             return strangerChat(fromUserId, webSocketMessage, conversationVo);
         }
 
         // 4.2 群聊
-        if (conversationVo.getConversationType() == ConversationType.GROUP.getCode() && cmd == RequestCmdType.GROUP_CHAT.getCode()) {
+        if (conversationVo.getConversationType() == ConversationTypeEnum.GROUP.getCode() && cmd == RequestCmdEnum.GROUP_CHAT.getCode()) {
             log.info("[filter] 处理群聊消息, conversationId:{}, fromUserId:{}", conversationVo.getId(), fromUserId);
             return groupChat(fromUserId, webSocketMessage, conversationVo);
         }
 
         // 4.3 单聊
-        if (conversationVo.getConversationType() == ConversationType.SINGLE.getCode() && cmd == RequestCmdType.SINGLE_CHAT.getCode()) {
+        if (conversationVo.getConversationType() == ConversationTypeEnum.SINGLE.getCode() && cmd == RequestCmdEnum.SINGLE_CHAT.getCode()) {
             log.info("[filter] 处理单聊消息, conversationId:{}, fromUserId:{}", conversationVo.getId(), fromUserId);
             return strangerChat(fromUserId, webSocketMessage, conversationVo);
         }
 
         // 5. 其他类型的消息或命令，记录日志并拦截
         log.warn("[filter] 不支持的消息类型, cmd:{}, conversationType:{}", cmd, conversationVo.getConversationType());
-        sendErrorResponse(fromUserId, ImResponseCode.UNSUPPORTED_MESSAGE_TYPE);
-        return FilterResult.error(ImResponseCode.UNSUPPORTED_MESSAGE_TYPE.getDescChinese(), ImResponseCode.UNSUPPORTED_MESSAGE_TYPE.getCode());
+        sendErrorResponse(fromUserId, ImResponseCodeEnum.UNSUPPORTED_MESSAGE_TYPE);
+        return FilterResult.error(ImResponseCodeEnum.UNSUPPORTED_MESSAGE_TYPE.getDescChinese(), ImResponseCodeEnum.UNSUPPORTED_MESSAGE_TYPE.getCode());
     }
 
     /**
@@ -135,8 +135,8 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
 
         // 判断from是否在conversationId中
         if (!toList.contains(fromUserId)) {
-            sendErrorResponse(fromUserId, ImResponseCode.SENDER_NOT_IN_CONVERSATION);
-            return FilterResult.error(ImResponseCode.SENDER_NOT_IN_CONVERSATION.getDescChinese(), ImResponseCode.SENDER_NOT_IN_CONVERSATION.getCode());
+            sendErrorResponse(fromUserId, ImResponseCodeEnum.SENDER_NOT_IN_CONVERSATION);
+            return FilterResult.error(ImResponseCodeEnum.SENDER_NOT_IN_CONVERSATION.getDescChinese(), ImResponseCodeEnum.SENDER_NOT_IN_CONVERSATION.getCode());
         } else {
             toList.remove(fromUserId);
         }
@@ -144,14 +144,14 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
         // 提取获取接收者逻辑
         Long to = getReceiverId(fromUserId, toList);
         if (to == null) {
-            sendErrorResponse(fromUserId, ImResponseCode.RECEIVER_NOT_IN_CONVERSATION);
-            return FilterResult.error(ImResponseCode.RECEIVER_NOT_IN_CONVERSATION.getDescChinese(), ImResponseCode.RECEIVER_NOT_IN_CONVERSATION.getCode());
+            sendErrorResponse(fromUserId, ImResponseCodeEnum.RECEIVER_NOT_IN_CONVERSATION);
+            return FilterResult.error(ImResponseCodeEnum.RECEIVER_NOT_IN_CONVERSATION.getDescChinese(), ImResponseCodeEnum.RECEIVER_NOT_IN_CONVERSATION.getCode());
         }
 
         // 检查必要的字段
         if (webSocketMessage.getHeader() == null || webSocketMessage.getRoute() == null || webSocketMessage.getContent() == null) {
-            sendErrorResponse(fromUserId, ImResponseCode.MESSAGE_INCOMPLETE);
-            return FilterResult.error(ImResponseCode.MESSAGE_INCOMPLETE.getDescChinese(), ImResponseCode.MESSAGE_INCOMPLETE.getCode());
+            sendErrorResponse(fromUserId, ImResponseCodeEnum.MESSAGE_INCOMPLETE);
+            return FilterResult.error(ImResponseCodeEnum.MESSAGE_INCOMPLETE.getDescChinese(), ImResponseCodeEnum.MESSAGE_INCOMPLETE.getCode());
         }
 
         // 保存消息表
@@ -164,8 +164,8 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
         boolean store = imStoreHandler.store(messageBo, webSocketMessage, receiverIds);
         if (!store) {
             log.error("[filter] 保存消息失败 message:{}", webSocketMessage);
-            sendErrorResponse(fromUserId, ImResponseCode.MESSAGE_STORE_FAILED);
-            return FilterResult.error(ImResponseCode.MESSAGE_STORE_FAILED.getDescChinese(), ImResponseCode.MESSAGE_STORE_FAILED.getCode());
+            sendErrorResponse(fromUserId, ImResponseCodeEnum.MESSAGE_STORE_FAILED);
+            return FilterResult.error(ImResponseCodeEnum.MESSAGE_STORE_FAILED.getDescChinese(), ImResponseCodeEnum.MESSAGE_STORE_FAILED.getCode());
         }
         return FilterResult.success();
     }
@@ -175,7 +175,7 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
      */
     private Long getReceiverId(Long fromUserId, List<Long> toList) {
         if (!toList.iterator().hasNext()) {
-            sendErrorResponse(fromUserId, ImResponseCode.RECEIVER_NOT_IN_CONVERSATION);
+            sendErrorResponse(fromUserId, ImResponseCodeEnum.RECEIVER_NOT_IN_CONVERSATION);
             return null;
         }
         return toList.iterator().next();
@@ -266,9 +266,9 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
      * @param userId       用户id
      * @param responseCode 响应码
      */
-    private void sendErrorResponse(Long userId, ImResponseCode responseCode) {
+    private void sendErrorResponse(Long userId, ImResponseCodeEnum responseCode) {
         WebSocketMessage errorResponse = new WebSocketMessage();
-        errorResponse.setDirection(MessageDirection.RESPONSE.getCode());
+        errorResponse.setDirection(MessageDirectionEnum.RESPONSE.getCode());
         // 初始化response对象
         ImResponse response = new ImResponse();
         response.setCode(responseCode.getCode());
@@ -303,8 +303,8 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
 
         // 判断from是否在conversationId中
         if (!toList.contains(fromUserId)) {
-            sendErrorResponse(fromUserId, ImResponseCode.SENDER_NOT_IN_CONVERSATION);
-            return FilterResult.error(ImResponseCode.SENDER_NOT_IN_CONVERSATION.getDescChinese(), ImResponseCode.SENDER_NOT_IN_CONVERSATION.getCode());
+            sendErrorResponse(fromUserId, ImResponseCodeEnum.SENDER_NOT_IN_CONVERSATION);
+            return FilterResult.error(ImResponseCodeEnum.SENDER_NOT_IN_CONVERSATION.getDescChinese(), ImResponseCodeEnum.SENDER_NOT_IN_CONVERSATION.getCode());
         }
 
         // 获取发送者的会话成员信息
@@ -317,21 +317,21 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
             ImConversationMemberVo senderMember = senderMemberList.get(0);
             // 检查用户是否被禁言
             if (senderMember.getMuteEndTime() != null && senderMember.getMuteEndTime().getTime() > System.currentTimeMillis()) {
-                sendErrorResponse(fromUserId, ImResponseCode.USER_MUTED);
-                return FilterResult.error(ImResponseCode.USER_MUTED.getDescChinese(), ImResponseCode.USER_MUTED.getCode());
+                sendErrorResponse(fromUserId, ImResponseCodeEnum.USER_MUTED);
+                return FilterResult.error(ImResponseCodeEnum.USER_MUTED.getDescChinese(), ImResponseCodeEnum.USER_MUTED.getCode());
             }
         }
 
         // 检查群组状态
         if (imConversationVo.getConversationStatus() != null && imConversationVo.getConversationStatus() != 1) {
-            sendErrorResponse(fromUserId, ImResponseCode.GROUP_DISSOLVED);
-            return FilterResult.error(ImResponseCode.GROUP_DISSOLVED.getDescChinese(), ImResponseCode.GROUP_DISSOLVED.getCode());
+            sendErrorResponse(fromUserId, ImResponseCodeEnum.GROUP_DISSOLVED);
+            return FilterResult.error(ImResponseCodeEnum.GROUP_DISSOLVED.getDescChinese(), ImResponseCodeEnum.GROUP_DISSOLVED.getCode());
         }
 
         // 检查必要的字段
         if (webSocketMessage.getHeader() == null || webSocketMessage.getRoute() == null || webSocketMessage.getContent() == null) {
-            sendErrorResponse(fromUserId, ImResponseCode.MESSAGE_INCOMPLETE);
-            return FilterResult.error(ImResponseCode.MESSAGE_INCOMPLETE.getDescChinese(), ImResponseCode.MESSAGE_INCOMPLETE.getCode());
+            sendErrorResponse(fromUserId, ImResponseCodeEnum.MESSAGE_INCOMPLETE);
+            return FilterResult.error(ImResponseCodeEnum.MESSAGE_INCOMPLETE.getDescChinese(), ImResponseCodeEnum.MESSAGE_INCOMPLETE.getCode());
         }
 
         // 保存消息表
@@ -343,14 +343,14 @@ public class ImMsgFilterHandlerImpl implements ImMsgFilterHandler {
             boolean store = imStoreHandler.store(messageBo, webSocketMessage, toList);
             if (!store) {
                 log.error("[filter] 保存消息失败 message:{}", webSocketMessage);
-                sendErrorResponse(fromUserId, ImResponseCode.MESSAGE_STORE_FAILED);
-                return FilterResult.error(ImResponseCode.MESSAGE_STORE_FAILED.getDescChinese(), ImResponseCode.MESSAGE_STORE_FAILED.getCode());
+                sendErrorResponse(fromUserId, ImResponseCodeEnum.MESSAGE_STORE_FAILED);
+                return FilterResult.error(ImResponseCodeEnum.MESSAGE_STORE_FAILED.getDescChinese(), ImResponseCodeEnum.MESSAGE_STORE_FAILED.getCode());
             }
             return FilterResult.success();
         } catch (Exception e) {
             log.error("[filter] 群聊消息处理失败", e);
-            sendErrorResponse(fromUserId, ImResponseCode.MESSAGE_PROCESS_FAILED);
-            return FilterResult.error(ImResponseCode.MESSAGE_PROCESS_FAILED.getDescChinese(), ImResponseCode.MESSAGE_PROCESS_FAILED.getCode());
+            sendErrorResponse(fromUserId, ImResponseCodeEnum.MESSAGE_PROCESS_FAILED);
+            return FilterResult.error(ImResponseCodeEnum.MESSAGE_PROCESS_FAILED.getDescChinese(), ImResponseCodeEnum.MESSAGE_PROCESS_FAILED.getCode());
         }
     }
 }
