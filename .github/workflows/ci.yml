@@ -3,12 +3,12 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ dev,main, master ]
-  pull_request:
-    branches: [ dev,main, master ]
+  # pull_request:
+  #   branches: [ dev,main, master ]
 
 env:
-  DOCKER_REGISTRY: ccr.ccs.tencentyun.com
-  DOCKER_NAMESPACE: your-namespace
+  DOCKER_REGISTRY: useccr.ccs.tencentyun.com
+  DOCKER_NAMESPACE: java-im-ai
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
 
@@ -24,6 +24,15 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: 'maven'
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-${{ runner.os }}-
+            maven-
 
       - name: Initialize Maven project with flatten plugin
         run: mvn flatten:flatten
@@ -57,8 +66,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ${{ env.DOCKER_REGISTRY }}
-          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
-          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+          username: ${{ secrets.TENCENT_REGISTRY_USERNAME }}
+          password: ${{ secrets.TENCENT_REGISTRY_PASSWORD }}
 
       - name: Build and push im-gateway
         uses: docker/build-push-action@v5
