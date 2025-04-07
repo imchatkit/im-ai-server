@@ -25,6 +25,9 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
           
+      - name: Initialize Maven project with flatten plugin
+        run: mvn flatten:flatten
+          
       - name: Build with Maven
         run: mvn clean package -DskipTests -Pprod
         
