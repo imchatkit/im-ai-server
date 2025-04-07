@@ -3,17 +3,17 @@ FROM bellsoft/liberica-openjdk-debian:17.0.11-cds
 #FROM bellsoft/liberica-openjdk-debian:21.0.3-cds
 #FROM findepi/graalvm:java17-native
 
-RUN mkdir -p /imai/im-gateway/logs  \
-    /imai/im-gateway/temp  \
+RUN mkdir -p /imai/core/logs  \
+    /imai/core/temp  \
     /imai/skywalking/agent
 
-WORKDIR /imai/im-gateway
+WORKDIR /imai/core
 
-ENV SERVER_PORT=8080 WS_PORT=9688 LANG=C.UTF-8 LC_ALL=C.UTF-8 JAVA_OPTS=""
+ENV SERVER_PORT=9601 LANG=C.UTF-8 LC_ALL=C.UTF-8 JAVA_OPTS=""
 
-EXPOSE ${SERVER_PORT} ${WS_PORT}
+EXPOSE ${SERVER_PORT}
 
-ADD ./target/im-gateway.jar ./app.jar
+ADD ./target/im-core-server.jar ./app.jar
 
 ENTRYPOINT java -Djava.security.egd=file:/dev/./urandom -Dserver.port=${SERVER_PORT} \
            #-Dskywalking.agent.service_name=ruoyi-gateway \

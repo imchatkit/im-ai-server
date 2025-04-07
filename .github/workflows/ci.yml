@@ -34,8 +34,8 @@ jobs:
             maven-${{ runner.os }}-
             maven-
 
-      - name: Initialize Maven project with flatten plugin
-        run: mvn flatten:flatten
+      # - name: Initialize Maven project with flatten plugin
+      #   run: mvn flatten:flatten
 
       - name: Build with Maven
         run: mvn clean package -DskipTests -Pprod
@@ -123,8 +123,28 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     steps:
-      - name: Deploy to production
-        run: echo "Deployment steps would go here"
+      - name: SSH Deploy
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            sleep 2
+            docker login ${{ env.DOCKER_REGISTRY }} --username=${{ secrets.TENCENT_REGISTRY_USERNAME }} --password=${{ secrets.TENCENT_REGISTRY_PASSWORD }}
+            
+            # 拉取最新的镜像
+            docker pull ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/im-gateway:${{ github.sha }}
+            docker pull ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-auth:${{ github.sha }}
+            docker pull ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-system:${{ github.sha }}
+            docker pull ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-gen:${{ github.sha }}
+            docker pull ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-job:${{ github.sha }}
+            docker pull ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-resource:${{ github.sha }}
+            docker pull ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/im-core-server:${{ github.sha }}
+            
+            # 可以在这里添加停止旧容器、启动新容器的命令
+            # 例如：docker-compose up -d 或 kubectl apply -f k8s-deployment.yaml
+
       - name: Manual approval
         uses: trstringer/manual-approval@v2
         with:
