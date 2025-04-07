@@ -512,30 +512,30 @@
         </resources>
     </build>
 
-    <repositories>
-        <repository>
-            <id>public</id>
-            <name>huawei nexus</name>
-            <url>https://mirrors.huaweicloud.com/repository/maven/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-    </repositories>
+<!--    <repositories>-->
+<!--        <repository>-->
+<!--            <id>public</id>-->
+<!--            <name>huawei nexus</name>-->
+<!--            <url>https://mirrors.huaweicloud.com/repository/maven/</url>-->
+<!--            <releases>-->
+<!--                <enabled>true</enabled>-->
+<!--            </releases>-->
+<!--        </repository>-->
+<!--    </repositories>-->
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>public</id>
-            <name>huawei nexus</name>
-            <url>https://mirrors.huaweicloud.com/repository/maven/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
+<!--    <pluginRepositories>-->
+<!--        <pluginRepository>-->
+<!--            <id>public</id>-->
+<!--            <name>huawei nexus</name>-->
+<!--            <url>https://mirrors.huaweicloud.com/repository/maven/</url>-->
+<!--            <releases>-->
+<!--                <enabled>true</enabled>-->
+<!--            </releases>-->
+<!--            <snapshots>-->
+<!--                <enabled>false</enabled>-->
+<!--            </snapshots>-->
+<!--        </pluginRepository>-->
+<!--    </pluginRepositories>-->
 
 </project>
 
