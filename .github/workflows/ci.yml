@@ -23,22 +23,24 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: 'maven'
+          cache: maven
 
-      - name: Cache Maven dependencies
+      # 更加优化的Maven缓存配置
+      - name: Cache Maven packages
         uses: actions/cache@v4
         with:
-          path: ~/.m2/repository
-          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          path: |
+            ~/.m2/repository
+            .m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            maven-${{ runner.os }}-
-            maven-
+            ${{ runner.os }}-maven-
 
       # - name: Initialize Maven project with flatten plugin
       #   run: mvn flatten:flatten
 
       - name: Build with Maven
-        run: mvn clean package -DskipTests -Pprod
+        run: mvn -B clean package -DskipTests -Pprod -Dmaven.repo.local=.m2/repository
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4

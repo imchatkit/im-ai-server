@@ -1,10 +1,7 @@
 /*
  Navicat Premium Dump SQL
-
- Source Server         : txy-my
  Source Server Type    : MySQL
  Source Server Version : 50744 (5.7.44)
- Source Host           : 106.52.81.52:3306
  Source Schema         : ry-cloud
 
  Target Server Type    : MySQL

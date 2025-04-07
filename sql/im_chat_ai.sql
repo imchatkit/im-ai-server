@@ -1,17 +1,14 @@
 /*
  Navicat Premium Dump SQL
-
- Source Server         : txy-my
  Source Server Type    : MySQL
  Source Server Version : 50744 (5.7.44)
- Source Host           : 106.52.81.52:3306
  Source Schema         : im_chat_ai
 
  Target Server Type    : MySQL
  Target Server Version : 50744 (5.7.44)
  File Encoding         : 65001
 
- Date: 21/01/2025 17:23:37
+ Date: 07/04/2025 14:36:18
 */
 
 SET NAMES utf8mb4;
@@ -129,6 +126,9 @@ CREATE TABLE `im_conversation`  (
 -- ----------------------------
 -- Records of im_conversation
 -- ----------------------------
+INSERT INTO `im_conversation` VALUES (1907311745947430913, NULL, 8, '2025-04-02 13:58:51', '2025-04-02 13:58:51', 1, 0, NULL, NULL, 1907255698100682753, 1907255698100682753);
+INSERT INTO `im_conversation` VALUES (1907311828306784258, NULL, 8, '2025-04-02 13:59:11', '2025-04-02 13:59:11', 1, 0, NULL, NULL, 1907255698100682753, 1907255698100682753);
+INSERT INTO `im_conversation` VALUES (1907312001611231234, NULL, 8, '2025-04-02 13:59:52', '2025-04-02 13:59:52', 1, 0, NULL, NULL, 1907255698100682753, 1907255698100682753);
 
 -- ----------------------------
 -- Table structure for im_conversation_member
@@ -185,31 +185,11 @@ CREATE TABLE `im_conversation_recent`  (
   `update_by` bigint(20) NULL DEFAULT NULL,
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `uk_user_conversation`(`fk_user_id`, `fk_conversation_id`) USING BTREE COMMENT '用户会话唯一索引',
   INDEX `idx_user_msg_time`(`fk_user_id`, `last_msg_time`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '首页对话列表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of im_conversation_recent
--- ----------------------------
-
--- ----------------------------
--- Table structure for im_conversation_seq
--- ----------------------------
-DROP TABLE IF EXISTS `im_conversation_seq`;
-CREATE TABLE `im_conversation_seq`  (
-  `conversation_id` bigint(20) UNSIGNED NOT NULL COMMENT '主键id',
-  `conversation_seq` bigint(20) NOT NULL COMMENT '会话当前序列号',
-  `create_dept` bigint(20) NULL DEFAULT NULL,
-  `create_by` bigint(20) NULL DEFAULT NULL,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_by` bigint(20) NULL DEFAULT NULL,
-  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`conversation_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '会话序列号表' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of im_conversation_seq
 -- ----------------------------
 
 -- ----------------------------
@@ -237,30 +217,6 @@ CREATE TABLE `im_device`  (
 
 -- ----------------------------
 -- Records of im_device
--- ----------------------------
-
--- ----------------------------
--- Table structure for im_device_pts
--- ----------------------------
-DROP TABLE IF EXISTS `im_device_pts`;
-CREATE TABLE `im_device_pts`  (
-  `id` bigint(20) UNSIGNED NOT NULL COMMENT '主键id',
-  `fk_user_id` bigint(20) NOT NULL COMMENT '用户id',
-  `fk_device_id` bigint(20) NOT NULL COMMENT '设备id',
-  `update_time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-  `max_pts` bigint(20) NULL DEFAULT NULL COMMENT '用户某设备当前最大位点',
-  `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除 0-未删除 1-已删除',
-  `extras` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '可选 自定义属性，供开发者扩展使用',
-  `create_dept` bigint(20) NULL DEFAULT NULL,
-  `create_by` bigint(20) NULL DEFAULT NULL,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_by` bigint(20) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `user_id`(`fk_user_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '设备pts表' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of im_device_pts
 -- ----------------------------
 
 -- ----------------------------
@@ -458,7 +414,7 @@ CREATE TABLE `im_message`  (
   `extras` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '可选 自定义属性，供开发者扩展使用',
   `app_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '应用ID',
   `tenant_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户ID',
-  `conversation_type` tinyint(4) NOT NULL COMMENT '会话类型:1单聊,2群聊,3聊天室',
+  `conversation_type` tinyint(4) NULL DEFAULT NULL COMMENT '会话类型:1单聊,2群聊,3聊天室',
   `to_uid` bigint(20) NULL DEFAULT NULL COMMENT '接收者ID(单聊必填)',
   `cmd` int(11) NOT NULL COMMENT '命令类型',
   `persistent` tinyint(1) NULL DEFAULT 1 COMMENT '是否持久化',
@@ -712,28 +668,9 @@ CREATE TABLE `im_user`  (
 -- ----------------------------
 -- Records of im_user
 -- ----------------------------
-INSERT INTO `im_user` VALUES (398120364340178, NULL, NULL, NULL, NULL, NULL, 3, NULL, '言静怡', '2025-01-16 15:25:37', NULL, '2025-01-16 15:25:37', 'irure est', 1, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL);
-
--- ----------------------------
--- Table structure for im_user_pts
--- ----------------------------
-DROP TABLE IF EXISTS `im_user_pts`;
-CREATE TABLE `im_user_pts`  (
-  `user_id` bigint(20) UNSIGNED NOT NULL COMMENT '主键id',
-  `pts` bigint(20) NULL DEFAULT NULL COMMENT '当前最大的同步位点',
-  `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除 0-未删除 1-已删除',
-  `extras` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '可选 自定义属性，供开发者扩展使用',
-  `create_dept` bigint(20) NULL DEFAULT NULL,
-  `create_by` bigint(20) NULL DEFAULT NULL,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_by` bigint(20) NULL DEFAULT NULL,
-  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`user_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户pts表' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of im_user_pts
--- ----------------------------
+INSERT INTO `im_user` VALUES (1907255420609724417, NULL, NULL, NULL, NULL, NULL, 3, NULL, '泥子豪', '2025-04-02 10:15:02', NULL, '2025-04-02 10:15:02', 'irure est', 1, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO `im_user` VALUES (1907255603389104129, NULL, NULL, NULL, NULL, NULL, 3, NULL, '符国栋', '2025-04-02 10:15:46', NULL, '2025-04-02 10:15:46', 'irure est', 1, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO `im_user` VALUES (1907255698100682753, NULL, NULL, NULL, NULL, NULL, 3, NULL, '俞三锋', '2025-04-02 10:16:08', NULL, '2025-04-02 10:16:08', 'irure est', 1, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for im_user_status
