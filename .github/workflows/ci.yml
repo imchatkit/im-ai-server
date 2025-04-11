@@ -92,19 +92,19 @@ jobs:
           push: true
           tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-system:${{ github.sha }}
 
-      - name: Build and push ruoyi-gen
-        uses: docker/build-push-action@v5
-        with:
-          context: ./framework/ruoyi-modules/ruoyi-gen
-          push: true
-          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-gen:${{ github.sha }}
+      # - name: Build and push ruoyi-gen
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: ./framework/ruoyi-modules/ruoyi-gen
+      #     push: true
+      #     tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-gen:${{ github.sha }}
 
-      - name: Build and push ruoyi-job
-        uses: docker/build-push-action@v5
-        with:
-          context: ./framework/ruoyi-modules/ruoyi-job
-          push: true
-          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-job:${{ github.sha }}
+      # - name: Build and push ruoyi-job
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: ./framework/ruoyi-modules/ruoyi-job
+      #     push: true
+      #     tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-job:${{ github.sha }}
 
       - name: Build and push ruoyi-resource
         uses: docker/build-push-action@v5
@@ -123,8 +123,20 @@ jobs:
   deploy:
     needs: docker-build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master'
     steps:
+      - uses: actions/checkout@v4
+      
+      - name: Copy deployment files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "docker-compose.yml,deploy.sh,env-example"
+          target: "/home/${{ secrets.SSH_USERNAME }}/im-ai-deploy"
+          overwrite: true
+          
       - name: SSH Deploy
         uses: appleboy/ssh-action@v0.1.10
         with:
@@ -132,20 +144,22 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            sleep 2
-            docker login ${{ env.DOCKER_REGISTRY }} --username=${{ secrets.TENCENT_REGISTRY_USERNAME }} --password=${{ secrets.TENCENT_REGISTRY_PASSWORD }}
+            cd /home/${{ secrets.SSH_USERNAME }}/im-ai-deploy
+            chmod +x deploy.sh
             
-            # 拉取最新的镜像
-            docker pull ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/im-gateway:${{ github.sha }}
-            docker pull ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-auth:${{ github.sha }}
-            docker pull ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-system:${{ github.sha }}
-            docker pull ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-gen:${{ github.sha }}
-            docker pull ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-job:${{ github.sha }}
-            docker pull ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-resource:${{ github.sha }}
-            docker pull ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/im-core-server:${{ github.sha }}
+            # 设置环境变量
+            export DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
+            export DOCKER_NAMESPACE=${{ env.DOCKER_NAMESPACE }}
+            export REGISTRY_USERNAME=${{ secrets.TENCENT_REGISTRY_USERNAME }}
+            export REGISTRY_PASSWORD=${{ secrets.TENCENT_REGISTRY_PASSWORD }}
             
-            # 可以在这里添加停止旧容器、启动新容器的命令
-            # 例如：docker-compose up -d 或 kubectl apply -f k8s-deployment.yaml
+            # 如果不存在.env文件，则复制示例文件
+            if [ ! -f .env ]; then
+              cp env-example .env
+            fi
+            
+            # 使用GitHub SHA作为标签部署
+            ./deploy.sh ${{ github.sha }}
 
       # - name: Manual approval
       #   uses: trstringer/manual-approval@v2

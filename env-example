@@ -1,0 +1,15 @@
+# Docker Registry配置
+DOCKER_REGISTRY=useccr.ccs.tencentyun.com
+DOCKER_NAMESPACE=java-im-ai
+# 使用latest作为默认标签，可在启动时通过TAG环境变量覆盖
+TAG=latest
+
+# Nacos配置
+NACOS_SERVER=10.1.12.11:8848
+NACOS_USERNAME=nacos
+NACOS_PASSWORD=abcdimkit8989a
+NACOS_DISCOVERY_GROUP=DEFAULT_GROUP
+NACOS_CONFIG_GROUP=DEFAULT_GROUP
+
+# 可以设置其他全局环境变量
+TZ=Asia/Shanghai 
