@@ -27,9 +27,9 @@ services:
     container_name: im-core-server
     restart: always
     ports:
-      - "9400:9400"
+      - "9601:9601"
     environment:
-      - SERVER_PORT=9400
+      - SERVER_PORT=9601
       - JAVA_OPTS=-Xms128m -Xmx128m
       - SPRING_CLOUD_NACOS_SERVER_ADDR=${NACOS_SERVER:-10.1.12.11:8848}
       - SPRING_CLOUD_NACOS_USERNAME=${NACOS_USERNAME:-nacos}
@@ -45,9 +45,9 @@ services:
     container_name: ruoyi-auth
     restart: always
     ports:
-      - "9200:9200"
+      - "9210:9210"
     environment:
-      - SERVER_PORT=9200
+      - SERVER_PORT=9210
       - JAVA_OPTS=-Xms128m -Xmx128m
       - SPRING_CLOUD_NACOS_SERVER_ADDR=${NACOS_SERVER:-10.1.12.11:8848}
       - SPRING_CLOUD_NACOS_USERNAME=${NACOS_USERNAME:-nacos}
