@@ -123,7 +123,7 @@ jobs:
   deploy:
     needs: docker-build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     steps:
       - name: SSH Deploy
         uses: appleboy/ssh-action@v0.1.10
@@ -147,10 +147,10 @@ jobs:
             # 可以在这里添加停止旧容器、启动新容器的命令
             # 例如：docker-compose up -d 或 kubectl apply -f k8s-deployment.yaml
 
-      - name: Manual approval
-        uses: trstringer/manual-approval@v2
-        with:
-          secret: ${{ github.token }}
-          approvers: your-github-username
-          minimum-approvals: 1
-          exclude-authors: github-actions[bot]
+      # - name: Manual approval
+      #   uses: trstringer/manual-approval@v2
+      #   with:
+      #     secret: ${{ github.token }}
+      #     approvers: your-github-username
+      #     minimum-approvals: 1
+      #     exclude-authors: github-actions[bot]
