@@ -5,11 +5,7 @@ services:
     image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/im-gateway:${TAG:-latest}
     container_name: im-gateway
     restart: always
-    networks:
-      - im-network
-    ports:
-      - "8080:8080"
-      - "9688:9688"
+    network_mode: host
     deploy:
       resources:
         limits:
@@ -28,10 +24,7 @@ services:
     image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/im-core-server:${TAG:-latest}
     container_name: im-core-server
     restart: always
-    networks:
-      - im-network
-    ports:
-      - "9601:9601"
+    network_mode: host
     deploy:
       resources:
         limits:
