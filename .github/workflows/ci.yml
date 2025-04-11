@@ -78,19 +78,19 @@ jobs:
           push: true
           tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/im-gateway:${{ github.sha }}
 
-      - name: Build and push ruoyi-auth
-        uses: docker/build-push-action@v5
-        with:
-          context: ./framework/ruoyi-auth
-          push: true
-          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-auth:${{ github.sha }}
+      # - name: Build and push ruoyi-auth
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: ./framework/ruoyi-auth
+      #     push: true
+      #     tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-auth:${{ github.sha }}
 
-      - name: Build and push ruoyi-system
-        uses: docker/build-push-action@v5
-        with:
-          context: ./framework/ruoyi-modules/ruoyi-system
-          push: true
-          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-system:${{ github.sha }}
+      # - name: Build and push ruoyi-system
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: ./framework/ruoyi-modules/ruoyi-system
+      #     push: true
+      #     tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-system:${{ github.sha }}
 
       # - name: Build and push ruoyi-gen
       #   uses: docker/build-push-action@v5
@@ -106,12 +106,12 @@ jobs:
       #     push: true
       #     tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-job:${{ github.sha }}
 
-      - name: Build and push ruoyi-resource
-        uses: docker/build-push-action@v5
-        with:
-          context: ./framework/ruoyi-modules/ruoyi-resource
-          push: true
-          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-resource:${{ github.sha }}
+      # - name: Build and push ruoyi-resource
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: ./framework/ruoyi-modules/ruoyi-resource
+      #     push: true
+      #     tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/ruoyi-resource:${{ github.sha }}
 
       - name: Build and push im-core-server
         uses: docker/build-push-action@v5

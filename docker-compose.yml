@@ -5,7 +5,11 @@ services:
     image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/im-gateway:${TAG:-latest}
     container_name: im-gateway
     restart: always
-    network_mode: host
+    networks:
+      - im-network
+    ports:
+      - "8080:8080"
+      - "9688:9688"
     deploy:
       resources:
         limits:
@@ -19,16 +23,15 @@ services:
       - SPRING_CLOUD_NACOS_PASSWORD=${NACOS_PASSWORD:-abcdimkit8989a}
       - SPRING_CLOUD_NACOS_DISCOVERY_GROUP=${NACOS_DISCOVERY_GROUP:-DEFAULT_GROUP}
       - SPRING_CLOUD_NACOS_CONFIG_GROUP=${NACOS_CONFIG_GROUP:-DEFAULT_GROUP}
-    extra_hosts:
-      - "nacos.myimkit.com:192.168.1.101"
-      - "mysql.myimkit.com:192.168.1.101"
-      - "redis.myimkit.com:192.168.1.101"
 
   im-core-server:
     image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/im-core-server:${TAG:-latest}
     container_name: im-core-server
     restart: always
-    network_mode: host
+    networks:
+      - im-network
+    ports:
+      - "9601:9601"
     deploy:
       resources:
         limits:
@@ -41,53 +44,52 @@ services:
       - SPRING_CLOUD_NACOS_PASSWORD=${NACOS_PASSWORD:-abcdimkit8989a}
       - SPRING_CLOUD_NACOS_DISCOVERY_GROUP=${NACOS_DISCOVERY_GROUP:-DEFAULT_GROUP}
       - SPRING_CLOUD_NACOS_CONFIG_GROUP=${NACOS_CONFIG_GROUP:-DEFAULT_GROUP}
-    extra_hosts:
-      - "nacos.myimkit.com:192.168.1.101"
-      - "mysql.myimkit.com:192.168.1.101"
-      - "redis.myimkit.com:192.168.1.101"
-  ruoyi-auth:
-    image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/ruoyi-auth:${TAG:-latest}
-    container_name: ruoyi-auth
-    restart: always
-    network_mode: host
-    deploy:
-      resources:
-        limits:
-          memory: 200M
-    environment:
-      - SERVER_PORT=9210
-      - JAVA_OPTS=-Xms138m -Xmx138m
-      - SPRING_CLOUD_NACOS_SERVER_ADDR=${NACOS_SERVER:-10.1.12.11:8848}
-      - SPRING_CLOUD_NACOS_USERNAME=${NACOS_USERNAME:-nacos}
-      - SPRING_CLOUD_NACOS_PASSWORD=${NACOS_PASSWORD:-abcdimkit8989a}
-      - SPRING_CLOUD_NACOS_DISCOVERY_GROUP=${NACOS_DISCOVERY_GROUP:-DEFAULT_GROUP}
-      - SPRING_CLOUD_NACOS_CONFIG_GROUP=${NACOS_CONFIG_GROUP:-DEFAULT_GROUP}
-    extra_hosts:
-      - "nacos.myimkit.com:192.168.1.101"
-      - "mysql.myimkit.com:192.168.1.101"
-      - "redis.myimkit.com:192.168.1.101"
 
-  ruoyi-system:
-    image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/ruoyi-system:${TAG:-latest}
-    container_name: ruoyi-system
-    restart: always
-    network_mode: host
-    deploy:
-      resources:
-        limits:
-          memory: 200M
-    environment:
-      - SERVER_PORT=9201
-      - JAVA_OPTS=-Xms138m -Xmx138m
-      - SPRING_CLOUD_NACOS_SERVER_ADDR=${NACOS_SERVER:-10.1.12.11:8848}
-      - SPRING_CLOUD_NACOS_USERNAME=${NACOS_USERNAME:-nacos}
-      - SPRING_CLOUD_NACOS_PASSWORD=${NACOS_PASSWORD:-abcdimkit8989a}
-      - SPRING_CLOUD_NACOS_DISCOVERY_GROUP=${NACOS_DISCOVERY_GROUP:-DEFAULT_GROUP}
-      - SPRING_CLOUD_NACOS_CONFIG_GROUP=${NACOS_CONFIG_GROUP:-DEFAULT_GROUP}
-    extra_hosts:
-      - "nacos.myimkit.com:192.168.1.101"
-      - "mysql.myimkit.com:192.168.1.101"
-      - "redis.myimkit.com:192.168.1.101"
+
+  # ruoyi-auth:
+  #   image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/ruoyi-auth:${TAG:-latest}
+  #   container_name: ruoyi-auth
+  #   restart: always
+  #   networks:
+  #     - im-network
+  #   ports:
+  #     - "9210:9210"
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: 200M
+  #   environment:
+  #     - SERVER_PORT=9210
+  #     - JAVA_OPTS=-Xms138m -Xmx138m
+  #     - SPRING_CLOUD_NACOS_SERVER_ADDR=${NACOS_SERVER:-10.1.12.11:8848}
+  #     - SPRING_CLOUD_NACOS_USERNAME=${NACOS_USERNAME:-nacos}
+  #     - SPRING_CLOUD_NACOS_PASSWORD=${NACOS_PASSWORD:-abcdimkit8989a}
+  #     - SPRING_CLOUD_NACOS_DISCOVERY_GROUP=${NACOS_DISCOVERY_GROUP:-DEFAULT_GROUP}
+  #     - SPRING_CLOUD_NACOS_CONFIG_GROUP=${NACOS_CONFIG_GROUP:-DEFAULT_GROUP}
+
+
+
+  # ruoyi-system:
+  #   image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/ruoyi-system:${TAG:-latest}
+  #   container_name: ruoyi-system
+  #   restart: always
+  #   networks:
+  #     - im-network
+  #   ports:
+  #     - "9201:9201"
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: 200M
+  #   environment:
+  #     - SERVER_PORT=9201
+  #     - JAVA_OPTS=-Xms138m -Xmx138m
+  #     - SPRING_CLOUD_NACOS_SERVER_ADDR=${NACOS_SERVER:-10.1.12.11:8848}
+  #     - SPRING_CLOUD_NACOS_USERNAME=${NACOS_USERNAME:-nacos}
+  #     - SPRING_CLOUD_NACOS_PASSWORD=${NACOS_PASSWORD:-abcdimkit8989a}
+  #     - SPRING_CLOUD_NACOS_DISCOVERY_GROUP=${NACOS_DISCOVERY_GROUP:-DEFAULT_GROUP}
+  #     - SPRING_CLOUD_NACOS_CONFIG_GROUP=${NACOS_CONFIG_GROUP:-DEFAULT_GROUP}
+
 
   # ruoyi-gen:
   #   image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/ruoyi-gen:${TAG:-latest}
@@ -107,10 +109,6 @@ services:
   #     - SPRING_CLOUD_NACOS_PASSWORD=${NACOS_PASSWORD:-abcdimkit8989a}
   #     - SPRING_CLOUD_NACOS_DISCOVERY_GROUP=${NACOS_DISCOVERY_GROUP:-DEFAULT_GROUP}
   #     - SPRING_CLOUD_NACOS_CONFIG_GROUP=${NACOS_CONFIG_GROUP:-DEFAULT_GROUP}
-  #   extra_hosts:
-  #     - "nacos.myimkit.com:192.168.1.101"
-  #     - "mysql.myimkit.com:192.168.1.101"
-  #     - "redis.myimkit.com:192.168.1.101"
 
   # ruoyi-job:
   #   image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/ruoyi-job:${TAG:-latest}
@@ -130,10 +128,7 @@ services:
   #     - SPRING_CLOUD_NACOS_PASSWORD=${NACOS_PASSWORD:-abcdimkit8989a}
   #     - SPRING_CLOUD_NACOS_DISCOVERY_GROUP=${NACOS_DISCOVERY_GROUP:-DEFAULT_GROUP}
   #     - SPRING_CLOUD_NACOS_CONFIG_GROUP=${NACOS_CONFIG_GROUP:-DEFAULT_GROUP}
-  #   extra_hosts:
-  #     - "nacos.myimkit.com:192.168.1.101"
-  #     - "mysql.myimkit.com:192.168.1.101"
-  #     - "redis.myimkit.com:192.168.1.101"
+
 
   # ruoyi-resource:
   #   image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/ruoyi-resource:${TAG:-latest}
@@ -153,8 +148,8 @@ services:
   #     - SPRING_CLOUD_NACOS_PASSWORD=${NACOS_PASSWORD:-abcdimkit8989a}
   #     - SPRING_CLOUD_NACOS_DISCOVERY_GROUP=${NACOS_DISCOVERY_GROUP:-DEFAULT_GROUP}
   #     - SPRING_CLOUD_NACOS_CONFIG_GROUP=${NACOS_CONFIG_GROUP:-DEFAULT_GROUP}
-  #   extra_hosts:
-  #     - "nacos.myimkit.com:192.168.1.101"
-  #     - "mysql.myimkit.com:192.168.1.101"
-  #     - "redis.myimkit.com:192.168.1.101"
 
+
+networks:
+  im-network:
+    driver: bridge
