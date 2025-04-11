@@ -9,11 +9,11 @@ services:
     deploy:
       resources:
         limits:
-          memory: 256M
+          memory: 356M
     environment:
       - SERVER_PORT=8080
       - WS_PORT=9688
-      - JAVA_OPTS=-Xms138m -Xmx138m
+      - JAVA_OPTS=-Xms238m -Xmx238m
       - SPRING_CLOUD_NACOS_SERVER_ADDR=${NACOS_SERVER:-10.1.12.11:8848}
       - SPRING_CLOUD_NACOS_USERNAME=${NACOS_USERNAME:-nacos}
       - SPRING_CLOUD_NACOS_PASSWORD=${NACOS_PASSWORD:-abcdimkit8989a}
@@ -28,10 +28,10 @@ services:
     deploy:
       resources:
         limits:
-          memory: 256M
+          memory: 356M
     environment:
       - SERVER_PORT=9601
-      - JAVA_OPTS=-Xms138m -Xmx138m
+      - JAVA_OPTS=-Xms238m -Xmx238m
       - SPRING_CLOUD_NACOS_SERVER_ADDR=${NACOS_SERVER:-10.1.12.11:8848}
       - SPRING_CLOUD_NACOS_USERNAME=${NACOS_USERNAME:-nacos}
       - SPRING_CLOUD_NACOS_PASSWORD=${NACOS_PASSWORD:-abcdimkit8989a}
@@ -50,10 +50,10 @@ services:
   #   deploy:
   #     resources:
   #       limits:
-  #         memory: 256M
+  #         memory: 356M
   #   environment:
   #     - SERVER_PORT=9210
-  #     - JAVA_OPTS=-Xms138m -Xmx138m
+  #     - JAVA_OPTS=-Xms238m -Xmx238m
   #     - SPRING_CLOUD_NACOS_SERVER_ADDR=${NACOS_SERVER:-10.1.12.11:8848}
   #     - SPRING_CLOUD_NACOS_USERNAME=${NACOS_USERNAME:-nacos}
   #     - SPRING_CLOUD_NACOS_PASSWORD=${NACOS_PASSWORD:-abcdimkit8989a}
@@ -66,17 +66,15 @@ services:
   #   image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/ruoyi-system:${TAG:-latest}
   #   container_name: ruoyi-system
   #   restart: always
-  #   networks:
-  #     - im-network
   #   ports:
   #     - "9201:9201"
   #   deploy:
   #     resources:
   #       limits:
-  #         memory: 256M
+  #         memory: 356M
   #   environment:
   #     - SERVER_PORT=9201
-  #     - JAVA_OPTS=-Xms138m -Xmx138m
+  #     - JAVA_OPTS=-Xms238m -Xmx238m
   #     - SPRING_CLOUD_NACOS_SERVER_ADDR=${NACOS_SERVER:-10.1.12.11:8848}
   #     - SPRING_CLOUD_NACOS_USERNAME=${NACOS_USERNAME:-nacos}
   #     - SPRING_CLOUD_NACOS_PASSWORD=${NACOS_PASSWORD:-abcdimkit8989a}
@@ -91,12 +89,12 @@ services:
   #   deploy:
   #     resources:
   #       limits:
-  #         memory: 256M
+  #         memory: 356M
   #   ports:
   #     - "9202:9202"
   #   environment:
   #     - SERVER_PORT=9202
-  #     - JAVA_OPTS=-Xms138m -Xmx138m
+  #     - JAVA_OPTS=-Xms238m -Xmx238m
   #     - SPRING_CLOUD_NACOS_SERVER_ADDR=${NACOS_SERVER:-10.1.12.11:8848}
   #     - SPRING_CLOUD_NACOS_USERNAME=${NACOS_USERNAME:-nacos}
   #     - SPRING_CLOUD_NACOS_PASSWORD=${NACOS_PASSWORD:-abcdimkit8989a}
@@ -110,12 +108,12 @@ services:
   #   deploy:
   #     resources:
   #       limits:
-  #         memory: 256M
+  #         memory: 356M
   #   ports:
   #     - "9203:9203"
   #   environment:
   #     - SERVER_PORT=9203
-  #     - JAVA_OPTS=-Xms138m -Xmx138m
+  #     - JAVA_OPTS=-Xms238m -Xmx238m
   #     - SPRING_CLOUD_NACOS_SERVER_ADDR=${NACOS_SERVER:-10.1.12.11:8848}
   #     - SPRING_CLOUD_NACOS_USERNAME=${NACOS_USERNAME:-nacos}
   #     - SPRING_CLOUD_NACOS_PASSWORD=${NACOS_PASSWORD:-abcdimkit8989a}
@@ -130,19 +128,15 @@ services:
   #   deploy:
   #     resources:
   #       limits:
-  #         memory: 256M
+  #         memory: 356M
   #   ports:
   #     - "9300:9300"
   #   environment:
   #     - SERVER_PORT=9300
-  #     - JAVA_OPTS=-Xms138m -Xmx138m
+  #     - JAVA_OPTS=-Xms238m -Xmx238m
   #     - SPRING_CLOUD_NACOS_SERVER_ADDR=${NACOS_SERVER:-10.1.12.11:8848}
   #     - SPRING_CLOUD_NACOS_USERNAME=${NACOS_USERNAME:-nacos}
   #     - SPRING_CLOUD_NACOS_PASSWORD=${NACOS_PASSWORD:-abcdimkit8989a}
   #     - SPRING_CLOUD_NACOS_DISCOVERY_GROUP=${NACOS_DISCOVERY_GROUP:-DEFAULT_GROUP}
   #     - SPRING_CLOUD_NACOS_CONFIG_GROUP=${NACOS_CONFIG_GROUP:-DEFAULT_GROUP}
 
-
-networks:
-  im-network:
-    driver: bridge
