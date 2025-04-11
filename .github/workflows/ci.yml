@@ -167,6 +167,17 @@ jobs:
             
             # 使用GitHub SHA作为标签部署
             ./deploy.sh ${{ github.sha }}
+            
+            # 清理旧镜像，保留最近3个版本
+            echo "清理旧镜像..."
+            for service in im-gateway ruoyi-auth ruoyi-system im-core-server; do
+              # 获取服务的所有镜像ID，除了最近使用的3个
+              image_ids=$(docker images ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/$service --format "{{.ID}}" | tail -n +4)
+              if [ ! -z "$image_ids" ]; then
+                echo "清理$service的旧镜像: $image_ids"
+                docker rmi $image_ids 2>/dev/null || true
+              fi
+            done
 
       # - name: Manual approval
       #   uses: trstringer/manual-approval@v2

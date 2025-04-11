@@ -21,8 +21,27 @@ docker login ${DOCKER_REGISTRY} --username=$REGISTRY_USERNAME --password=$REGIST
 echo "拉取最新镜像..."
 $DOCKER_COMPOSE_CMD pull
 
-# 启动服务
+# 停止并删除现有容器
+echo "停止并删除现有容器..."
+$DOCKER_COMPOSE_CMD down
+
+# 清理任何可能残留的旧容器
+echo "清理残留容器..."
+containers=$(docker ps -a --filter "name=im-gateway|im-core-server|ruoyi-auth|ruoyi-system" --format "{{.Names}}")
+if [ ! -z "$containers" ]; then
+    echo "发现残留容器: $containers"
+    
+    # 先优雅地停止容器
+    echo "正在停止容器..."
+    docker stop $containers 2>/dev/null || true
+    
+    # 确认容器已停止后再删除
+    echo "正在删除容器..."
+    docker rm $containers 2>/dev/null || true
+fi
+
+# 强制重新创建启动服务
 echo "启动服务..."
-$DOCKER_COMPOSE_CMD up -d
+$DOCKER_COMPOSE_CMD up -d --force-recreate
 
 echo "部署完成!" 

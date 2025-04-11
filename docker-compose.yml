@@ -5,6 +5,10 @@ services:
     image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/im-gateway:${TAG:-latest}
     container_name: im-gateway
     restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 256M
     ports:
       - "8080:8080"
       - "9688:9688"
@@ -26,6 +30,10 @@ services:
     image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/im-core-server:${TAG:-latest}
     container_name: im-core-server
     restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 256M
     ports:
       - "9601:9601"
     environment:
@@ -44,6 +52,10 @@ services:
     image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/ruoyi-auth:${TAG:-latest}
     container_name: ruoyi-auth
     restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 256M
     ports:
       - "9210:9210"
     environment:
@@ -63,6 +75,10 @@ services:
     image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/ruoyi-system:${TAG:-latest}
     container_name: ruoyi-system
     restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 256M
     ports:
       - "9201:9201"
     environment:
@@ -82,6 +98,10 @@ services:
   #   image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/ruoyi-gen:${TAG:-latest}
   #   container_name: ruoyi-gen
   #   restart: always
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: 256M
   #   ports:
   #     - "9202:9202"
   #   environment:
@@ -101,6 +121,10 @@ services:
   #   image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/ruoyi-job:${TAG:-latest}
   #   container_name: ruoyi-job
   #   restart: always
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: 256M
   #   ports:
   #     - "9203:9203"
   #   environment:
@@ -120,6 +144,10 @@ services:
   #   image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/ruoyi-resource:${TAG:-latest}
   #   container_name: ruoyi-resource
   #   restart: always
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: 256M
   #   ports:
   #     - "9300:9300"
   #   environment:
