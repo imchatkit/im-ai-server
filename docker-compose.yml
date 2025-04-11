@@ -5,17 +5,15 @@ services:
     image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/im-gateway:${TAG:-latest}
     container_name: im-gateway
     restart: always
+    network_mode: host
     deploy:
       resources:
         limits:
-          memory: 256M
-    ports:
-      - "8080:8080"
-      - "9688:9688"
+          memory: 200M
     environment:
       - SERVER_PORT=8080
       - WS_PORT=9688
-      - JAVA_OPTS=-Xms128m -Xmx128m
+      - JAVA_OPTS=-Xms138m -Xmx138m
       - SPRING_CLOUD_NACOS_SERVER_ADDR=${NACOS_SERVER:-10.1.12.11:8848}
       - SPRING_CLOUD_NACOS_USERNAME=${NACOS_USERNAME:-nacos}
       - SPRING_CLOUD_NACOS_PASSWORD=${NACOS_PASSWORD:-abcdimkit8989a}
@@ -25,20 +23,19 @@ services:
       - "nacos.myimkit.com:192.168.1.101"
       - "mysql.myimkit.com:192.168.1.101"
       - "redis.myimkit.com:192.168.1.101"
-  
+
   im-core-server:
     image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/im-core-server:${TAG:-latest}
     container_name: im-core-server
     restart: always
+    network_mode: host
     deploy:
       resources:
         limits:
-          memory: 256M
-    ports:
-      - "9601:9601"
+          memory: 200M
     environment:
       - SERVER_PORT=9601
-      - JAVA_OPTS=-Xms128m -Xmx128m
+      - JAVA_OPTS=-Xms138m -Xmx138m
       - SPRING_CLOUD_NACOS_SERVER_ADDR=${NACOS_SERVER:-10.1.12.11:8848}
       - SPRING_CLOUD_NACOS_USERNAME=${NACOS_USERNAME:-nacos}
       - SPRING_CLOUD_NACOS_PASSWORD=${NACOS_PASSWORD:-abcdimkit8989a}
@@ -47,20 +44,19 @@ services:
     extra_hosts:
       - "nacos.myimkit.com:192.168.1.101"
       - "mysql.myimkit.com:192.168.1.101"
-      - "redis.myimkit.com:192.168.1.101"   
+      - "redis.myimkit.com:192.168.1.101"
   ruoyi-auth:
     image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/ruoyi-auth:${TAG:-latest}
     container_name: ruoyi-auth
     restart: always
+    network_mode: host
     deploy:
       resources:
         limits:
-          memory: 256M
-    ports:
-      - "9210:9210"
+          memory: 200M
     environment:
       - SERVER_PORT=9210
-      - JAVA_OPTS=-Xms128m -Xmx128m
+      - JAVA_OPTS=-Xms138m -Xmx138m
       - SPRING_CLOUD_NACOS_SERVER_ADDR=${NACOS_SERVER:-10.1.12.11:8848}
       - SPRING_CLOUD_NACOS_USERNAME=${NACOS_USERNAME:-nacos}
       - SPRING_CLOUD_NACOS_PASSWORD=${NACOS_PASSWORD:-abcdimkit8989a}
@@ -70,20 +66,19 @@ services:
       - "nacos.myimkit.com:192.168.1.101"
       - "mysql.myimkit.com:192.168.1.101"
       - "redis.myimkit.com:192.168.1.101"
-  
+
   ruoyi-system:
     image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/ruoyi-system:${TAG:-latest}
     container_name: ruoyi-system
     restart: always
+    network_mode: host
     deploy:
       resources:
         limits:
-          memory: 256M
-    ports:
-      - "9201:9201"
+          memory: 200M
     environment:
       - SERVER_PORT=9201
-      - JAVA_OPTS=-Xms128m -Xmx128m
+      - JAVA_OPTS=-Xms138m -Xmx138m
       - SPRING_CLOUD_NACOS_SERVER_ADDR=${NACOS_SERVER:-10.1.12.11:8848}
       - SPRING_CLOUD_NACOS_USERNAME=${NACOS_USERNAME:-nacos}
       - SPRING_CLOUD_NACOS_PASSWORD=${NACOS_PASSWORD:-abcdimkit8989a}
@@ -93,7 +88,7 @@ services:
       - "nacos.myimkit.com:192.168.1.101"
       - "mysql.myimkit.com:192.168.1.101"
       - "redis.myimkit.com:192.168.1.101"
-  
+
   # ruoyi-gen:
   #   image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/ruoyi-gen:${TAG:-latest}
   #   container_name: ruoyi-gen
@@ -101,12 +96,12 @@ services:
   #   deploy:
   #     resources:
   #       limits:
-  #         memory: 256M
+  #         memory: 200M
   #   ports:
   #     - "9202:9202"
   #   environment:
   #     - SERVER_PORT=9202
-  #     - JAVA_OPTS=-Xms128m -Xmx128m
+  #     - JAVA_OPTS=-Xms138m -Xmx138m
   #     - SPRING_CLOUD_NACOS_SERVER_ADDR=${NACOS_SERVER:-10.1.12.11:8848}
   #     - SPRING_CLOUD_NACOS_USERNAME=${NACOS_USERNAME:-nacos}
   #     - SPRING_CLOUD_NACOS_PASSWORD=${NACOS_PASSWORD:-abcdimkit8989a}
@@ -116,7 +111,7 @@ services:
   #     - "nacos.myimkit.com:192.168.1.101"
   #     - "mysql.myimkit.com:192.168.1.101"
   #     - "redis.myimkit.com:192.168.1.101"
-  
+
   # ruoyi-job:
   #   image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/ruoyi-job:${TAG:-latest}
   #   container_name: ruoyi-job
@@ -124,12 +119,12 @@ services:
   #   deploy:
   #     resources:
   #       limits:
-  #         memory: 256M
+  #         memory: 200M
   #   ports:
   #     - "9203:9203"
   #   environment:
   #     - SERVER_PORT=9203
-  #     - JAVA_OPTS=-Xms128m -Xmx128m
+  #     - JAVA_OPTS=-Xms138m -Xmx138m
   #     - SPRING_CLOUD_NACOS_SERVER_ADDR=${NACOS_SERVER:-10.1.12.11:8848}
   #     - SPRING_CLOUD_NACOS_USERNAME=${NACOS_USERNAME:-nacos}
   #     - SPRING_CLOUD_NACOS_PASSWORD=${NACOS_PASSWORD:-abcdimkit8989a}
@@ -139,7 +134,7 @@ services:
   #     - "nacos.myimkit.com:192.168.1.101"
   #     - "mysql.myimkit.com:192.168.1.101"
   #     - "redis.myimkit.com:192.168.1.101"
-  
+
   # ruoyi-resource:
   #   image: ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/ruoyi-resource:${TAG:-latest}
   #   container_name: ruoyi-resource
@@ -147,12 +142,12 @@ services:
   #   deploy:
   #     resources:
   #       limits:
-  #         memory: 256M
+  #         memory: 200M
   #   ports:
   #     - "9300:9300"
   #   environment:
   #     - SERVER_PORT=9300
-  #     - JAVA_OPTS=-Xms128m -Xmx128m
+  #     - JAVA_OPTS=-Xms138m -Xmx138m
   #     - SPRING_CLOUD_NACOS_SERVER_ADDR=${NACOS_SERVER:-10.1.12.11:8848}
   #     - SPRING_CLOUD_NACOS_USERNAME=${NACOS_USERNAME:-nacos}
   #     - SPRING_CLOUD_NACOS_PASSWORD=${NACOS_PASSWORD:-abcdimkit8989a}
@@ -162,4 +157,4 @@ services:
   #     - "nacos.myimkit.com:192.168.1.101"
   #     - "mysql.myimkit.com:192.168.1.101"
   #     - "redis.myimkit.com:192.168.1.101"
-  
+
