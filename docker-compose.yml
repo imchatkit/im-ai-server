@@ -13,7 +13,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 200M
+          memory: 256M
     environment:
       - SERVER_PORT=8080
       - WS_PORT=9688
@@ -35,7 +35,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 200M
+          memory: 256M
     environment:
       - SERVER_PORT=9601
       - JAVA_OPTS=-Xms138m -Xmx138m
@@ -57,7 +57,7 @@ services:
   #   deploy:
   #     resources:
   #       limits:
-  #         memory: 200M
+  #         memory: 256M
   #   environment:
   #     - SERVER_PORT=9210
   #     - JAVA_OPTS=-Xms138m -Xmx138m
@@ -80,7 +80,7 @@ services:
   #   deploy:
   #     resources:
   #       limits:
-  #         memory: 200M
+  #         memory: 256M
   #   environment:
   #     - SERVER_PORT=9201
   #     - JAVA_OPTS=-Xms138m -Xmx138m
@@ -98,7 +98,7 @@ services:
   #   deploy:
   #     resources:
   #       limits:
-  #         memory: 200M
+  #         memory: 256M
   #   ports:
   #     - "9202:9202"
   #   environment:
@@ -117,7 +117,7 @@ services:
   #   deploy:
   #     resources:
   #       limits:
-  #         memory: 200M
+  #         memory: 256M
   #   ports:
   #     - "9203:9203"
   #   environment:
@@ -137,7 +137,7 @@ services:
   #   deploy:
   #     resources:
   #       limits:
-  #         memory: 200M
+  #         memory: 256M
   #   ports:
   #     - "9300:9300"
   #   environment:
